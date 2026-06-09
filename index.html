@@ -101,12 +101,17 @@ nav{
 }
 .btn-ghost:hover{background:var(--grove-light)}
 .hero-visual{
-  display:flex;justify-content:center;align-items:center;
+  display:flex;flex-direction:column;justify-content:center;align-items:center;
   position:relative;
 }
-.hero-logo{width:auto;height:auto;max-width:400px;max-height:280px;object-fit:contain}
-.hero-logo-brand{display:block;text-align:center;margin-top:12px;font-size:18px;font-weight:600;letter-spacing:0.08em;color:var(--forest)}
-.hero-logo-brand span{font-weight:400;color:var(--muted);margin-left:6px;font-size:15px}
+.hero-logo{width:auto;height:auto;max-width:400px;max-height:240px;object-fit:cover;
+  object-position:center top;clip-path:polygon(0 0,100% 0,100% 70%,0 70%);
+}
+.hero-logo-brand{
+  display:block;text-align:center;margin-top:20px;
+  font-size:22px;font-weight:600;letter-spacing:0.08em;color:var(--forest);
+}
+.hero-logo-brand span{font-weight:400;color:var(--muted);margin-left:8px;font-size:18px}
 
 /* ── SECTION COMMON ── */
 .section-header{text-align:center;padding:80px 0 48px}
@@ -389,7 +394,7 @@ footer{border-top:0.5px solid var(--border);padding:36px 0}
       </div>
     </div>
     <div class="hero-visual">
-      <img src="assets/logo.png" alt="引木 Yinmutree" class="hero-logo">
+      <img src="assets/logo.png" alt="引木" class="hero-logo">
       <span class="hero-logo-brand">引木<span>Yinmu</span></span>
     </div>
   </div>
