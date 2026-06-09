@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>引木管理咨询 — 积木成林，共生共长</title>
+<meta name="description" content="引木管理咨询工作室，专注企业AI落地咨询、管理咨询与家庭成长服务。让每一棵木，都能长成森林。">
+<style>
+/* ── RESET & BASE ── */
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-font-smoothing:antialiased}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+  color:var(--ink);background:var(--bg);line-height:1.6;overflow-x:hidden;
+}
+a{color:inherit;text-decoration:none}
+img{max-width:100%;display:block}
+
+/* ── VARIABLES ── */
+:root{
+  --forest:#2D5A3D;
+  --grove:#5A8F6E;
+  --grove-light:#EAF3DE;
+  --heartwood:#8B7355;
+  --soil:#1A1A1A;
+  --parchment:#F5F2EB;
+  --bg:#FAFAF8;
+  --white:#fff;
+  --ink:#1C1C1C;
+  --muted:#6B6B6B;
+  --border:rgba(45,90,61,0.12);
+  --radius:14px;
+}
+
+/* ── UTILITY ── */
+.wrap{max-width:1120px;margin:0 auto;padding:0 32px}
+
+/* ── NAV ── */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  background:rgba(250,250,248,0.85);
+  backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+  border-bottom:0.5px solid var(--border);
+  transition:background .3s;
+}
+.nav-inner{
+  display:flex;align-items:center;justify-content:space-between;
+  height:64px;
+}
+.nav-logo{display:flex;align-items:center;gap:10px}
+.nav-logo img{height:32px;width:auto}
+.nav-logo-text{font-size:18px;font-weight:600;letter-spacing:0.02em;color:var(--forest)}
+.nav-links{display:flex;gap:28px}
+.nav-links a{
+  font-size:14px;color:var(--muted);
+  position:relative;transition:color .2s;
+}
+.nav-links a:hover{color:var(--forest)}
+.nav-links a::after{
+  content:'';position:absolute;bottom:-4px;left:0;width:0;height:1.5px;
+  background:var(--forest);transition:width .25s;
+}
+.nav-links a:hover::after{width:100%}
+.nav-mobile-btn{display:none;background:none;border:none;cursor:pointer;padding:4px}
+.nav-mobile-btn svg{width:24px;height:24px;stroke:var(--ink)}
+
+/* ── HERO ── */
+.hero{padding:140px 0 80px}
+.hero-grid{display:grid;grid-template-columns:1.1fr 0.9fr;gap:60px;align-items:center}
+.hero-tag{
+  display:inline-block;
+  padding:6px 16px;background:var(--grove-light);
+  border-radius:20px;font-size:13px;color:var(--forest);
+  font-weight:500;letter-spacing:0.03em;margin-bottom:24px;
+}
+.hero h1{
+  font-size:48px;font-weight:600;line-height:1.2;
+  letter-spacing:-0.01em;margin-bottom:20px;
+}
+.hero h1 span{
+  color:var(--forest);position:relative;
+}
+.hero h1 span::after{
+  content:'';position:absolute;bottom:2px;left:0;right:0;height:6px;
+  background:var(--grove-light);z-index:-1;border-radius:3px;
+}
+.hero-sub{font-size:17px;color:var(--muted);max-width:480px;margin-bottom:36px;line-height:1.7}
+.hero-actions{display:flex;gap:14px;flex-wrap:wrap}
+.btn-primary{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:14px 28px;background:var(--forest);color:var(--white);
+  border:none;border-radius:10px;font-size:14px;font-weight:500;
+  cursor:pointer;transition:transform .2s,box-shadow .2s;
+}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(45,90,61,0.25)}
+.btn-ghost{
+  display:inline-flex;align-items:center;
+  padding:14px 28px;background:transparent;color:var(--forest);
+  border:1.5px solid var(--grove);border-radius:10px;font-size:14px;font-weight:500;
+  cursor:pointer;transition:background .2s;
+}
+.btn-ghost:hover{background:var(--grove-light)}
+.hero-visual{
+  display:flex;justify-content:center;align-items:center;
+  position:relative;
+}
+.tree-svg{width:100%;max-width:380px}
+
+/* ── SECTION COMMON ── */
+.section-header{text-align:center;padding:80px 0 48px}
+.section-header h2{font-size:30px;font-weight:600;margin-bottom:10px;letter-spacing:-0.01em}
+.section-header p{color:var(--muted);font-size:15px}
+.section-divider{
+  width:40px;height:3px;background:var(--forest);border-radius:2px;
+  margin:16px auto 0;
+}
+
+/* ── ABOUT ── */
+.about{padding-bottom:80px}
+.about-card{
+  background:var(--white);border:0.5px solid var(--border);
+  border-radius:var(--radius);padding:52px;
+  display:grid;grid-template-columns:1.2fr 0.8fr;gap:52px;align-items:center;
+}
+.about-text p{color:var(--muted);margin-bottom:18px;font-size:15px;line-height:1.75}
+.about-text strong{color:var(--forest);font-weight:600}
+.about-stats{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.stat-item{
+  padding:24px;background:var(--parchment);border-radius:10px;
+  text-align:center;transition:transform .2s;
+}
+.stat-item:hover{transform:translateY(-2px)}
+.stat-num{font-size:32px;font-weight:600;color:var(--forest);margin-bottom:4px}
+.stat-label{font-size:12px;color:var(--muted)}
+
+/* ── PHILOSOPHY ── */
+.philosophy{padding-bottom:80px}
+.philosophy-card{
+  background:var(--forest);border-radius:var(--radius);
+  padding:64px;color:var(--white);position:relative;overflow:hidden;
+}
+.philosophy-card::before{
+  content:'';position:absolute;top:-80px;right:-80px;
+  width:260px;height:260px;border-radius:50%;
+  background:rgba(255,255,255,0.04);
+}
+.philosophy-grid{display:grid;grid-template-columns:1fr 1fr;gap:48px;position:relative;z-index:1}
+.philosophy-intro h3{font-size:24px;font-weight:500;margin-bottom:16px}
+.philosophy-intro p{font-size:15px;line-height:1.75;opacity:0.85}
+.philosophy-compare{
+  display:grid;grid-template-columns:1fr 1fr;gap:16px;
+}
+.compare-col{
+  padding:28px;border-radius:10px;
+}
+.compare-col.mech{background:rgba(255,255,255,0.08)}
+.compare-col.bio{background:rgba(234,243,222,0.15)}
+.compare-col h4{font-size:14px;font-weight:600;margin-bottom:14px;letter-spacing:0.03em}
+.compare-col.mech h4{opacity:0.6}
+.compare-col.bio h4{color:#C8E6A0}
+.compare-col ul{list-style:none;font-size:13px;line-height:1.9;opacity:0.8}
+.compare-col.bio ul{opacity:0.9}
+
+/* ── SERVICES ── */
+.services{padding-bottom:80px}
+.services-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.svc-card{
+  background:var(--white);border:0.5px solid var(--border);
+  border-radius:var(--radius);padding:32px 24px;
+  transition:border-color .25s,transform .25s,box-shadow .25s;
+}
+.svc-card:hover{
+  border-color:var(--grove);transform:translateY(-4px);
+  box-shadow:0 8px 24px rgba(45,90,61,0.08);
+}
+.svc-icon{
+  width:44px;height:44px;border-radius:10px;
+  background:var(--grove-light);display:flex;align-items:center;justify-content:center;
+  margin-bottom:18px;
+}
+.svc-icon svg{width:22px;height:22px}
+.svc-card h3{font-size:17px;font-weight:600;margin-bottom:8px;color:var(--forest)}
+.svc-card p{font-size:13px;color:var(--muted);line-height:1.7;flex:1}
+.svc-step{
+  font-size:11px;color:var(--grove);font-weight:600;
+  letter-spacing:0.06em;margin-bottom:8px;
+  text-transform:uppercase;
+}
+.svc-tags{
+  display:flex;flex-wrap:wrap;gap:6px;margin-top:14px;
+}
+.svc-tags span{
+  padding:3px 10px;background:var(--grove-light);
+  border-radius:4px;font-size:11px;color:var(--forest);font-weight:500;
+}
+
+/* ── PRODUCTS ── */
+.products{padding-bottom:80px}
+.products-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.prod-card{
+  background:var(--white);border:0.5px solid var(--border);
+  border-radius:var(--radius);padding:32px 24px;
+  transition:border-color .25s;
+}
+.prod-card:hover{border-color:var(--forest)}
+.prod-tag{
+  display:inline-block;padding:3px 10px;
+  background:var(--grove-light);border-radius:4px;
+  font-size:11px;color:var(--forest);font-weight:500;
+  margin-bottom:14px;letter-spacing:0.04em;
+}
+.prod-card h3{font-size:15px;font-weight:600;margin-bottom:8px}
+.prod-card p{font-size:13px;color:var(--muted);line-height:1.7;margin-bottom:16px}
+.prod-items{display:flex;flex-wrap:wrap;gap:8px}
+.prod-item{
+  padding:4px 12px;border:0.5px solid var(--border);
+  border-radius:20px;font-size:12px;color:var(--muted);
+  transition:background .2s,color .2s;
+}
+.prod-item:hover{background:var(--grove-light);color:var(--forest);border-color:var(--grove)}
+
+/* ── VALUES ── */
+.values{padding-bottom:80px}
+.values-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.val-card{
+  text-align:center;padding:36px 16px;
+  background:var(--white);border:0.5px solid var(--border);
+  border-radius:var(--radius);transition:transform .2s;
+}
+.val-card:hover{transform:translateY(-3px)}
+.val-mark{
+  width:52px;height:52px;border-radius:50%;
+  background:var(--grove-light);display:flex;align-items:center;justify-content:center;
+  margin:0 auto 18px;
+}
+.val-mark svg{width:24px;height:24px}
+.val-card h3{font-size:15px;font-weight:600;margin-bottom:8px;color:var(--forest)}
+.val-card p{font-size:12px;color:var(--muted);line-height:1.7}
+
+/* ── FOUNDER ── */
+.founder{padding-bottom:80px}
+.founder-card{
+  background:var(--white);border:0.5px solid var(--border);
+  border-radius:var(--radius);padding:44px 48px;
+  display:grid;grid-template-columns:auto 1fr;gap:40px;align-items:center;
+}
+.founder-avatar{
+  width:110px;height:110px;border-radius:50%;
+  background:var(--grove-light);
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;position:relative;overflow:hidden;
+}
+.founder-avatar img{width:100%;height:100%;object-fit:cover}
+.founder-name{font-size:20px;font-weight:600;margin-bottom:6px}
+.founder-tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+.founder-tag{
+  padding:3px 12px;border:0.5px solid var(--border);
+  border-radius:20px;font-size:12px;color:var(--muted);
+}
+.founder-tag.mbti{background:var(--grove-light);color:var(--forest);border-color:var(--grove);font-weight:500}
+.founder-desc{font-size:14px;color:var(--muted);line-height:1.8;margin-bottom:14px}
+.founder-creds{display:flex;flex-wrap:wrap;gap:8px}
+.cred-badge{
+  padding:5px 14px;background:var(--parchment);
+  border-radius:6px;font-size:12px;color:var(--heartwood);font-weight:500;
+}
+
+/* ── CTA ── */
+.cta{
+  background:var(--forest);border-radius:20px;
+  padding:72px;text-align:center;position:relative;overflow:hidden;
+}
+.cta::before{
+  content:'';position:absolute;bottom:-60px;left:-60px;
+  width:200px;height:200px;border-radius:50%;
+  background:rgba(255,255,255,0.03);
+}
+.cta::after{
+  content:'';position:absolute;top:-40px;right:-40px;
+  width:160px;height:160px;border-radius:50%;
+  background:rgba(255,255,255,0.04);
+}
+.cta h2{font-size:28px;font-weight:500;color:var(--white);margin-bottom:14px;position:relative;z-index:1}
+.cta p{font-size:15px;color:rgba(255,255,255,0.65);max-width:460px;margin:0 auto 20px;position:relative;z-index:1}
+.cta-phone{
+  font-size:20px;font-weight:500;color:rgba(255,255,255,0.92);
+  letter-spacing:0.04em;margin-bottom:24px;position:relative;z-index:1;
+}
+.btn-white{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:14px 36px;background:var(--white);color:var(--forest);
+  border:none;border-radius:10px;font-size:14px;font-weight:600;
+  cursor:pointer;transition:transform .2s,box-shadow .2s;position:relative;z-index:1;
+}
+.btn-white:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(0,0,0,0.15)}
+
+/* ── FOOTER ── */
+footer{border-top:0.5px solid var(--border);padding:36px 0}
+.footer-inner{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px}
+.footer-logo{display:flex;align-items:center;gap:10px}
+.footer-logo svg{width:24px;height:24px}
+.footer-logo span{font-size:14px;font-weight:500}
+.footer-copy{font-size:12px;color:var(--muted)}
+.footer-links{display:flex;gap:24px}
+.footer-links a{font-size:12px;color:var(--muted);transition:color .2s}
+.footer-links a:hover{color:var(--forest)}
+
+/* ── ANIMATIONS ── */
+@keyframes fadeInUp{
+  from{opacity:0;transform:translateY(20px)}
+  to{opacity:1;transform:translateY(0)}
+}
+.hero-grid>*{animation:fadeInUp .6s ease both}
+.hero-grid>*:nth-child(2){animation-delay:.15s}
+.svc-card,.prod-card,.val-card,.stat-item{
+  animation:fadeInUp .5s ease both;
+}
+
+/* ── RESPONSIVE ── */
+@media(max-width:900px){
+  .hero-grid{grid-template-columns:1fr;gap:40px;text-align:center}
+  .hero h1{font-size:36px}
+  .hero-sub{margin:0 auto 36px}
+  .hero-actions{justify-content:center}
+  .about-card{grid-template-columns:1fr;gap:28px;padding:28px}
+  .philosophy-grid{grid-template-columns:1fr;gap:28px}
+  .services-grid{grid-template-columns:repeat(2,1fr)}
+  .products-grid{grid-template-columns:1fr}
+  .values-grid{grid-template-columns:repeat(2,1fr)}
+  .founder-card{grid-template-columns:1fr;gap:24px;padding:28px;text-align:center}
+  .founder-tags{justify-content:center}
+  .founder-creds{justify-content:center}
+  .cta{padding:48px 28px}
+}
+@media(max-width:600px){
+  .wrap{padding:0 20px}
+  .hero{padding:110px 0 60px}
+  .hero h1{font-size:30px}
+  .services-grid{grid-template-columns:1fr}
+  .nav-links{display:none}
+  .nav-mobile-btn{display:block}
+  .footer-inner{flex-direction:column;text-align:center}
+  .footer-links{justify-content:center}
+  .about-stats{grid-template-columns:1fr 1fr}
+  .philosophy-compare{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- ── NAV ── -->
+<nav>
+  <div class="wrap nav-inner">
+    <a href="#" class="nav-logo">
+      <img src="assets/logo.png" alt="引木 Yinmutree">
+    </a>
+    <div class="nav-links">
+      <a href="#about">关于</a>
+      <a href="#philosophy">理念</a>
+      <a href="#services">服务</a>
+      <a href="#products">产品</a>
+      <a href="#founder">创始人</a>
+      <a href="#contact">联系</a>
+    </div>
+    <button class="nav-mobile-btn" onclick="document.querySelector('.nav-links').style.display=document.querySelector('.nav-links').style.display==='flex'?'none':'flex'">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+  </div>
+</nav>
+
+<!-- ── HERO ── -->
+<section class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <div class="hero-tag">企业AI落地 · 降本增效 · 组织赋能</div>
+      <h1>让每一棵木<br>都能长成<span>森林</span></h1>
+      <p class="hero-sub">引木管理咨询工作室——用专业和耐心，陪伴企业与家庭找到自己的生长方向。</p>
+      <div class="hero-actions">
+        <a href="#services" class="btn-primary">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          了解服务
+        </a>
+        <a href="#contact" class="btn-ghost">联系我们</a>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <svg class="tree-svg" viewBox="0 0 400 420" fill="none">
+        <!-- 柔光背景 -->
+        <circle cx="200" cy="190" r="170" fill="#2D5A3D" opacity="0.04"/>
+        <circle cx="200" cy="190" r="110" fill="#5A8F6E" opacity="0.06"/>
+        <!-- 地面阴影 -->
+        <ellipse cx="200" cy="370" rx="140" ry="14" fill="#2D5A3D" opacity="0.08"/>
+        <!-- 小树3（最右） -->
+        <rect x="287" y="295" width="8" height="55" rx="3" fill="#8B7355" opacity="0.7"/>
+        <ellipse cx="291" cy="284" rx="22" ry="24" fill="#2D5A3D" opacity="0.75"/>
+        <!-- 小树2（最左） -->
+        <rect x="97" y="285" width="9" height="60" rx="3" fill="#8B7355" opacity="0.7"/>
+        <ellipse cx="102" cy="272" rx="26" ry="28" fill="#5A8F6E" opacity="0.7"/>
+        <!-- 侧枝2 -->
+        <rect x="244" y="222" width="12" height="48" rx="3" fill="#8B7355" transform="rotate(16 244 222)"/>
+        <ellipse cx="260" cy="212" rx="36" ry="32" fill="#5A8F6E"/>
+        <!-- 侧枝1 -->
+        <rect x="144" y="228" width="12" height="50" rx="3" fill="#8B7355" transform="rotate(-18 144 228)"/>
+        <ellipse cx="132" cy="216" rx="38" ry="34" fill="#5A8F6E"/>
+        <!-- 主树干 -->
+        <rect x="190" y="200" width="20" height="140" rx="5" fill="#8B7355"/>
+        <!-- 主树冠 -->
+        <ellipse cx="200" cy="168" rx="68" ry="62" fill="#2D5A3D"/>
+        <!-- 树冠高光 -->
+        <ellipse cx="184" cy="150" rx="20" ry="18" fill="#5A8F6E" opacity="0.45"/>
+        <ellipse cx="218" cy="160" rx="14" ry="12" fill="#5A8F6E" opacity="0.35"/>
+        <!-- 根系暗示 -->
+        <path d="M195 340 Q180 355 170 360" stroke="#8B7355" stroke-width="2" fill="none" opacity="0.3"/>
+        <path d="M205 340 Q220 355 232 358" stroke="#8B7355" stroke-width="2" fill="none" opacity="0.3"/>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<!-- ── ABOUT ── -->
+<section class="about" id="about">
+  <div class="wrap">
+    <div class="section-header">
+      <h2>关于引木</h2>
+      <p>识材 · 顺势 · 修剪 · 成林</p>
+      <div class="section-divider"></div>
+    </div>
+    <div class="about-card">
+      <div class="about-text">
+        <p>引木（哈尔滨南岗区引木管理咨询工作室）专注于企业AI落地应用，帮助企业通过AI智能体和自动化工作流实现降本增效。</p>
+        <p>我们相信，每个组织都是有生命的"木材"。我们不做流水线式的标准化改造，而是帮助每家企业找到适合自己的AI生长路径——从认知破土，到能力扎根，到价值成林。</p>
+        <p><strong>积木成林，共生共长</strong>——这是我们的信念，也是我们的承诺。</p>
+      </div>
+      <div class="about-stats">
+        <div class="stat-item">
+          <div class="stat-num">3</div>
+          <div class="stat-label">递进式服务</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-num">3</div>
+          <div class="stat-label">产品系列</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-num">AI</div>
+          <div class="stat-label">智能体落地</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-num">降本</div>
+          <div class="stat-label">增效咨询</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── PHILOSOPHY ── -->
+<section class="philosophy" id="philosophy">
+  <div class="wrap">
+    <div class="section-header">
+      <h2>我们的理念</h2>
+      <p>生物态 vs 机械态——不是管理工具的选择，是对人的基本态度</p>
+      <div class="section-divider"></div>
+    </div>
+    <div class="philosophy-card">
+      <div class="philosophy-grid">
+        <div class="philosophy-intro">
+          <h3>人不是零件，是树木</h3>
+          <p>机械态的管理把人标准化——同样的KPI、同样的路径、同样的方法，一旦环境变化，整个机器面临报废。生物态的管理尊重差异——每棵树有自己的纹路、自己的节奏、自己的方向。树木不需要被改造，只需要被看见、被理解、被给予适合它生长的环境。</p>
+        </div>
+        <div class="philosophy-compare">
+          <div class="compare-col mech">
+            <h4>机械态</h4>
+            <ul>
+              <li>把人当零件</li>
+              <li>标准化、流程化</li>
+              <li>消除差异</li>
+              <li>环境变化→崩溃</li>
+              <li>被推动</li>
+            </ul>
+          </div>
+          <div class="compare-col bio">
+            <h4>生物态（引木）</h4>
+            <ul>
+              <li>把人当树木</li>
+              <li>因材施教、顺势而为</li>
+              <li>尊重差异、利用差异</li>
+              <li>反脆弱、越挫越勇</li>
+              <li>自驱动、自生长</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── SERVICES ── -->
+<section class="services" id="services">
+  <div class="wrap">
+    <div class="section-header">
+      <h2>服务内容</h2>
+      <p>认知破土 · 能力扎根 · 价值成林</p>
+      <div class="section-divider"></div>
+    </div>
+    <div class="services-grid" style="grid-template-columns:repeat(3,1fr)">
+      <!-- 认知破土 -->
+      <div class="svc-card" style="display:flex;flex-direction:column">
+        <div class="svc-icon">
+          <svg viewBox="0 0 22 22" fill="none"><path d="M11 20V4" stroke="#2D5A3D" stroke-width="1.5" stroke-linecap="round"/><path d="M6 9l5-5 5 5" stroke="#2D5A3D" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M3 18c2-2 4.5-3 8-3s6 1 8 3" stroke="#5A8F6E" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </div>
+        <div class="svc-step">第一步</div>
+        <h3>认知破土</h3>
+        <p>企业降本增效的起点。通过AI智能体配置、自动化工作流搭建和AI工具实操培训，帮助企业决策者和管理层建立AI认知，看清AI能做什么、怎么做、从哪里开始。</p>
+        <div class="svc-tags">
+          <span>AI智能体配置</span>
+          <span>自动化工作流</span>
+          <span>工具实操培训</span>
+        </div>
+      </div>
+      <!-- 能力扎根 -->
+      <div class="svc-card" style="display:flex;flex-direction:column">
+        <div class="svc-icon">
+          <svg viewBox="0 0 22 22" fill="none"><path d="M11 20V8" stroke="#2D5A3D" stroke-width="2" stroke-linecap="round"/><ellipse cx="11" cy="7" rx="5" ry="4.5" fill="#5A8F6E"/><path d="M7 16c1.5-1.5 2.5-2 4-2s2.5.5 4 2" stroke="#8B7355" stroke-width="1.2" stroke-linecap="round" opacity="0.5"/><path d="M5 19c2-2 3.5-3 6-3s4 1 6 3" stroke="#5A8F6E" stroke-width="1.2" stroke-linecap="round" opacity="0.4"/></svg>
+        </div>
+        <div class="svc-step">第二步</div>
+        <h3>能力扎根</h3>
+        <p>从认知到落地的关键一跃。深入企业实际业务场景，在细分领域搭建AI智能体和自动化工作流系统，让降本增效不再是概念，而是看得见、可量化的业务成果。</p>
+        <div class="svc-tags">
+          <span>业务场景诊断</span>
+          <span>AI系统搭建</span>
+          <span>降本增效落地</span>
+        </div>
+      </div>
+      <!-- 价值成林 -->
+      <div class="svc-card" style="display:flex;flex-direction:column">
+        <div class="svc-icon">
+          <svg viewBox="0 0 22 22" fill="none"><ellipse cx="6" cy="10" rx="3" ry="3.5" fill="#5A8F6E"/><rect x="5" y="13" width="1.5" height="5" rx="0.75" fill="#8B7355"/><ellipse cx="11" cy="8" rx="3.5" ry="4" fill="#2D5A3D"/><rect x="10.25" y="12" width="1.5" height="6" rx="0.75" fill="#8B7355"/><ellipse cx="16" cy="11" rx="2.8" ry="3" fill="#5A8F6E" opacity="0.7"/><rect x="15.25" y="14" width="1.5" height="4" rx="0.75" fill="#8B7355" opacity="0.7"/></svg>
+        </div>
+        <div class="svc-step">第三步</div>
+        <h3>价值成林</h3>
+        <p>从个人能力到组织能力的跨越。系统提升企业内部人才的AI能力，赋能组织成为AI自动化高效型组织——让每位员工都掌握AI，让AI落地规模化、可持续化。</p>
+        <div class="svc-tags">
+          <span>人才AI能力提升</span>
+          <span>组织AI化转型</span>
+          <span>规模化落地</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── PRODUCTS ── -->
+<section class="products" id="products">
+  <div class="wrap">
+    <div class="section-header">
+      <h2>产品系列</h2>
+      <p>三条产品线，让AI真正为企业创造价值</p>
+      <div class="section-divider"></div>
+    </div>
+    <div class="products-grid" style="grid-template-columns:repeat(3,1fr)">
+      <div class="prod-card">
+        <div class="prod-tag">企业侧</div>
+        <h3>企业AI赋能系列</h3>
+        <p>从工具选型到工作流设计，从认知建立到业务落地，全程陪伴企业完成AI转型。帮助企业在降本增效中找到AI的最佳切入点，实现看得见的效率提升。</p>
+        <div class="prod-items">
+          <span class="prod-item">AI智能体定制</span>
+          <span class="prod-item">自动化工作流</span>
+          <span class="prod-item">AI工具培训</span>
+          <span class="prod-item">业务场景落地</span>
+        </div>
+      </div>
+      <div class="prod-card">
+        <div class="prod-tag">个人侧</div>
+        <h3>个人能力提升系列</h3>
+        <p>聚焦职场人AI竞争力提升，从认知破局到实战应用，帮助个人掌握AI工具与思维方式，在AI时代建立不可替代的个人优势。</p>
+        <div class="prod-items">
+          <span class="prod-item">AI认知升级</span>
+          <span class="prod-item">AI工具实操</span>
+          <span class="prod-item">AI工作流设计</span>
+          <span class="prod-item">AI效率教练</span>
+        </div>
+      </div>
+      <div class="prod-card">
+        <div class="prod-tag">知识资产</div>
+        <h3>AI数字资产构建</h3>
+        <p>帮企业构建可复用、可传承的AI数字资产体系，让AI能力沉淀为组织资产，不因人员流动而流失，持续为企业创造价值。</p>
+        <div class="prod-items">
+          <span class="prod-item">AI数字员工</span>
+          <span class="prod-item">自动化工作流</span>
+          <span class="prod-item">知识库搭建</span>
+          <span class="prod-item">提示词仓库</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── VALUES ── -->
+<section class="values" id="values">
+  <div class="wrap">
+    <div class="section-header">
+      <h2>价值观</h2>
+      <p>扎根 · 阳光 · 共生 · 成林</p>
+      <div class="section-divider"></div>
+    </div>
+    <div class="values-grid">
+      <div class="val-card">
+        <div class="val-mark">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M12 22V8" stroke="#2D5A3D" stroke-width="2" stroke-linecap="round"/><path d="M7 13l5-5 5 5" stroke="#2D5A3D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 20c2-2.5 4.5-3.5 8-3.5s6 1 8 3.5" stroke="#5A8F6E" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </div>
+        <h3>扎根</h3>
+        <p>深耕专业能力，打好基础才能向上生长</p>
+      </div>
+      <div class="val-card">
+        <div class="val-mark">
+          <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="5" stroke="#2D5A3D" stroke-width="1.5"/><circle cx="12" cy="12" r="1.5" fill="#5A8F6E"/><path d="M12 2v3M12 19v3M22 12h-3M5 12H2" stroke="#5A8F6E" stroke-width="1.5" stroke-linecap="round"/><path d="M18.5 5.5l-2 2M7.5 16.5l-2 2M18.5 18.5l-2-2M7.5 7.5l-2-2" stroke="#2D5A3D" stroke-width="1.2" stroke-linecap="round"/></svg>
+        </div>
+        <h3>阳光</h3>
+        <p>开放透明，用正向的方式建立信任</p>
+      </div>
+      <div class="val-card">
+        <div class="val-mark">
+          <svg viewBox="0 0 24 24" fill="none"><circle cx="9" cy="12" r="5.5" stroke="#2D5A3D" stroke-width="1.3"/><circle cx="15" cy="12" r="5.5" stroke="#5A8F6E" stroke-width="1.3"/><ellipse cx="12" cy="12" rx="3" ry="5" fill="#EAF3DE"/></svg>
+        </div>
+        <h3>共生</h3>
+        <p>成就客户，一起变强而非独自强大</p>
+      </div>
+      <div class="val-card">
+        <div class="val-mark">
+          <svg viewBox="0 0 24 24" fill="none"><ellipse cx="6" cy="9" rx="3" ry="3.5" fill="#5A8F6E"/><rect x="5" y="12" width="2" height="7" rx="1" fill="#8B7355"/><ellipse cx="12" cy="8" rx="3.5" ry="4" fill="#2D5A3D"/><rect x="11" y="12" width="2" height="8" rx="1" fill="#8B7355"/><ellipse cx="18" cy="10" rx="2.5" ry="3" fill="#5A8F6E" opacity="0.7"/><rect x="17" y="13" width="2" height="5" rx="1" fill="#8B7355" opacity="0.7"/></svg>
+        </div>
+        <h3>成林</h3>
+        <p>积木成林，每棵树都不可或缺</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── FOUNDER ── -->
+<section class="founder" id="founder">
+  <div class="wrap">
+    <div class="section-header">
+      <h2>创始人</h2>
+      <p>十余年深耕，专业值得信赖</p>
+      <div class="section-divider"></div>
+    </div>
+    <div class="founder-card">
+      <div class="founder-avatar">
+        <img src="assets/founder.png" alt="刘健昕" style="width:100%;height:100%;object-fit:cover;">
+      </div>
+      <div>
+        <div class="founder-name">刘健昕</div>
+        <div class="founder-tags">
+          <span class="founder-tag mbti">INTJ</span>
+          <span class="founder-tag">企业AI效率工程师</span>
+          <span class="founder-tag">AI落地实战派</span>
+        </div>
+        <p class="founder-desc">企业管理咨询从业十余年，专注于企业AI落地应用。不走"讲概念"路线，只做"能落地"的事——帮企业用AI智能体和自动化工作流实现真正的降本增效，让AI从PPT里的愿景变成业务里的生产力。</p>
+        <div class="founder-creds">
+          <span class="cred-badge">国家中级经济师</span>
+          <span class="cred-badge">人力资源管理师</span>
+          <span class="cred-badge">就业指导师</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── CTA ── -->
+<section class="wrap">
+  <div class="cta" id="contact">
+    <h2>准备好让AI成为你的生产力了吗？</h2>
+    <p>从认知破土到价值成林，无论你的企业处于AI落地的哪个阶段，引木都能帮你找到最适合的路径。</p>
+    <div class="cta-phone">176 0069 7399（微信同号）</div>
+    <a href="tel:17600697399" class="btn-white">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 2h3l1.5 4-2 1.5a9 9 0 004 4L11 9.5 15 11v3a2 2 0 01-2 2C7.5 15.5 1 9 1 4a2 2 0 012-2z" fill="currentColor"/></svg>
+      立即联系
+    </a>
+  </div>
+</section>
+
+<!-- ── FOOTER ── -->
+<footer>
+  <div class="wrap footer-inner">
+    <div class="footer-logo">
+      <img src="assets/logo.png" alt="引木" style="height:22px;width:auto;">
+    </div>
+    <div class="footer-copy">&copy; 2026 哈尔滨南岗区引木管理咨询工作室 · 积木成林，共生共长</div>
+    <div class="footer-links">
+      <a href="#about">关于</a>
+      <a href="#services">服务</a>
+      <a href="#founder">创始人</a>
+      <a href="#contact">联系</a>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
