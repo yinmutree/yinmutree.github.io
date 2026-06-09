@@ -247,29 +247,32 @@ nav{
 
 /* ── FOUNDER ── */
 .founder{padding-bottom:80px}
+.founders-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px}
 .founder-card{
   background:var(--white);border:0.5px solid var(--border);
-  border-radius:var(--radius);padding:44px 48px;
-  display:grid;grid-template-columns:auto 1fr;gap:40px;align-items:center;
+  border-radius:var(--radius);padding:36px 32px;
+  display:flex;flex-direction:column;align-items:center;text-align:center;
 }
 .founder-avatar{
-  width:110px;height:110px;border-radius:50%;
+  width:100px;height:100px;border-radius:50%;
   background:var(--grove-light);
   display:flex;align-items:center;justify-content:center;
   flex-shrink:0;position:relative;overflow:hidden;
+  margin-bottom:16px;
 }
 .founder-avatar img{width:100%;height:100%;object-fit:cover}
-.founder-name{font-size:20px;font-weight:600;margin-bottom:6px}
-.founder-tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+.founder-role{font-size:11px;color:var(--grove);font-weight:600;letter-spacing:0.06em;margin-bottom:6px}
+.founder-name{font-size:18px;font-weight:600;margin-bottom:8px}
+.founder-tags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px;justify-content:center}
 .founder-tag{
-  padding:3px 12px;border:0.5px solid var(--border);
-  border-radius:20px;font-size:12px;color:var(--muted);
+  padding:3px 10px;border:0.5px solid var(--border);
+  border-radius:20px;font-size:11px;color:var(--muted);
 }
 .founder-tag.mbti{background:var(--grove-light);color:var(--forest);border-color:var(--grove);font-weight:500}
-.founder-desc{font-size:14px;color:var(--muted);line-height:1.8;margin-bottom:14px}
-.founder-creds{display:flex;flex-wrap:wrap;gap:8px}
+.founder-desc{font-size:13px;color:var(--muted);line-height:1.75;margin-bottom:12px}
+.founder-creds{display:flex;flex-wrap:wrap;gap:6px;justify-content:center}
 .cred-badge{
-  padding:5px 14px;background:var(--parchment);
+  padding:4px 10px;background:var(--parchment);
   border-radius:6px;font-size:12px;color:var(--heartwood);font-weight:500;
 }
 
@@ -338,9 +341,7 @@ footer{border-top:0.5px solid var(--border);padding:36px 0}
   .services-grid{grid-template-columns:repeat(2,1fr)}
   .products-grid{grid-template-columns:1fr}
   .values-grid{grid-template-columns:repeat(2,1fr)}
-  .founder-card{grid-template-columns:1fr;gap:24px;padding:28px;text-align:center}
-  .founder-tags{justify-content:center}
-  .founder-creds{justify-content:center}
+  .founders-grid{grid-template-columns:1fr}
   .cta{padding:48px 28px}
 }
 @media(max-width:600px){
@@ -359,6 +360,7 @@ footer{border-top:0.5px solid var(--border);padding:36px 0}
   .footer-links{justify-content:center}
   .about-stats{grid-template-columns:1fr 1fr}
   .philosophy-compare{grid-template-columns:1fr}
+  .founder-card{padding:28px 20px}
 }
 </style>
 </head>
@@ -633,44 +635,44 @@ footer{border-top:0.5px solid var(--border);padding:36px 0}
       <p>专业互补，实战落地</p>
       <div class="section-divider"></div>
     </div>
+    <div class="founders-grid">
     <div class="founder-card">
       <div class="founder-avatar">
         <img src="assets/founder.png" alt="刘健昕" style="width:100%;height:100%;object-fit:cover;">
       </div>
-      <div>
-        <div class="founder-name">刘健昕</div>
-        <div class="founder-tags">
-          <span class="founder-tag">降本增效专家</span>
-          <span class="founder-tag">企业AI效率工程师</span>
-          <span class="founder-tag">AI落地实战派</span>
-        </div>
-        <p class="founder-desc">企业管理咨询从业十余年，专注于企业AI落地应用。不走"讲概念"路线，只做"能落地"的事——帮企业用AI智能体和自动化工作流实现真正的降本增效，让AI从PPT里的愿景变成业务里的生产力。</p>
-        <div class="founder-creds">
-          <span class="cred-badge">前上市企业培训总监</span>
-          <span class="cred-badge">国家中级经济师</span>
-          <span class="cred-badge">人力资源管理师</span>
-          <span class="cred-badge">就业指导师</span>
-        </div>
+      <div class="founder-role">创始人</div>
+      <div class="founder-name">刘健昕</div>
+      <div class="founder-tags">
+        <span class="founder-tag">降本增效专家</span>
+        <span class="founder-tag">企业AI效率工程师</span>
+        <span class="founder-tag">AI落地实战派</span>
+      </div>
+      <p class="founder-desc">企业管理咨询从业十余年，专注于企业AI落地应用。不走"讲概念"路线，只做"能落地"的事——帮企业用AI智能体和自动化工作流实现真正的降本增效，让AI从PPT里的愿景变成业务里的生产力。</p>
+      <div class="founder-creds">
+        <span class="cred-badge">前上市企业培训总监</span>
+        <span class="cred-badge">国家中级经济师</span>
+        <span class="cred-badge">人力资源管理师</span>
+        <span class="cred-badge">就业指导师</span>
       </div>
     </div>
-    <div class="founder-card" style="margin-top:24px">
+    <div class="founder-card">
       <div class="founder-avatar">
         <img src="assets/cofounder.png" alt="邬彤" style="width:100%;height:100%;object-fit:cover;">
       </div>
-      <div>
-        <div class="founder-name">邬彤</div>
-        <div class="founder-tags">
-          <span class="founder-tag">懂技术的市场人</span>
-          <span class="founder-tag">客户需求翻译官</span>
-          <span class="founder-tag">项目交付护航者</span>
-        </div>
-        <p class="founder-desc">技术背景出身，却在市场一线摸爬滚打多年——懂技术，所以跟客户谈AI不会"飘在空中"；懂市场，所以能精准捕捉客户真正的需求痛点。在引木负责客户对接与项目交付护航，确保每个项目的需求理解到位、执行过程透明、最终结果让客户满意。</p>
-        <div class="founder-creds">
-          <span class="cred-badge">人工智能与信息安全背景</span>
-          <span class="cred-badge">客户需求精准洞察</span>
-          <span class="cred-badge">项目交付全程护航</span>
-        </div>
+      <div class="founder-role">联合创始人</div>
+      <div class="founder-name">邬彤</div>
+      <div class="founder-tags">
+        <span class="founder-tag">懂技术的市场人</span>
+        <span class="founder-tag">客户需求翻译官</span>
+        <span class="founder-tag">项目交付护航者</span>
       </div>
+      <p class="founder-desc">技术背景出身，却在市场一线摸爬滚打多年——懂技术，所以跟客户谈AI不会"飘在空中"；懂市场，所以能精准捕捉客户真正的需求痛点。在引木负责客户对接与项目交付护航，确保每个项目的需求理解到位、执行过程透明、最终结果让客户满意。</p>
+      <div class="founder-creds">
+        <span class="cred-badge">人工智能与信息安全背景</span>
+        <span class="cred-badge">客户需求精准洞察</span>
+        <span class="cred-badge">项目交付全程护航</span>
+        </div>
+    </div>
     </div>
   </div>
 </section>
