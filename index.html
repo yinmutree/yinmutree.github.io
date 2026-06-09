@@ -167,6 +167,7 @@ nav{
 .svc-card{
   background:var(--white);border:0.5px solid var(--border);
   border-radius:var(--radius);padding:32px 24px;
+  display:flex;flex-direction:column;
   transition:border-color .25s,transform .25s,box-shadow .25s;
 }
 .svc-card:hover{
@@ -196,7 +197,7 @@ nav{
 
 /* ── PRODUCTS ── */
 .products{padding-bottom:80px}
-.products-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.products-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
 .prod-card{
   background:var(--white);border:0.5px solid var(--border);
   border-radius:var(--radius);padding:32px 24px;
@@ -337,6 +338,8 @@ footer{border-top:0.5px solid var(--border);padding:36px 0}
   .hero{padding:110px 0 60px}
   .hero h1{font-size:30px}
   .services-grid{grid-template-columns:1fr}
+  .svc-card{padding:24px 20px}
+  .prod-card{padding:24px 20px}
   .nav-links{display:none}
   .nav-mobile-btn{display:block}
   .footer-inner{flex-direction:column;text-align:center}
@@ -502,9 +505,9 @@ footer{border-top:0.5px solid var(--border);padding:36px 0}
       <p>认知破土 · 能力扎根 · 价值成林</p>
       <div class="section-divider"></div>
     </div>
-    <div class="services-grid" style="grid-template-columns:repeat(3,1fr)">
+    <div class="services-grid">
       <!-- 认知破土 -->
-      <div class="svc-card" style="display:flex;flex-direction:column">
+      <div class="svc-card">
         <div class="svc-icon">
           <svg viewBox="0 0 22 22" fill="none"><path d="M11 20V4" stroke="#2D5A3D" stroke-width="1.5" stroke-linecap="round"/><path d="M6 9l5-5 5 5" stroke="#2D5A3D" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M3 18c2-2 4.5-3 8-3s6 1 8 3" stroke="#5A8F6E" stroke-width="1.5" stroke-linecap="round"/></svg>
         </div>
@@ -518,7 +521,7 @@ footer{border-top:0.5px solid var(--border);padding:36px 0}
         </div>
       </div>
       <!-- 能力扎根 -->
-      <div class="svc-card" style="display:flex;flex-direction:column">
+      <div class="svc-card">
         <div class="svc-icon">
           <svg viewBox="0 0 22 22" fill="none"><path d="M11 20V8" stroke="#2D5A3D" stroke-width="2" stroke-linecap="round"/><ellipse cx="11" cy="7" rx="5" ry="4.5" fill="#5A8F6E"/><path d="M7 16c1.5-1.5 2.5-2 4-2s2.5.5 4 2" stroke="#8B7355" stroke-width="1.2" stroke-linecap="round" opacity="0.5"/><path d="M5 19c2-2 3.5-3 6-3s4 1 6 3" stroke="#5A8F6E" stroke-width="1.2" stroke-linecap="round" opacity="0.4"/></svg>
         </div>
@@ -532,7 +535,7 @@ footer{border-top:0.5px solid var(--border);padding:36px 0}
         </div>
       </div>
       <!-- 价值成林 -->
-      <div class="svc-card" style="display:flex;flex-direction:column">
+      <div class="svc-card">
         <div class="svc-icon">
           <svg viewBox="0 0 22 22" fill="none"><ellipse cx="6" cy="10" rx="3" ry="3.5" fill="#5A8F6E"/><rect x="5" y="13" width="1.5" height="5" rx="0.75" fill="#8B7355"/><ellipse cx="11" cy="8" rx="3.5" ry="4" fill="#2D5A3D"/><rect x="10.25" y="12" width="1.5" height="6" rx="0.75" fill="#8B7355"/><ellipse cx="16" cy="11" rx="2.8" ry="3" fill="#5A8F6E" opacity="0.7"/><rect x="15.25" y="14" width="1.5" height="4" rx="0.75" fill="#8B7355" opacity="0.7"/></svg>
         </div>
@@ -557,7 +560,7 @@ footer{border-top:0.5px solid var(--border);padding:36px 0}
       <p>三条产品线，让AI真正为企业创造价值</p>
       <div class="section-divider"></div>
     </div>
-    <div class="products-grid" style="grid-template-columns:repeat(3,1fr)">
+    <div class="products-grid">
       <div class="prod-card">
         <div class="prod-tag">企业侧</div>
         <h3>企业AI赋能系列</h3>
