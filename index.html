@@ -104,7 +104,7 @@ nav{
   display:flex;justify-content:center;align-items:center;
   position:relative;
 }
-.tree-svg{width:100%;max-width:380px}
+.hero-logo{width:auto;height:auto;max-width:320px;max-height:220px;object-fit:contain}
 
 /* ── SECTION COMMON ── */
 .section-header{text-align:center;padding:80px 0 48px}
@@ -387,35 +387,7 @@ footer{border-top:0.5px solid var(--border);padding:36px 0}
       </div>
     </div>
     <div class="hero-visual">
-      <svg class="tree-svg" viewBox="0 0 400 420" fill="none">
-        <!-- 柔光背景 -->
-        <circle cx="200" cy="190" r="170" fill="#2D5A3D" opacity="0.04"/>
-        <circle cx="200" cy="190" r="110" fill="#5A8F6E" opacity="0.06"/>
-        <!-- 地面阴影 -->
-        <ellipse cx="200" cy="370" rx="140" ry="14" fill="#2D5A3D" opacity="0.08"/>
-        <!-- 小树3（最右） -->
-        <rect x="287" y="295" width="8" height="55" rx="3" fill="#8B7355" opacity="0.7"/>
-        <ellipse cx="291" cy="284" rx="22" ry="24" fill="#2D5A3D" opacity="0.75"/>
-        <!-- 小树2（最左） -->
-        <rect x="97" y="285" width="9" height="60" rx="3" fill="#8B7355" opacity="0.7"/>
-        <ellipse cx="102" cy="272" rx="26" ry="28" fill="#5A8F6E" opacity="0.7"/>
-        <!-- 侧枝2 -->
-        <rect x="244" y="222" width="12" height="48" rx="3" fill="#8B7355" transform="rotate(16 244 222)"/>
-        <ellipse cx="260" cy="212" rx="36" ry="32" fill="#5A8F6E"/>
-        <!-- 侧枝1 -->
-        <rect x="144" y="228" width="12" height="50" rx="3" fill="#8B7355" transform="rotate(-18 144 228)"/>
-        <ellipse cx="132" cy="216" rx="38" ry="34" fill="#5A8F6E"/>
-        <!-- 主树干 -->
-        <rect x="190" y="200" width="20" height="140" rx="5" fill="#8B7355"/>
-        <!-- 主树冠 -->
-        <ellipse cx="200" cy="168" rx="68" ry="62" fill="#2D5A3D"/>
-        <!-- 树冠高光 -->
-        <ellipse cx="184" cy="150" rx="20" ry="18" fill="#5A8F6E" opacity="0.45"/>
-        <ellipse cx="218" cy="160" rx="14" ry="12" fill="#5A8F6E" opacity="0.35"/>
-        <!-- 根系暗示 -->
-        <path d="M195 340 Q180 355 170 360" stroke="#8B7355" stroke-width="2" fill="none" opacity="0.3"/>
-        <path d="M205 340 Q220 355 232 358" stroke="#8B7355" stroke-width="2" fill="none" opacity="0.3"/>
-      </svg>
+      <img src="assets/logo.png" alt="引木 Yinmutree" class="hero-logo">
     </div>
   </div>
 </section>
