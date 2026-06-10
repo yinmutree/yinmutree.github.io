@@ -122,6 +122,51 @@ nav{
   margin:16px auto 0;
 }
 
+/* ── VISION & MISSION ── */
+.vm-section{padding-bottom:80px}
+.vm-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.vision-card{
+  background:var(--forest);border-radius:var(--radius);
+  padding:56px 48px;position:relative;overflow:hidden;
+  display:flex;flex-direction:column;justify-content:center;
+}
+.vision-card::before{
+  content:'';position:absolute;top:-60px;right:-60px;
+  width:200px;height:200px;border-radius:50%;
+  background:rgba(255,255,255,0.04);
+}
+.vision-label{
+  font-size:12px;color:rgba(255,255,255,0.5);
+  letter-spacing:0.15em;margin-bottom:16px;position:relative;z-index:1;
+}
+.vision-title{
+  font-size:26px;font-weight:600;color:var(--white);
+  line-height:1.45;position:relative;z-index:1;
+}
+.vision-quote{
+  margin-top:28px;padding-left:14px;
+  border-left:2.5px solid rgba(200,230,160,0.4);
+  font-size:14px;color:rgba(255,255,255,0.65);
+  line-height:1.7;position:relative;z-index:1;
+}
+.mission-card{
+  background:var(--white);border:0.5px solid var(--border);
+  border-radius:var(--radius);padding:56px 48px;
+  display:flex;flex-direction:column;justify-content:center;text-align:center;
+}
+.mission-label{
+  font-size:12px;color:var(--muted);
+  letter-spacing:0.15em;margin-bottom:16px;
+}
+.mission-title{
+  font-size:30px;font-weight:600;color:var(--forest);
+  line-height:1.4;margin-bottom:24px;
+}
+.mission-desc{
+  font-size:14px;color:var(--muted);line-height:1.85;
+  max-width:360px;margin:0 auto;
+}
+
 /* ── ABOUT ── */
 .about{padding-bottom:80px}
 .about-card{
@@ -337,6 +382,11 @@ footer{border-top:0.5px solid var(--border);padding:36px 0}
   .hero-logo{max-width:360px;max-height:260px}
   .hero-logo-brand{font-size:22px}
   .hero-logo-brand span{font-size:18px}
+  .vm-grid{grid-template-columns:1fr}
+  .vision-card{padding:40px 32px}
+  .vision-title{font-size:22px}
+  .mission-card{padding:40px 32px}
+  .mission-title{font-size:26px}
   .about-card{grid-template-columns:1fr;gap:28px;padding:28px}
   .philosophy-grid{grid-template-columns:1fr;gap:28px}
   .services-grid{grid-template-columns:repeat(2,1fr)}
@@ -383,6 +433,7 @@ footer{border-top:0.5px solid var(--border);padding:36px 0}
       <img src="assets/logo.png" alt="引木 Yinmutree">
     </a>
     <div class="nav-links">
+      <a href="#vision">愿景</a>
       <a href="#about">关于</a>
       <a href="#philosophy">理念</a>
       <a href="#services">服务</a>
@@ -414,6 +465,31 @@ footer{border-top:0.5px solid var(--border);padding:36px 0}
     <div class="hero-visual">
       <img src="assets/logo.png" alt="引木" class="hero-logo">
       <span class="hero-logo-brand">引木<span>Yinmu</span></span>
+    </div>
+  </div>
+</section>
+
+<!-- ── VISION & MISSION ── -->
+<section class="vm-section" id="vision">
+  <div class="wrap">
+    <div class="vm-grid">
+      <div class="vision-card">
+        <div class="vision-label">我们要去的地方</div>
+        <div class="vision-title">
+          成为生态型组织<br>最值得信赖的成长伙伴<br>
+          <span style="font-size:20px;font-weight:500;opacity:0.85">帮助1000个组织实现持续进化</span>
+        </div>
+        <div class="vision-quote">"不做一夜成材的速成班，只做扎根泥土的长期主义者"</div>
+      </div>
+      <div class="mission-card">
+        <div class="mission-label">我们存在的意义</div>
+        <div class="mission-title">让每一棵木，<br>都能长成森林</div>
+        <div class="mission-desc">
+          我们相信，每个企业、每个人都是一颗待破土的种子、一棵待生枝出叶的木。<br><br>
+          引木所做的，就是提供阳光、水分与养分——<br>
+          让认知破土、让能力扎根、让价值成林。
+        </div>
+      </div>
     </div>
   </div>
 </section>
