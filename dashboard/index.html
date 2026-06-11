@@ -1745,8 +1745,15 @@ function renderROIDetail(isYearly, yearly) {
 function renderTrendChart() {
     if (charts.trend) charts.trend.destroy();
     
-    // 显示 1-6月，无数据月份展示 0（趋势更直观）
-    const showCount = 6;
+    // 动态显示：找到有数据的最后一个月，至少显示到 6 月
+    // 后续添加 7-12 月数据时，图表自动扩展
+    let lastDataIndex = 5; // 至少显示到 6 月（索引 5）
+    for (let i = 0; i < DATA.trend.labels.length; i++) {
+        if (DATA.trend.monthlyCost[i] !== null || DATA.trend.cumulativeROI[i] !== null) {
+            if (i > lastDataIndex) lastDataIndex = i;
+        }
+    }
+    const showCount = lastDataIndex + 1;
     const labels = DATA.trend.labels.slice(0, showCount);
     const monthlyCost = labels.map((_, i) => DATA.trend.monthlyCost[i] || 0);
     const cumulativeROI = labels.map((_, i) => DATA.trend.cumulativeROI[i] || 0);
