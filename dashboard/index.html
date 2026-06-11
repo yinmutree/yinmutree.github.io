@@ -308,11 +308,11 @@
         </div>
         <div class="space-y-3 mb-4">
             <div>
-                <div class="flex justify-between text-xs mb-1.5"><span class="text-slate-400">累计投入</span><span class="font-semibold text-slate-300">¥<span id="roi-invest-total">--</span>万</span></div>
+                <div class="flex justify-between text-xs mb-1.5"><span class="text-slate-400" id="roi-invest-label">累计投入</span><span class="font-semibold text-slate-300">¥<span id="roi-invest-total">--</span>万</span></div>
                 <div class="progress-bar-bg"><div class="progress-bar-fill bg-slate-500" id="roi-invest-bar" style="width: 0%"></div></div>
             </div>
             <div>
-                <div class="flex justify-between text-xs mb-1.5"><span class="text-slate-400">累计回报</span><span class="font-semibold text-emerald-400">¥<span id="roi-return-total">--</span>万</span></div>
+                <div class="flex justify-between text-xs mb-1.5"><span class="text-slate-400" id="roi-return-label">累计回报</span><span class="font-semibold text-emerald-400">¥<span id="roi-return-total">--</span>万</span></div>
                 <div class="progress-bar-bg"><div class="progress-bar-fill bg-emerald-500" id="roi-return-bar" style="width: 0%"></div></div>
             </div>
         </div>
@@ -1833,12 +1833,24 @@ function renderROIDetail(isYearly, yearly) {
     }
     
     const d = m.roiDetail;
-    document.getElementById('roi-invest-total').textContent = d.invest?.total || '--';
-    document.getElementById('roi-return-total').textContent = d.return?.total || '--';
+    // 月份视图：显示本月新增投入 / 本月回报；全年总览：显示累计投入 / 累计回报
+    if (isYearly) {
+        document.getElementById('roi-invest-total').textContent = d.invest?.total || '--';
+        document.getElementById('roi-return-total').textContent = d.return?.total || '--';
+        document.getElementById('roi-invest-label').textContent = '累计投入';
+        document.getElementById('roi-return-label').textContent = '累计回报';
+    } else {
+        document.getElementById('roi-invest-total').textContent = d.invest?.monthTotal || '--';
+        document.getElementById('roi-return-total').textContent = d.return?.total || '--';
+        document.getElementById('roi-invest-label').textContent = '本月新增投入';
+        document.getElementById('roi-return-label').textContent = '本月回报';
+    }
 
-    const max = Math.max(d.invest?.total || 1, d.return?.total || 1);
-    document.getElementById('roi-invest-bar').style.width = ((d.invest?.total || 0) / max * 100) + '%';
-    document.getElementById('roi-return-bar').style.width = ((d.return?.total || 0) / max * 100) + '%';
+    const invVal = isYearly ? (d.invest?.total || 1) : (d.invest?.monthTotal || 1);
+    const retVal = isYearly ? (d.return?.total || 1) : (d.return?.total || 1);
+    const max = Math.max(invVal || 1, retVal || 1);
+    document.getElementById('roi-invest-bar').style.width = ((invVal || 0) / max * 100) + '%';
+    document.getElementById('roi-return-bar').style.width = ((retVal || 0) / max * 100) + '%';
 
     document.getElementById('invest-items').innerHTML = (d.invest?.items || []).map(item => `
         <div class="flex justify-between items-center py-1.5 border-b border-slate-700/50 last:border-0">
