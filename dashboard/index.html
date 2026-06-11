@@ -296,7 +296,7 @@ const DEFAULT_DATA = {
             ],
             roiDetail: {
                 invest: { total: 12, items: [{name: "软件服务费", value: 6}, {name: "实施部署费", value: 4}, {name: "年度运维费", value: 2}] },
-                return: { total: 18.0, items: [{name: "人力节省折算", value: 12}, {name: "效率提升折算", value: 4.2}, {name: "风险规避价值", value: 1.8}] }
+                return: { total: 9.6, items: [{name: "人力节省折算", value: 6}, {name: "效率提升折算", value: 2.4}, {name: "风险规避价值", value: 1.2}] }
             },
             flows: [
                 { name: "农资采购审批", dept: "采购部", monthlyVolume: "135单", savedPerTime: "0.5小时", monthlySaved: "68小时", status: "running" },
@@ -321,7 +321,7 @@ const DEFAULT_DATA = {
             ],
             roiDetail: {
                 invest: { total: 12, items: [{name: "软件服务费", value: 6}, {name: "实施部署费", value: 4}, {name: "年度运维费", value: 2}] },
-                return: { total: 28.8, items: [{name: "人力节省折算", value: 19}, {name: "效率提升折算", value: 7.2}, {name: "风险规避价值", value: 2.6}] }
+                return: { total: 10.8, items: [{name: "人力节省折算", value: 7}, {name: "效率提升折算", value: 3}, {name: "风险规避价值", value: 0.8}] }
             },
             flows: [
                 { name: "农资采购审批", dept: "采购部", monthlyVolume: "150单", savedPerTime: "0.5小时", monthlySaved: "75小时", status: "running" },
@@ -527,9 +527,14 @@ function calculateYearlyData() {
         totalCost += parseKPIValue(m.kpi[3].value);
     });
     
-    // 投入/回报：取最后一个月（累计值，不累加）
+    // 投入：年度总成本，取最后一个月
     const investTotal = parseFloat((validMonths[validMonths.length - 1].roiDetail.invest.total || 0).toFixed(1));
-    const returnTotal = parseFloat((validMonths[validMonths.length - 1].roiDetail.return.total || 0).toFixed(1));
+    // 回报：逐月累加
+    let returnTotal = 0;
+    validMonths.forEach(m => {
+        returnTotal += parseFloat((m.roiDetail.return.total || 0).toFixed(1));
+    });
+    returnTotal = parseFloat(returnTotal.toFixed(1));
     
     // 当前ROI = 总回报 / 总投入
     const currentROI = investTotal > 0 ? (returnTotal / investTotal).toFixed(1) : '0';
