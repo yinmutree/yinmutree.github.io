@@ -389,7 +389,7 @@ function createDefaultMonth(monthName, period) {
             { id: "headcount", title: "节省人力数", value: "--", unit: "人", mom: "--", momPct: "--", trans: "--", icon: "user", color: "blue" },
             { id: "flows", title: "自动化流程数", value: "--", unit: "个", mom: "--", momPct: "--", trans: "--", icon: "cog", color: "indigo" },
             { id: "cost", title: "人力成本节省", value: "--", unit: "万", mom: "--", momPct: "--", trans: "--", icon: "coins", color: "emerald" },
-            { id: "roi", title: "AI投入产出比", value: "--", unit: ": 1", mom: "--", momPct: "up", trans: "--", icon: "bullseye", color: "white", highlight: true }
+            { id: "roi", title: "AI投入产出比", value: "--", unit: "%", mom: "--", momPct: "up", trans: "--", icon: "bullseye", color: "white", highlight: true }
         ],
         roiDetail: {
             invest: { total: 0, items: [{name: "软件服务费", value: 0}, {name: "实施部署费", value: 0}, {name: "年度运维费", value: 0}] },
@@ -1603,8 +1603,8 @@ function calculateYearlyData() {
     });
     if (returnTotal === 0 && validMonths.length > 0) returnTotal = validMonths[validMonths.length - 1].roiDetail.return.total;
     
-    // 当前ROI = 总回报 / 总投入
-    const currentROI = investTotal > 0 ? (returnTotal / investTotal).toFixed(1) : '0';
+    // 当前ROI = (总回报 - 总投入) / 总投入 × 100%
+    const currentROI = investTotal > 0 ? ((returnTotal - investTotal) / investTotal * 100).toFixed(0) : '0';
     
     // 汇总所有流程（去重，取最新状态）
     const allFlows = [];
@@ -1736,7 +1736,7 @@ function renderKPI(isYearly, yearly, flows) {
             { id: "headcount", title: "节省人力数", value: yearly.totalHeadcount, unit: "人", mom: "全年最大", momPct: "up", trans: `共 ${yearly.monthCount} 个月`, icon: "user", color: "blue" },
             { id: "flows", title: "自动化流程数", value: yearly.totalFlows.toString(), unit: "个", mom: "全部流程", momPct: "up", trans: `去重后共 ${yearly.totalFlows} 个`, icon: "cog", color: "indigo" },
             { id: "cost", title: "人力成本节省", value: yearly.totalCost, unit: "万", mom: "全年累计", momPct: "up", trans: `共 ${yearly.monthCount} 个月`, icon: "coins", color: "emerald" },
-            { id: "roi", title: "AI投入产出比", value: yearly.currentROI, unit: ": 1", mom: "全年平均", momPct: "up", trans: `总回报 ¥${yearly.returnTotal}万 / 总投入 ¥${yearly.investTotal}万`, icon: "bullseye", color: "white", highlight: true }
+            { id: "roi", title: "AI投入产出比", value: yearly.currentROI, unit: "%", mom: "全年平均", momPct: "up", trans: `总回报 ¥${yearly.returnTotal}万 / 总投入 ¥${yearly.investTotal}万`, icon: "bullseye", color: "white", highlight: true }
         ];
     } else {
         // 单月视图：使用当月数据
@@ -2302,10 +2302,12 @@ function autoCalcROI() {
     const returnTotalEl = document.getElementById('e-return-total');
     if (returnTotalEl) returnTotalEl.value = cumulativeReturn.toFixed(1).replace(/\.0$/, '');
     
-    // 计算ROI = 累计回报 / 累计投入
+    // 计算ROI = (累计回报 - 累计投入) / 累计投入 × 100%
     let roiValue = '';
-    if (investTotal > 0) {
-        roiValue = (cumulativeReturn / investTotal).toFixed(1).replace(/\.0$/, '');
+    if (investTotal > 0 && cumulativeReturn > 0) {
+        roiValue = ((cumulativeReturn - investTotal) / investTotal * 100).toFixed(0);
+    } else if (investTotal > 0 && cumulativeReturn === 0) {
+        roiValue = '-100';
     }
     
     // 更新KPI[4]（AI投入产出比）的value
@@ -2968,8 +2970,8 @@ function collectFormData() {
         runningInvest += (mo.roiDetail.invest.monthTotal || 0);
         mo.roiDetail.invest.total = runningInvest;
     });
-    // 累计投入（当前月份）取自 DOM
-    m.roiDetail.invest.total = parseFloat((el('e-invest-total')?.value) || runningInvest);
+    // 累计投入 = 所有月份 monthTotal 累加到当月的值
+    m.roiDetail.invest.total = runningInvest;
     
     // 回报：收集本月回报变化，重新计算累计回报
     var monthReturnTotal = 0;
@@ -2989,7 +2991,8 @@ function collectFormData() {
         runningReturn += moReturn;
         mo.roiDetail.return.total = runningReturn;
     });
-    m.roiDetail.return.total = parseFloat((el('e-return-total')?.value) || runningReturn);
+    // 累计回报 = 所有月份 return items 累加到当月的值
+    m.roiDetail.return.total = runningReturn;
 
     // 流程 - 动态收集（扫描DOM，不依赖数组长度）
     const newFlows = [];
@@ -3165,9 +3168,42 @@ function exportData() {
     }
 }
 
+// 数据标准化：为旧数据（无 monthTotal）填充字段，并保持 return.total 为当月值
+function normalizeROIData() {
+    DATA.months.forEach(m => {
+        if (!m.roiDetail) m.roiDetail = { invest: { total: 0, monthTotal: 0, items: [] }, return: { total: 0, items: [] } };
+        if (!m.roiDetail.invest) m.roiDetail.invest = { total: 0, monthTotal: 0, items: [] };
+        if (!m.roiDetail.return) m.roiDetail.return = { total: 0, items: [] };
+        // 旧数据没有 monthTotal，从 invest items 求和
+        if (m.roiDetail.invest.monthTotal === undefined || m.roiDetail.invest.monthTotal === null) {
+            let sum = 0;
+            (m.roiDetail.invest.items || []).forEach(it => { sum += (it.value || 0); });
+            m.roiDetail.invest.monthTotal = sum;
+        }
+        // 确保 return.total = 当月 items 之和（非累计值）
+        let retSum = 0;
+        (m.roiDetail.return.items || []).forEach(it => { retSum += (it.value || 0); });
+        m.roiDetail.return.total = retSum;
+    });
+    // 重新计算累计投入
+    let runningInvest = 0;
+    DATA.months.forEach(m => {
+        runningInvest += (m.roiDetail.invest.monthTotal || 0);
+        m.roiDetail.invest.total = runningInvest;
+    });
+    // 重新计算累计回报
+    let runningReturn = 0;
+    DATA.months.forEach(m => {
+        runningReturn += m.roiDetail.return.total;
+        m.roiDetail.return.total = runningReturn;
+    });
+    console.log('✅ 数据标准化完成，累计投入=' + runningInvest + '万, 累计回报=' + runningReturn + '万');
+}
+
 // 初始化
 window.addEventListener('DOMContentLoaded', () => {
     const hasURLData = loadDataFromURL();
+    normalizeROIData();
     renderMonthTabs();
     renderAll();
     
