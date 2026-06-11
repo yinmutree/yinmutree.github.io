@@ -1945,11 +1945,9 @@ function renderTrendChart() {
             monthlyCost.push(parseKPIValue(m.kpi[3].value));
         }
         if (m.kpi[4].value !== '--' && m.kpi[4].value !== '') {
-            // 确保数组对齐
-            if (cumulativeROI.length < labels.length) {
-                while (cumulativeROI.length < labels.length) cumulativeROI.push(null);
-            }
-            cumulativeROI[cumulativeROI.length === labels.length - 1 ? cumulativeROI.length : cumulativeROI.length] = parseKPIValue(m.kpi[4].value);
+            // 确保数组对齐：补 null 到 labels 前一个位置，然后 push
+            while (cumulativeROI.length < labels.length - 1) cumulativeROI.push(null);
+            cumulativeROI.push(parseKPIValue(m.kpi[4].value));
         }
     });
     // 对齐两个数组
