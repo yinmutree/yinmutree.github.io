@@ -1592,10 +1592,16 @@ function calculateYearlyData() {
         totalCost += parseKPIValue(m.kpi[3].value);
     });
     
-    // 投入：取最后一个月（投入已是累计值，不累加）
-    const investTotal = validMonths[validMonths.length - 1].roiDetail.invest.total;
-    // 回报：取最后一个月（回报已是累计值，不累加）
-    const returnTotal = validMonths[validMonths.length - 1].roiDetail.return.total;
+    // 投入：逐月累加「本月新增投入」(monthTotal)，兼容旧数据 fallback 到最后月累计值
+    let investTotal = 0;
+    validMonths.forEach(m => { investTotal += (m.roiDetail.invest.monthTotal || 0); });
+    if (investTotal === 0 && validMonths.length > 0) investTotal = validMonths[validMonths.length - 1].roiDetail.invest.total;
+    // 回报：逐月累加各月回报
+    let returnTotal = 0;
+    validMonths.forEach(m => {
+        (m.roiDetail.return.items || []).forEach(item => { returnTotal += (item.value || 0); });
+    });
+    if (returnTotal === 0 && validMonths.length > 0) returnTotal = validMonths[validMonths.length - 1].roiDetail.return.total;
     
     // 当前ROI = 总回报 / 总投入
     const currentROI = investTotal > 0 ? (returnTotal / investTotal).toFixed(1) : '0';
