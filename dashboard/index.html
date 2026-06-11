@@ -712,11 +712,26 @@ function renderKPI(isYearly, yearly, flows) {
 function renderROIDetail(isYearly, yearly) {
     const m = isYearly && yearly ? { roiDetail: { invest: { total: yearly.investTotal, items: [] }, return: { total: yearly.returnTotal, items: [] } } } : getCurrentMonth();
     if (isYearly && yearly) {
-        // 全年：投入/回报不累加，取最后有效月份的值（投入是年度费用，回报已是累计值）
         const validMonths = DATA.months.filter(mm => mm.kpi[0].value !== "--");
         const lastMonth = validMonths[validMonths.length - 1];
         m.roiDetail.invest.items = [...lastMonth.roiDetail.invest.items];
         m.roiDetail.return.items = [...lastMonth.roiDetail.return.items];
+    } else {
+        // 月度视图：累计回报 = 当月及之前所有月份回报之和
+        const currentIdx = DATA.currentMonthIndex;
+        let cumReturn = 0;
+        const cumReturnItems = {};
+        for (let i = 0; i <= currentIdx; i++) {
+            const month = DATA.months[i];
+            if (month && month.roiDetail && month.roiDetail.return && month.roiDetail.return.total != null) {
+                cumReturn += parseFloat(month.roiDetail.return.total);
+                (month.roiDetail.return.items || []).forEach(item => {
+                    if (item.name) cumReturnItems[item.name] = (cumReturnItems[item.name] || 0) + item.value;
+                });
+            }
+        }
+        m.roiDetail.return.total = parseFloat(cumReturn.toFixed(1));
+        m.roiDetail.return.items = Object.entries(cumReturnItems).map(([name, value]) => ({ name, value }));
     }
     
     const d = m.roiDetail;
