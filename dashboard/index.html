@@ -371,7 +371,7 @@ function loadDataFromURL() {
                 normalizeROIData();
                 // 同时保存到 localStorage 作为后备
                 try {
-                    localStorage.setItem('dashboard_data_v2', JSON.stringify(DATA));
+                    localStorage.setItem('dashboard_data_v3', JSON.stringify(DATA));
                     console.log('💾 已同步保存到 localStorage');
                 } catch (e) {
                     console.warn('⚠️ localStorage 保存失败:', e.message);
@@ -385,17 +385,13 @@ function loadDataFromURL() {
     
     // URL 加载失败或为空，尝试从 localStorage 加载
     try {
-        const saved = localStorage.getItem('dashboard_data_v2');
+        // v3 key: 旧 v2 缓存自动作废
+        const saved = localStorage.getItem('dashboard_data_v3');
         if (saved) {
             const parsed = JSON.parse(saved);
             if (parsed && parsed.months && parsed.months.length > 0) {
                 DATA = parsed;
                 console.log('✅ 从 localStorage 加载数据成功，月份数:', DATA.months.length);
-                DATA.months.forEach((m, i) => {
-                    console.log(`  ${m.monthName}: KPI=${m.kpi?.length || 0}, flows=${m.flows?.length || 0}, stories=${m.stories?.length || 0}`);
-                });
-                normalizeROIData();
-                // 不再自动写回 hash，保持 URL 干净
                 return true;
             }
         }
@@ -403,7 +399,7 @@ function loadDataFromURL() {
         console.error('❌ 从 localStorage 加载数据失败:', e.message);
     }
     
-    console.log('ℹ️ 使用默认示例数据');
+    console.log('ℹ️ 显示 DEFAULT_DATA（1-6月真实数据）');
     return false;
 }
 
@@ -411,7 +407,7 @@ function saveDataToURL() {
     const jsonStr = JSON.stringify(DATA);
     // 只保存到 localStorage，不再自动写 hash（保持 URL 干净）
     try {
-        localStorage.setItem('dashboard_data_v2', jsonStr);
+        localStorage.setItem('dashboard_data_v3', jsonStr);
         console.log('💾 数据已保存');
     } catch (e) {
         console.warn('⚠️ localStorage 保存失败:', e.message);
@@ -1720,7 +1716,7 @@ function importFromFile() {
 
 function restoreFromLocalStorage() {
     try {
-        const saved = localStorage.getItem('dashboard_data_v2');
+        const saved = localStorage.getItem('dashboard_data_v3');
         if (!saved) {
             alert('❌ 本地没有备份数据');
             return;
