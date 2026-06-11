@@ -254,97 +254,1084 @@ function createDefaultMonth(monthName, period) {
 
 const DEFAULT_DATA = {
     clientName: "北谷农业",
-    isYearlyView: true,
-    currentMonthIndex: 0,
-    providerName: "智效科技",
-    advisorName: "张顾问",
-    advisorPhone: "138-0000-0000",
-    dataNote: { source: "北谷农业月度确认 + 智效系统日志", costBasis: "按约定人力成本 40元/小时 计算", period: "2026年" },
-
+    isYearlyView: false,
+    currentMonthIndex: 4,
+    providerName: "引木管理咨询",
+    advisorName: "法师（健昕）",
+    advisorPhone: "17600697399",
     months: [
         {
-            monthName: "1月", period: "2026.01", nextUpdate: "2026年2月28日",
+            monthName: "1月",
+            period: "2026.01",
+            nextUpdate: "2026年2月28日",
             kpi: [
-                { id: "hours", title: "累计节省工时", value: "2,100", unit: "小时", mom: "+2,100h", momPct: "100", trans: "约 1.2人/月", icon: "clock", color: "amber" },
-                { id: "headcount", title: "节省人力数", value: "1.2", unit: "人", mom: "+1.2人", momPct: "100", trans: "刚起步", icon: "user", color: "blue" },
-                { id: "flows", title: "自动化流程数", value: "3", unit: "个", mom: "+3个", momPct: "100", trans: "覆盖2个部门", icon: "cog", color: "indigo" },
-                { id: "cost", title: "人力成本节省", value: "8.4", unit: "万", mom: "+8.4万", momPct: "100", trans: "首月见效", icon: "coins", color: "emerald" },
-                { id: "roi", title: "AI投入产出比", value: "0.7", unit: ": 1", mom: "累计趋势", momPct: "up", trans: "投入期，回报逐步释放", icon: "bullseye", color: "white", highlight: true }
+                {
+                    id: "hours",
+                    title: "累计节省工时",
+                    value: "0",
+                    unit: "小时",
+                    mom: "--",
+                    momPct: "--",
+                    trans: "--",
+                    icon: "clock",
+                    color: "amber"
+                },
+                {
+                    id: "headcount",
+                    title: "节省人力数",
+                    value: "0",
+                    unit: "",
+                    mom: "--",
+                    momPct: "--",
+                    trans: "--",
+                    icon: "user",
+                    color: "blue"
+                },
+                {
+                    id: "flows",
+                    title: "自动化流程数",
+                    value: "0",
+                    unit: "个",
+                    mom: "--",
+                    momPct: "--",
+                    trans: "--",
+                    icon: "cog",
+                    color: "indigo"
+                },
+                {
+                    id: "cost",
+                    title: "人力成本节省",
+                    value: "0",
+                    unit: "",
+                    mom: "--",
+                    momPct: "--",
+                    trans: "--",
+                    icon: "coins",
+                    color: "emerald"
+                },
+                {
+                    id: "roi",
+                    title: "AI投入产出比",
+                    value: "",
+                    unit: "",
+                    mom: "累计趋势",
+                    momPct: "up",
+                    trans: "累计趋势中",
+                    icon: "bullseye",
+                    color: "white",
+                    highlight: true
+                }
             ],
             roiDetail: {
-                invest: { total: 12, items: [{name: "软件服务费", value: 6}, {name: "实施部署费", value: 4}, {name: "年度运维费", value: 2}] },
-                return: { total: 8.4, items: [{name: "人力节省折算", value: 6}, {name: "效率提升折算", value: 1.8}, {name: "风险规避价值", value: 0.6}] }
+                invest: {
+                    total: 2.1,
+                    items: [
+                        {
+                            name: "软件订阅/授权费",
+                            value: 0
+                        },
+                        {
+                            name: "系统实施/部署费",
+                            value: 1.8
+                        },
+                        {
+                            name: "培训与运维费",
+                            value: 0.3
+                        }
+                    ]
+                },
+                return: {
+                    total: 0,
+                    items: [
+                        {
+                            name: "",
+                            value: 0
+                        },
+                        {
+                            name: "",
+                            value: 0
+                        },
+                        {
+                            name: "",
+                            value: 0
+                        }
+                    ]
+                }
             },
             flows: [
-                { name: "农资采购审批", dept: "采购部", monthlyVolume: "120单", savedPerTime: "0.5小时", monthlySaved: "60小时", status: "running" },
-                { name: "种植计划生成", dept: "生产部", monthlyVolume: "45份", savedPerTime: "2小时", monthlySaved: "90小时", status: "running" },
-                { name: "客户咨询初筛", dept: "销售部", monthlyVolume: "800条", savedPerTime: "0.1小时", monthlySaved: "80小时", status: "running" }
+                {
+                    name: "",
+                    dept: "",
+                    monthlyVolume: "",
+                    savedPerTime: "",
+                    monthlySaved: "",
+                    status: "running"
+                }
             ],
-            stories: [
-                { dept: "采购部", title: "农资采购审批自动化", scenario: "每月120单农资采购需人工审批、比价、归档", before: "2名采购专员，每人每周花3天处理审批", after: "AI自动比价+风险识别，人工仅需终审异常单", results: [{label: "释放工作量", value: "0.5人/月"}, {label: "月省工时", value: "60小时"}, {label: "月省成本", value: "2,400元"}] }
-            ],
-            dataNote: { source: "北谷农业月度确认 + 智效系统日志", costBasis: "按约定人力成本 40元/小时 计算", period: "2026年1月" }
+            stories: [],
+            dataNote: {
+                source: "北谷农业月度确认 + 智效系统日志",
+                costBasis: "按约定人力成本 40元/小时 计算",
+                period: "2026年1月"
+            }
         },
         {
-            monthName: "2月", period: "2026.02", nextUpdate: "2026年3月31日",
+            monthName: "2月",
+            period: "2026.02",
+            nextUpdate: "2026年2月28日",
             kpi: [
-                { id: "hours", title: "累计节省工时", value: "4,500", unit: "小时", mom: "+2,400h", momPct: "114", trans: "约 2.6人/月", icon: "clock", color: "amber" },
-                { id: "headcount", title: "节省人力数", value: "2.6", unit: "人", mom: "+1.4人", momPct: "117", trans: "释放1个全职", icon: "user", color: "blue" },
-                { id: "flows", title: "自动化流程数", value: "5", unit: "个", mom: "+2个", momPct: "67", trans: "覆盖3个部门", icon: "cog", color: "indigo" },
-                { id: "cost", title: "人力成本节省", value: "18.0", unit: "万", mom: "+9.6万", momPct: "114", trans: "累计省出1.8个年薪", icon: "coins", color: "emerald" },
-                { id: "roi", title: "AI投入产出比", value: "1.5", unit: ": 1", mom: "累计趋势", momPct: "up", trans: "回报开始超过投入", icon: "bullseye", color: "white", highlight: true }
+                {
+                    id: "hours",
+                    title: "累计节省工时",
+                    value: "0",
+                    unit: "小时",
+                    mom: "--",
+                    momPct: "--",
+                    trans: "--",
+                    icon: "clock",
+                    color: "amber"
+                },
+                {
+                    id: "headcount",
+                    title: "节省人力数",
+                    value: "0",
+                    unit: "",
+                    mom: "--",
+                    momPct: "--",
+                    trans: "--",
+                    icon: "user",
+                    color: "blue"
+                },
+                {
+                    id: "flows",
+                    title: "自动化流程数",
+                    value: "0",
+                    unit: "个",
+                    mom: "--",
+                    momPct: "--",
+                    trans: "--",
+                    icon: "cog",
+                    color: "indigo"
+                },
+                {
+                    id: "cost",
+                    title: "人力成本节省",
+                    value: "0",
+                    unit: "",
+                    mom: "--",
+                    momPct: "--",
+                    trans: "--",
+                    icon: "coins",
+                    color: "emerald"
+                },
+                {
+                    id: "roi",
+                    title: "AI投入产出比",
+                    value: "",
+                    unit: "",
+                    mom: "累计趋势",
+                    momPct: "up",
+                    trans: "累计趋势中",
+                    icon: "bullseye",
+                    color: "white",
+                    highlight: true
+                }
             ],
             roiDetail: {
-                invest: { total: 12, items: [{name: "软件服务费", value: 6}, {name: "实施部署费", value: 4}, {name: "年度运维费", value: 2}] },
-                return: { total: 9.6, items: [{name: "人力节省折算", value: 6}, {name: "效率提升折算", value: 2.4}, {name: "风险规避价值", value: 1.2}] }
+                invest: {
+                    total: 2.1,
+                    items: [
+                        {
+                            name: "软件订阅/授权费",
+                            value: 0
+                        },
+                        {
+                            name: "系统实施/部署费",
+                            value: 1.8
+                        },
+                        {
+                            name: "培训与运维费",
+                            value: 0.3
+                        }
+                    ]
+                },
+                return: {
+                    total: 0,
+                    items: [
+                        {
+                            name: "",
+                            value: 0
+                        },
+                        {
+                            name: "",
+                            value: 0
+                        },
+                        {
+                            name: "",
+                            value: 0
+                        }
+                    ]
+                }
             },
             flows: [
-                { name: "农资采购审批", dept: "采购部", monthlyVolume: "135单", savedPerTime: "0.5小时", monthlySaved: "68小时", status: "running" },
-                { name: "种植计划生成", dept: "生产部", monthlyVolume: "50份", savedPerTime: "2小时", monthlySaved: "100小时", status: "running" },
-                { name: "客户咨询初筛", dept: "销售部", monthlyVolume: "950条", savedPerTime: "0.1小时", monthlySaved: "95小时", status: "running" },
-                { name: "病虫害预警", dept: "技术部", monthlyVolume: "200次", savedPerTime: "0.3小时", monthlySaved: "60小时", status: "running" },
-                { name: "物流调度优化", dept: "物流部", monthlyVolume: "80单", savedPerTime: "1小时", monthlySaved: "80小时", status: "optimizing" }
+                {
+                    name: "",
+                    dept: "",
+                    monthlyVolume: "",
+                    savedPerTime: "",
+                    monthlySaved: "",
+                    status: "running"
+                }
             ],
-            stories: [
-                { dept: "生产部", title: "种植计划智能生成", scenario: "每月50份种植计划需人工计算面积、品种、肥料配比", before: "3名技术员，每人每周花2天编制计划", after: "AI根据土壤数据+市场需求自动生成，人工只需微调", results: [{label: "编制时间", value: "2天→4小时"}, {label: "月省工时", value: "100小时"}, {label: "准确率", value: "85%→96%"}] }
-            ],
-            dataNote: { source: "北谷农业月度确认 + 智效系统日志", costBasis: "按约定人力成本 40元/小时 计算", period: "2026年1月-2月" }
+            stories: [],
+            dataNote: {
+                source: "北谷农业月度确认 + 智效系统日志",
+                costBasis: "按约定人力成本 40元/小时 计算",
+                period: "2026年1月"
+            }
         },
         {
-            monthName: "3月", period: "2026.03", nextUpdate: "2026年4月30日",
+            monthName: "3月",
+            period: "2026.03",
+            nextUpdate: "2026年2月28日",
             kpi: [
-                { id: "hours", title: "累计节省工时", value: "7,200", unit: "小时", mom: "+2,700h", momPct: "60", trans: "约 4.1人/月", icon: "clock", color: "amber" },
-                { id: "headcount", title: "节省人力数", value: "4.1", unit: "人", mom: "+1.5人", momPct: "58", trans: "释放2个全职", icon: "user", color: "blue" },
-                { id: "flows", title: "自动化流程数", value: "7", unit: "个", mom: "+2个", momPct: "40", trans: "覆盖4个部门", icon: "cog", color: "indigo" },
-                { id: "cost", title: "人力成本节省", value: "28.8", unit: "万", mom: "+10.8万", momPct: "60", trans: "累计省出2.9个年薪", icon: "coins", color: "emerald" },
-                { id: "roi", title: "AI投入产出比", value: "2.4", unit: ": 1", mom: "累计趋势", momPct: "up", trans: "每投入1元，回报2.4元", icon: "bullseye", color: "white", highlight: true }
+                {
+                    id: "hours",
+                    title: "累计节省工时",
+                    value: "0",
+                    unit: "小时",
+                    mom: "--",
+                    momPct: "--",
+                    trans: "--",
+                    icon: "clock",
+                    color: "amber"
+                },
+                {
+                    id: "headcount",
+                    title: "节省人力数",
+                    value: "0",
+                    unit: "",
+                    mom: "--",
+                    momPct: "--",
+                    trans: "--",
+                    icon: "user",
+                    color: "blue"
+                },
+                {
+                    id: "flows",
+                    title: "自动化流程数",
+                    value: "0",
+                    unit: "个",
+                    mom: "--",
+                    momPct: "--",
+                    trans: "--",
+                    icon: "cog",
+                    color: "indigo"
+                },
+                {
+                    id: "cost",
+                    title: "人力成本节省",
+                    value: "0",
+                    unit: "",
+                    mom: "--",
+                    momPct: "--",
+                    trans: "--",
+                    icon: "coins",
+                    color: "emerald"
+                },
+                {
+                    id: "roi",
+                    title: "AI投入产出比",
+                    value: "",
+                    unit: "",
+                    mom: "累计趋势",
+                    momPct: "up",
+                    trans: "累计趋势中",
+                    icon: "bullseye",
+                    color: "white",
+                    highlight: true
+                }
             ],
             roiDetail: {
-                invest: { total: 12, items: [{name: "软件服务费", value: 6}, {name: "实施部署费", value: 4}, {name: "年度运维费", value: 2}] },
-                return: { total: 10.8, items: [{name: "人力节省折算", value: 7}, {name: "效率提升折算", value: 3}, {name: "风险规避价值", value: 0.8}] }
+                invest: {
+                    total: 2.1,
+                    items: [
+                        {
+                            name: "软件订阅/授权费",
+                            value: 0
+                        },
+                        {
+                            name: "系统实施/部署费",
+                            value: 1.8
+                        },
+                        {
+                            name: "培训与运维费",
+                            value: 0.3
+                        }
+                    ]
+                },
+                return: {
+                    total: 0,
+                    items: [
+                        {
+                            name: "",
+                            value: 0
+                        },
+                        {
+                            name: "",
+                            value: 0
+                        },
+                        {
+                            name: "",
+                            value: 0
+                        }
+                    ]
+                }
             },
             flows: [
-                { name: "农资采购审批", dept: "采购部", monthlyVolume: "150单", savedPerTime: "0.5小时", monthlySaved: "75小时", status: "running" },
-                { name: "种植计划生成", dept: "生产部", monthlyVolume: "55份", savedPerTime: "2小时", monthlySaved: "110小时", status: "running" },
-                { name: "客户咨询初筛", dept: "销售部", monthlyVolume: "1,100条", savedPerTime: "0.1小时", monthlySaved: "110小时", status: "running" },
-                { name: "病虫害预警", dept: "技术部", monthlyVolume: "280次", savedPerTime: "0.3小时", monthlySaved: "84小时", status: "running" },
-                { name: "物流调度优化", dept: "物流部", monthlyVolume: "100单", savedPerTime: "1小时", monthlySaved: "100小时", status: "running" },
-                { name: "财务报表生成", dept: "财务部", monthlyVolume: "30份", savedPerTime: "1.5小时", monthlySaved: "45小时", status: "running" },
-                { name: "员工考勤统计", dept: "人事部", monthlyVolume: "200人", savedPerTime: "0.2小时", monthlySaved: "40小时", status: "optimizing" }
+                {
+                    name: "",
+                    dept: "",
+                    monthlyVolume: "",
+                    savedPerTime: "",
+                    monthlySaved: "",
+                    status: "running"
+                }
+            ],
+            stories: [],
+            dataNote: {
+                source: "北谷农业月度确认 + 智效系统日志",
+                costBasis: "按约定人力成本 40元/小时 计算",
+                period: "2026年1月"
+            }
+        },
+        {
+            monthName: "4月",
+            period: "2026.04",
+            nextUpdate: "2026年5月28日",
+            kpi: [
+                {
+                    id: "hours",
+                    title: "累计节省工时",
+                    value: "23.5",
+                    unit: "小时",
+                    mom: "+23.5小时",
+                    momPct: "100",
+                    trans: "约 0.0人/月",
+                    icon: "clock",
+                    color: "amber"
+                },
+                {
+                    id: "headcount",
+                    title: "节省人力数",
+                    value: "1",
+                    unit: "人",
+                    mom: "+1人",
+                    momPct: "100",
+                    trans: "约释放1个全职",
+                    icon: "user",
+                    color: "blue"
+                },
+                {
+                    id: "flows",
+                    title: "自动化流程数",
+                    value: "11",
+                    unit: "个",
+                    mom: "+11个",
+                    momPct: "100",
+                    trans: "覆盖6个部门",
+                    icon: "cog",
+                    color: "indigo"
+                },
+                {
+                    id: "cost",
+                    title: "人力成本节省",
+                    value: "0.6",
+                    unit: "万",
+                    mom: "+0.1万",
+                    momPct: "100",
+                    trans: "相当于省出0.0个年薪",
+                    icon: "coins",
+                    color: "emerald"
+                },
+                {
+                    id: "roi",
+                    title: "AI投入产出比",
+                    value: "0.7",
+                    unit: ": 1",
+                    mom: "累计趋势",
+                    momPct: "up",
+                    trans: "每投入1元，回报0.7元",
+                    icon: "bullseye",
+                    color: "white",
+                    highlight: true
+                }
+            ],
+            roiDetail: {
+                invest: {
+                    total: 2.1,
+                    items: [
+                        {
+                            name: "软件订阅/授权费",
+                            value: 0
+                        },
+                        {
+                            name: "系统实施/部署费",
+                            value: 1.8
+                        },
+                        {
+                            name: "培训与运维费",
+                            value: 0.3
+                        }
+                    ]
+                },
+                return: {
+                    total: 1.4,
+                    items: [
+                        {
+                            name: "人力节省折算",
+                            value: 0.6
+                        },
+                        {
+                            name: "运营成本节省",
+                            value: 0.6
+                        },
+                        {
+                            name: "返工成本节省",
+                            value: 0.2
+                        }
+                    ]
+                }
+            },
+            flows: [
+                {
+                    name: "组织发展及异动周报输出",
+                    dept: "人资部",
+                    monthlyVolume: "4",
+                    savedPerTime: "0.5",
+                    monthlySaved: "2",
+                    status: "running"
+                },
+                {
+                    name: "离职信息同步",
+                    dept: "人资部",
+                    monthlyVolume: "5",
+                    savedPerTime: "0.2",
+                    monthlySaved: "1",
+                    status: "running"
+                },
+                {
+                    name: "入职信息同步及拉群",
+                    dept: "人资部",
+                    monthlyVolume: "5",
+                    savedPerTime: "0.2",
+                    monthlySaved: "1",
+                    status: "running"
+                },
+                {
+                    name: "转正一个月倒计时",
+                    dept: "人资部",
+                    monthlyVolume: "5",
+                    savedPerTime: "0.2",
+                    monthlySaved: "1",
+                    status: "running"
+                },
+                {
+                    name: "面试时间修改提醒",
+                    dept: "人资部",
+                    monthlyVolume: "5",
+                    savedPerTime: "0.2",
+                    monthlySaved: "1",
+                    status: "running"
+                },
+                {
+                    name: "周年提醒及年度重置",
+                    dept: "人资部",
+                    monthlyVolume: "70",
+                    savedPerTime: "0.1",
+                    monthlySaved: "7",
+                    status: "running"
+                },
+                {
+                    name: "新人首月、次月汇报提醒",
+                    dept: "人资部",
+                    monthlyVolume: "10",
+                    savedPerTime: "0.1",
+                    monthlySaved: "1",
+                    status: "running"
+                },
+                {
+                    name: "招聘数据周报",
+                    dept: "人资部",
+                    monthlyVolume: "4",
+                    savedPerTime: "2",
+                    monthlySaved: "8",
+                    status: "running"
+                },
+                {
+                    name: "转正流程状态自动修改",
+                    dept: "人资部",
+                    monthlyVolume: "5",
+                    savedPerTime: "0.1",
+                    monthlySaved: "0.5",
+                    status: "running"
+                },
+                {
+                    name: "主动离职流程状态自动修改",
+                    dept: "人资部",
+                    monthlyVolume: "5",
+                    savedPerTime: "0.1",
+                    monthlySaved: "0.5",
+                    status: "running"
+                },
+                {
+                    name: "被动流程状态自动修改",
+                    dept: "人资部",
+                    monthlyVolume: "5",
+                    savedPerTime: "0.1",
+                    monthlySaved: "0.5",
+                    status: "running"
+                }
+            ],
+            stories: [],
+            dataNote: {
+                source: "北谷农业月度确认 + 引木系统日志",
+                costBasis: "按约定人力成本 50元/小时 计算",
+                period: "2026年"
+            }
+        },
+        {
+            monthName: "5月",
+            period: "2026.05",
+            nextUpdate: "2026年6月28日",
+            kpi: [
+                {
+                    id: "hours",
+                    title: "累计节省工时",
+                    value: "233.5",
+                    unit: "小时",
+                    mom: "+210小时",
+                    momPct: "894",
+                    trans: "约 0.1人/月",
+                    icon: "clock",
+                    color: "amber"
+                },
+                {
+                    id: "headcount",
+                    title: "节省人力数",
+                    value: "4",
+                    unit: "人",
+                    mom: "+3人",
+                    momPct: "300",
+                    trans: "约释放4个全职",
+                    icon: "user",
+                    color: "blue"
+                },
+                {
+                    id: "flows",
+                    title: "自动化流程数",
+                    value: "13",
+                    unit: "个",
+                    mom: "+2个",
+                    momPct: "18",
+                    trans: "覆盖7个部门",
+                    icon: "cog",
+                    color: "indigo"
+                },
+                {
+                    id: "cost",
+                    title: "人力成本节省",
+                    value: "2.6",
+                    unit: "万",
+                    mom: "+2.9万",
+                    momPct: "483",
+                    trans: "相当于省出0.3个年薪",
+                    icon: "coins",
+                    color: "emerald"
+                },
+                {
+                    id: "roi",
+                    title: "AI投入产出比",
+                    value: "2.9",
+                    unit: ": 1",
+                    mom: "累计趋势",
+                    momPct: "up",
+                    trans: "每投入1元，回报2.9元",
+                    icon: "bullseye",
+                    color: "white",
+                    highlight: true
+                }
+            ],
+            roiDetail: {
+                invest: {
+                    total: 2.1,
+                    items: [
+                        {
+                            name: "软件订阅/授权费",
+                            value: 0
+                        },
+                        {
+                            name: "系统实施/部署费",
+                            value: 1.8
+                        },
+                        {
+                            name: "培训与运维费",
+                            value: 0.3
+                        }
+                    ]
+                },
+                return: {
+                    total: 6.1,
+                    items: [
+                        {
+                            name: "人力节省折算",
+                            value: 2.6
+                        },
+                        {
+                            name: "运营成本降低",
+                            value: 2.6
+                        },
+                        {
+                            name: "返工成本节省",
+                            value: 0.9
+                        }
+                    ]
+                }
+            },
+            flows: [
+                {
+                    name: "组织发展及异动周报输出",
+                    dept: "人资部",
+                    monthlyVolume: "4",
+                    savedPerTime: "0.5",
+                    monthlySaved: "2",
+                    status: "running"
+                },
+                {
+                    name: "离职信息同步",
+                    dept: "人资部",
+                    monthlyVolume: "5",
+                    savedPerTime: "0.2",
+                    monthlySaved: "1",
+                    status: "running"
+                },
+                {
+                    name: "入职信息同步及拉群",
+                    dept: "人资部",
+                    monthlyVolume: "5",
+                    savedPerTime: "0.2",
+                    monthlySaved: "1",
+                    status: "running"
+                },
+                {
+                    name: "转正一个月倒计时",
+                    dept: "人资部",
+                    monthlyVolume: "5",
+                    savedPerTime: "0.2",
+                    monthlySaved: "1",
+                    status: "running"
+                },
+                {
+                    name: "面试时间修改提醒",
+                    dept: "人资部",
+                    monthlyVolume: "5",
+                    savedPerTime: "0.2",
+                    monthlySaved: "1",
+                    status: "running"
+                },
+                {
+                    name: "周年提醒及年度重置",
+                    dept: "人资部",
+                    monthlyVolume: "70",
+                    savedPerTime: "0.1",
+                    monthlySaved: "7",
+                    status: "running"
+                },
+                {
+                    name: "新人首月、次月汇报提醒",
+                    dept: "人资部",
+                    monthlyVolume: "10",
+                    savedPerTime: "0.1",
+                    monthlySaved: "1",
+                    status: "running"
+                },
+                {
+                    name: "招聘数据周报",
+                    dept: "人资部",
+                    monthlyVolume: "1",
+                    savedPerTime: "2",
+                    monthlySaved: "2",
+                    status: "running"
+                },
+                {
+                    name: "转正流程状态自动修改",
+                    dept: "人资部",
+                    monthlyVolume: "5",
+                    savedPerTime: "0.1",
+                    monthlySaved: "0.5",
+                    status: "running"
+                },
+                {
+                    name: "主动离职流程状态自动修改",
+                    dept: "人资部",
+                    monthlyVolume: "5",
+                    savedPerTime: "0.1",
+                    monthlySaved: "0.5",
+                    status: "running"
+                },
+                {
+                    name: "被动流程状态自动修改",
+                    dept: "人资部",
+                    monthlyVolume: "5",
+                    savedPerTime: "0.1",
+                    monthlySaved: "0.5",
+                    status: "running"
+                },
+                {
+                    name: "360评估收集及结果自动输出",
+                    dept: "人资部",
+                    monthlyVolume: "0.25",
+                    savedPerTime: "160",
+                    monthlySaved: "40",
+                    status: "running"
+                },
+                {
+                    name: "黑龙江零售商自助对账表（三方对账）",
+                    dept: "财务部",
+                    monthlyVolume: "22",
+                    savedPerTime: "4",
+                    monthlySaved: "176",
+                    status: "running"
+                }
             ],
             stories: [
-                { dept: "技术部", title: "病虫害AI预警", scenario: "春季病虫害高发，需人工巡查280次/月", before: "4名技术员轮班巡查，漏检率约8%", after: "AI图像识别+气象数据预警，自动推送防治方案", results: [{label: "漏检率", value: "8%→1%"}, {label: "月省工时", value: "84小时"}, {label: "挽回损失", value: "5万元/月"}] }
+                {
+                    dept: "财务部",
+                    title: "三方对账效率提升",
+                    scenario: "因内勤目前对账工作停留在wps文件表格且涉及到数据敏感不能实现实时对账，导致人工1v1对账，效率极低且耗费工时较高，近一个月对账周期且无法实现月度对账效果，返工严重",
+                    before: "无法实现财务、销售、零售商三方对账",
+                    after: "实时智能表格+自动化提醒+表格减负",
+                    results: [
+                        {
+                            label: "三方实时月度对账",
+                            value: "月度对账工时节省近20天"
+                        },
+                        {
+                            label: "数据隔离+表格减负",
+                            value: "80多表格减负为2张表"
+                        },
+                        {
+                            label: "异常数据自动提醒",
+                            value: "异常数据8小时内处理"
+                        }
+                    ]
+                }
             ],
-            dataNote: { source: "北谷农业月度确认 + 智效系统日志", costBasis: "按约定人力成本 40元/小时 计算", period: "2026年1月-3月" }
+            dataNote: {
+                source: "北谷农业月度确认 + 引木系统日志",
+                costBasis: "按约定人力成本 50元/小时 计算",
+                period: "2026年"
+            }
+        },
+        {
+            monthName: "6月",
+            period: "2026.06",
+            nextUpdate: "2026年7月28日",
+            kpi: [
+                {
+                    id: "hours",
+                    title: "累计节省工时",
+                    value: "409.5",
+                    unit: "小时",
+                    mom: "+176小时",
+                    momPct: "75",
+                    trans: "约 0.2人/月",
+                    icon: "clock",
+                    color: "amber"
+                },
+                {
+                    id: "headcount",
+                    title: "节省人力数",
+                    value: "6",
+                    unit: "人",
+                    mom: "+2人",
+                    momPct: "50",
+                    trans: "约释放6个全职",
+                    icon: "user",
+                    color: "blue"
+                },
+                {
+                    id: "flows",
+                    title: "自动化流程数",
+                    value: "14",
+                    unit: "个",
+                    mom: "+1个",
+                    momPct: "8",
+                    trans: "覆盖7个部门",
+                    icon: "cog",
+                    color: "indigo"
+                },
+                {
+                    id: "cost",
+                    title: "人力成本节省",
+                    value: "3.9",
+                    unit: "万",
+                    mom: "+0万",
+                    momPct: "0",
+                    trans: "相当于省出0.3个年薪",
+                    icon: "coins",
+                    color: "emerald"
+                },
+                {
+                    id: "roi",
+                    title: "AI投入产出比",
+                    value: "4.3",
+                    unit: ": 1",
+                    mom: "累计趋势",
+                    momPct: "up",
+                    trans: "每投入1元，回报4.3元",
+                    icon: "bullseye",
+                    color: "white",
+                    highlight: true
+                }
+            ],
+            roiDetail: {
+                invest: {
+                    total: 2.1,
+                    items: [
+                        {
+                            name: "软件订阅/授权费",
+                            value: 0
+                        },
+                        {
+                            name: "系统实施/部署费",
+                            value: 1.8
+                        },
+                        {
+                            name: "培训与运维费",
+                            value: 0.3
+                        }
+                    ]
+                },
+                return: {
+                    total: 9.1,
+                    items: [
+                        {
+                            name: "人力节省折算",
+                            value: 3.9
+                        },
+                        {
+                            name: "运营成本降低",
+                            value: 3.9
+                        },
+                        {
+                            name: "返工成本节省",
+                            value: 1.3
+                        }
+                    ]
+                }
+            },
+            flows: [
+                {
+                    name: "组织发展及异动周报输出",
+                    dept: "人资部",
+                    monthlyVolume: "4",
+                    savedPerTime: "0.5",
+                    monthlySaved: "2",
+                    status: "running"
+                },
+                {
+                    name: "离职信息同步",
+                    dept: "人资部",
+                    monthlyVolume: "5",
+                    savedPerTime: "0.2",
+                    monthlySaved: "1",
+                    status: "running"
+                },
+                {
+                    name: "入职信息同步及拉群",
+                    dept: "人资部",
+                    monthlyVolume: "5",
+                    savedPerTime: "0.2",
+                    monthlySaved: "1",
+                    status: "running"
+                },
+                {
+                    name: "转正一个月倒计时",
+                    dept: "人资部",
+                    monthlyVolume: "5",
+                    savedPerTime: "0.2",
+                    monthlySaved: "1",
+                    status: "running"
+                },
+                {
+                    name: "面试时间修改提醒",
+                    dept: "人资部",
+                    monthlyVolume: "5",
+                    savedPerTime: "0.2",
+                    monthlySaved: "1",
+                    status: "running"
+                },
+                {
+                    name: "周年提醒及年度重置",
+                    dept: "人资部",
+                    monthlyVolume: "70",
+                    savedPerTime: "0.1",
+                    monthlySaved: "7",
+                    status: "running"
+                },
+                {
+                    name: "新人首月、次月汇报提醒",
+                    dept: "人资部",
+                    monthlyVolume: "10",
+                    savedPerTime: "0.1",
+                    monthlySaved: "1",
+                    status: "running"
+                },
+                {
+                    name: "招聘数据周报",
+                    dept: "人资部",
+                    monthlyVolume: "1",
+                    savedPerTime: "2",
+                    monthlySaved: "2",
+                    status: "running"
+                },
+                {
+                    name: "转正流程状态自动修改",
+                    dept: "人资部",
+                    monthlyVolume: "5",
+                    savedPerTime: "0.1",
+                    monthlySaved: "0.5",
+                    status: "running"
+                },
+                {
+                    name: "主动离职流程状态自动修改",
+                    dept: "人资部",
+                    monthlyVolume: "5",
+                    savedPerTime: "0.1",
+                    monthlySaved: "0.5",
+                    status: "running"
+                },
+                {
+                    name: "被动流程状态自动修改",
+                    dept: "人资部",
+                    monthlyVolume: "5",
+                    savedPerTime: "0.1",
+                    monthlySaved: "0.5",
+                    status: "running"
+                },
+                {
+                    name: "360评估收集及结果自动输出",
+                    dept: "人资部",
+                    monthlyVolume: "0.25",
+                    savedPerTime: "160",
+                    monthlySaved: "40",
+                    status: "running"
+                },
+                {
+                    name: "黑龙江零售商自助对账表（三方对账）",
+                    dept: "财务部",
+                    monthlyVolume: "22",
+                    savedPerTime: "4",
+                    monthlySaved: "176",
+                    status: "running"
+                },
+                {
+                    name: "广西零售商自助对账表（三方对账）",
+                    dept: "财务部",
+                    monthlyVolume: "22",
+                    savedPerTime: "4",
+                    monthlySaved: "176",
+                    status: "running"
+                }
+            ],
+            stories: [
+                {
+                    dept: "--",
+                    title: "--",
+                    scenario: "--",
+                    before: "--",
+                    after: "--",
+                    results: [
+                        {
+                            label: "--",
+                            value: "--"
+                        },
+                        {
+                            label: "--",
+                            value: "--"
+                        },
+                        {
+                            label: "--",
+                            value: "--"
+                        }
+                    ]
+                }
+            ],
+            dataNote: {
+                source: "北谷农业月度确认 + 引木系统日志",
+                costBasis: "按约定人力成本 50元/小时 计算",
+                period: "2026年"
+            }
         }
     ],
-
     trend: {
-        labels: ["1月", "2月", "3月", "4月", "5月", "6月", "7月", "8月", "9月", "10月", "11月", "12月"],
-        monthlyCost: [8.4, 9.6, 10.8, null, null, null, null, null, null, null, null, null],
-        cumulativeROI: [0.7, 1.5, 2.4, null, null, null, null, null, null, null, null, null]
+        labels: [
+            "1月",
+            "2月",
+            "3月",
+            "4月",
+            "5月",
+            "6月",
+            "7月",
+            "8月",
+            "9月",
+            "10月",
+            "11月",
+            "12月"
+        ],
+        monthlyCost: [
+            null,
+            null,
+            null,
+            1.4,
+            6.1,
+            9.1,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+        ],
+        cumulativeROI: [
+            null,
+            null,
+            null,
+            2,
+            8.7,
+            13,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+        ]
+    },
+    dataNote: {
+        source: "北谷智能表格+引木员工效率调研",
+        costBasis: "按岗位月薪6500元/月核算",
+        period: "2026"
     }
 };
+
 
 let DATA = JSON.parse(JSON.stringify(DEFAULT_DATA));
 let charts = {};
