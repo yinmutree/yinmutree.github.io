@@ -1,0 +1,3167 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>北谷农业效率仪表盘</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        * { -webkit-tap-highlight-color: transparent; }
+        body { font-family: 'Inter', 'PingFang SC', sans-serif; background: #0f172a; color: #e2e8f0; overscroll-behavior-y: none; }
+        .glass { background: rgba(30, 41, 59, 0.75); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.08); }
+        .gradient-text { background: linear-gradient(135deg, #60a5fa, #a78bfa); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .card-hover { transition: all 0.2s ease; }
+        .card-hover:active { transform: scale(0.98); opacity: 0.9; }
+        .trend-up { color: #34d399; }
+        .kpi-number { font-size: 32px; font-weight: 800; line-height: 1.1; letter-spacing: -0.02em; }
+        @media (min-width: 768px) { .kpi-number { font-size: 42px; } }
+        .status-running { background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16,185,129,0.3); }
+        .status-optimizing { background: rgba(251, 191, 36, 0.15); color: #fbbf24; border: 1px solid rgba(251,191,36,0.3); }
+        .status-pending { background: rgba(59, 130, 246, 0.15); color: #60a5fa; border: 1px solid rgba(59,130,246,0.3); }
+        .story-card-dark { border-left: 3px solid #3b82f6; background: linear-gradient(to right, rgba(59,130,246,0.08), rgba(30,41,59,0.5)); }
+        .progress-bar-bg { background: #334155; border-radius: 999px; height: 8px; overflow: hidden; }
+        .progress-bar-fill { height: 100%; border-radius: 999px; transition: width 1s ease; }
+        .sticky-header { position: sticky; top: 0; z-index: 30; background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(12px); }
+        .touch-btn { transition: all 0.15s; min-height: 44px; display: inline-flex; align-items: center; justify-content: center; }
+        .touch-btn:active { transform: scale(0.96); opacity: 0.8; }
+        .month-tab { transition: all 0.2s; padding: 6px 12px; border-radius: 8px; font-size: 13px; white-space: nowrap; }
+        .month-tab.active { background: rgba(96, 165, 250, 0.2); color: #60a5fa; border: 1px solid rgba(96,165,250,0.3); }
+        .month-tab:not(.active) { color: #64748b; border: 1px solid transparent; }
+        .month-tab:not(.active):hover { color: #94a3b8; background: rgba(255,255,255,0.03); }
+        .year-tab { transition: all 0.2s; padding: 6px 14px; border-radius: 8px; font-size: 13px; white-space: nowrap; font-weight: 600; }
+        .year-tab.active { background: linear-gradient(135deg, rgba(16,185,129,0.2), rgba(59,130,246,0.2)); color: #34d399; border: 1px solid rgba(16,185,129,0.4); }
+        .year-tab:not(.active) { color: #64748b; border: 1px solid transparent; }
+        .year-tab:not(.active):hover { color: #94a3b8; background: rgba(255,255,255,0.03); }
+        .edit-input { background: #1e293b; border: 1px solid #334155; color: #e2e8f0; padding: 0.5rem 0.75rem; border-radius: 0.5rem; width: 100%; font-size: 14px; }
+        .edit-input:focus { outline: none; border-color: #60a5fa; }
+        .edit-label { font-size: 12px; color: #94a3b8; margin-bottom: 0.25rem; display: block; }
+        .edit-panel-bg { background: #0B1120; }
+        .edit-section { background: #1e293b; border-radius: 0.75rem; padding: 1rem; margin-bottom: 1rem; border: 1px solid rgba(255,255,255,0.08); }
+        .edit-section-title { font-size: 14px; font-weight: 600; color: #f1f5f9; margin-bottom: 0.75rem; }
+        .hidden { display: none !important; }
+        .month-scroll { overflow-x: auto; scrollbar-width: none; -ms-overflow-style: none; }
+        .month-scroll::-webkit-scrollbar { display: none; }
+        /* KPI流程展开区动画 */
+        .kpi-flows-expand-section { animation: fadeSlideIn 0.3s ease; }
+        @keyframes fadeSlideIn {
+            from { opacity: 0; transform: translateY(-8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .kpi-flow-item { transition: background 0.15s; }
+        .kpi-flow-item:hover { background: rgba(255,255,255,0.04); }
+        .kpi-expand-btn { transition: all 0.2s; }
+        .kpi-expand-btn:hover { color: #818cf8; }
+        /* ============ 手机端适配 (< 640px) ============ */
+        @media (max-width: 639px) {
+            /* 全局 */
+            body { font-size: 14px; }
+            
+            /* 顶部导航 */
+            .sticky-header { padding: 0.5rem 0.75rem; }
+            .sticky-header .flex.items-center.justify-between.mb-3 { margin-bottom: 0.5rem; }
+            .sticky-header h1 { font-size: 14px; }
+            .sticky-header .text-xs { font-size: 11px; }
+            
+            /* 导航按钮 - 缩小 padding */
+            #export-btn, #edit-btn { padding: 0.35rem 0.5rem; font-size: 11px; }
+            #export-btn i, #edit-btn i { margin-right: 2px; }
+            
+            /* 月份 TAB */
+            .month-tab { padding: 4px 10px; font-size: 12px; }
+            .year-tab { padding: 4px 12px; font-size: 12px; }
+            
+            /* 看板主体 */
+            #dashboard { padding: 0.75rem 0.5rem 1.5rem; }
+            #dashboard > .space-y-5 { gap: 0.75rem; }
+            #dashboard section[class*="glass"] { padding: 0.75rem; border-radius: 0.625rem; }
+            
+            /* KPI 卡片 - 2列 */
+            #kpi-section { gap: 0.5rem; }
+            #kpi-section .glass { padding: 0.75rem 0.5rem; }
+            .kpi-number { font-size: 26px !important; line-height: 1; }
+            #kpi-section .text-xs { font-size: 10px; }
+            #kpi-section .text-\[10px\] { font-size: 9px; }
+            #kpi-section .w-9.h-9 { width: 30px; height: 30px; }
+            #kpi-section .w-1.h-4 { width: 3px; height: 12px; }
+            
+            /* 标题 */
+            section h2, section h3 { font-size: 13px; }
+            #roi-title, #dept-title, #trend-title, #stories-title { font-size: 13px; }
+            
+            /* ROI 进度条 */
+            #roi-invest-detail, #roi-return-detail { padding: 0.5rem; }
+            
+            /* 图表高度缩小 */
+            #dept-chart-container { height: 160px !important; }
+            section[class*="glass"] div[style*="height: 240px"] { height: 180px !important; }
+            
+            /* 价值故事 */
+            #stories-container > div { padding: 0.75rem; }
+            #stories-container .story-card-dark { padding: 0.5rem 0.75rem; }
+            
+            /* 数据说明 */
+            #dashboard section:last-child { padding: 0.75rem; }
+            #dashboard section:last-child .text-xs { font-size: 11px; }
+            
+            /* 分享提示 */
+            #share-tip { padding: 0.5rem 0.75rem; font-size: 11px; top: 0; }
+            
+            /* KPI流程展开 */
+            #kpi-flows-expand .glass { padding: 0.75rem; }
+            #kpi-flows-expand h3 { font-size: 12px; }
+            
+            /* 编辑面板 - 顶部按钮换行 */
+            #edit-panel>.sticky { padding: 0.5rem 0.75rem; }
+            #edit-panel>.sticky>.max-w-2xl { flex-direction: column; gap: 0.5rem; align-items: stretch; }
+            #edit-panel>.sticky .flex.items-center.gap-3 { justify-content: space-between; }
+            #edit-panel>.sticky>.max-w-2xl>.flex.gap-2:last-child {
+                width: 100%;
+                display: grid;
+                grid-template-columns: 1fr 1fr 1fr;
+                gap: 0.375rem;
+            }
+            #edit-panel .edit-input.w-auto { width: 100% !important; }
+            #edit-panel>.sticky button.touch-btn { padding: 0.4rem 0.25rem; font-size: 10px; white-space: nowrap; }
+            
+            /* 编辑表单 */
+            #edit-form { padding: 0.5rem 0.75rem 6rem; }
+            .edit-section { padding: 0.75rem; }
+            .edit-section-title { font-size: 12px; }
+            .edit-input { padding: 0.4rem 0.5rem; font-size: 13px; }
+            .edit-label { font-size: 11px; }
+            
+            /* 编辑底部按钮 */
+            #edit-panel>.fixed.bottom-0 { padding: 0.6rem 0.75rem; }
+            #edit-panel>.fixed.bottom-0 button { padding: 0.65rem; font-size: 13px; }
+            
+            /* PDF 弹窗 */
+            #pdf-tip-modal .glass { padding: 1rem; }
+            #pdf-tip-modal h3 { font-size: 15px; }
+            #pdf-tip-modal .text-sm { font-size: 12px; }
+        }
+        
+        /* ============ 极小屏 (< 380px) ============ */
+        @media (max-width: 379px) {
+            .kpi-number { font-size: 22px !important; }
+            .month-tab { padding: 3px 8px; font-size: 11px; }
+            #edit-panel>.sticky>.max-w-2xl>.flex.gap-2:last-child { grid-template-columns: 1fr 1fr 1fr; gap: 0.25rem; }
+            #edit-panel>.sticky button.touch-btn { font-size: 9px; }
+        }
+        
+        /* 打印样式 */
+        @media print {
+            @page { margin: 15mm; size: A4; }
+            body { background: #fff !important; color: #1e293b !important; font-size: 11pt; }
+            .print-hide, #edit-btn, #edit-panel, #share-tip, .sticky-header, nav,
+            .kpi-expand-btn, #kpi-flows-expand, #roi-invest-detail, #roi-return-detail,
+            .month-scroll, .year-tab:not(.active), .month-tab:not(.active) { display: none !important; }
+            .glass { background: #fff !important; backdrop-filter: none !important; border: 1px solid #e2e8f0 !important; box-shadow: none !important; }
+            .kpi-number, .sticky-header h1, h2, h3, p, span { color: #1e293b !important; }
+            .gradient-text { background: none !important; -webkit-text-fill-color: #1e293b !important; color: #1e293b !important; }
+            .kpi-number { font-size: 28px !important; color: #1e293b !important; }
+            .kpi-number[style*="font-size:36px"] { font-size: 32px !important; }
+            h2, h3 { font-size: 14pt !important; }
+            canvas { max-width: 100% !important; height: auto !important; }
+            .text-slate-400, .text-slate-500, .text-slate-300, .text-slate-200, .text-slate-100, .text-slate-600 { color: #475569 !important; }
+            .text-emerald-400, .text-emerald-300 { color: #059669 !important; }
+            .text-white, .text-slate-100 { color: #1e293b !important; }
+            .status-running, .status-optimizing, .status-pending { color: #1e293b !important; }
+            .story-card-dark { border-left-color: #3b82f6 !important; background: #f8fafc !important; }
+            .bg-slate-800\\/50, .bg-slate-800\\/30, .bg-slate-800\\/20, .bg-rose-500\\/5, .bg-emerald-500\\/5 { background: #f8fafc !important; }
+            .border-slate-700\\/50, .border-slate-700\\/30, .border-slate-800\\/50, .border-rose-500\\/10, .border-emerald-500\\/10 { border-color: #e2e8f0 !important; }
+            .footer-section { page-break-inside: avoid; }
+            #dept-chart-container { height: 180px !important; }
+            .progress-bar-bg { background: #e2e8f0 !important; }
+            #dashboard { padding-top: 0 !important; }
+            section { margin-bottom: 12px; page-break-inside: avoid; }
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+
+<!-- 顶部导航 -->
+<nav class="sticky-header px-4 py-3 border-b border-slate-800/50">
+    <div class="max-w-6xl mx-auto">
+        <div class="flex items-center justify-between mb-3">
+            <div class="flex items-center gap-2.5">
+                <div class="w-9 h-9 rounded-lg overflow-hidden flex-shrink-0">
+                    <img src="data:image/png;base64,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" class="w-full h-full object-cover" alt="北谷农业">
+                </div>
+                <div>
+                    <h1 class="text-base font-bold gradient-text leading-tight">北谷农业效率仪表盘</h1>
+                    <p class="text-xs text-slate-500 leading-tight" id="client-name">北谷农业</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-2">
+                <button onclick="exportReport()" id="export-btn" class="touch-btn px-3 py-2 rounded-lg bg-emerald-500/20 text-emerald-400 text-xs hover:bg-emerald-500/30 transition border border-emerald-500/20 print-hide">
+                    <i class="fas fa-file-pdf mr-1"></i>导出报告
+                </button>
+                <button onclick="exportData()" id="export-data-btn" class="touch-btn px-3 py-2 rounded-lg bg-amber-500/20 text-amber-400 text-xs hover:bg-amber-500/30 transition border border-amber-500/20 print-hide">
+                    <i class="fas fa-download mr-1"></i>导出数据
+                </button>
+                <button onclick="toggleEdit()" id="edit-btn" class="touch-btn px-3 py-2 rounded-lg bg-blue-500/20 text-blue-400 text-xs hover:bg-blue-500/30 transition border border-blue-500/20 print-hide">
+                    <i class="fas fa-edit mr-1"></i>编辑数据
+                </button>
+            </div>
+        </div>
+        <!-- 月份切换：全年 + 各月 -->
+        <div class="month-scroll flex gap-1.5" id="month-tabs"></div>
+    </div>
+</nav>
+
+<!-- PDF 导出引导弹窗 -->
+<div id="pdf-tip-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center" style="background: rgba(0,0,0,0.7);">
+    <div class="glass rounded-xl p-6 mx-4 max-w-sm w-full text-center border border-emerald-500/30">
+        <div class="text-4xl mb-3">📄</div>
+        <h3 class="text-lg font-bold text-white mb-2">导出 PDF 报告</h3>
+        <p class="text-sm text-slate-400 mb-4 leading-relaxed">即将打开打印对话框，请按以下步骤操作：</p>
+        <div class="bg-slate-800 rounded-lg p-3 mb-5 text-left text-xs text-slate-300 space-y-2">
+            <div class="flex gap-2"><span class="text-emerald-400">①</span> 目标打印机选择<span class="text-emerald-400 font-semibold">「另存为PDF」</span></div>
+            <div class="flex gap-2"><span class="text-emerald-400">②</span> 点击保存按钮</div>
+            <div class="flex gap-2"><span class="text-emerald-400">③</span> 选择保存位置即可</div>
+        </div>
+        <div class="flex gap-3">
+            <button onclick="document.getElementById('pdf-tip-modal').classList.add('hidden')" class="touch-btn flex-1 py-2.5 rounded-lg bg-slate-700 text-slate-300 text-sm hover:bg-slate-600 transition">取消</button>
+            <button onclick="doPrintPDF(); document.getElementById('pdf-tip-modal').classList.add('hidden')" class="touch-btn flex-1 py-2.5 rounded-lg bg-emerald-500 text-white text-sm font-medium hover:bg-emerald-600 transition">知道了，打开打印</button>
+        </div>
+    </div>
+</div>
+
+<!-- 编辑模式面板 -->
+<div id="edit-panel" class="hidden fixed inset-0 z-50 edit-panel-bg overflow-y-auto">
+    <div class="sticky top-0 z-10 bg-[#0B1120] border-b border-slate-800 px-4 py-3">
+        <div class="max-w-2xl mx-auto flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <button onclick="cancelEdit()" class="touch-btn w-9 h-9 rounded-lg bg-slate-800 text-slate-400 hover:text-white hover:bg-slate-700 transition flex items-center justify-center">
+                    <i class="fas fa-times text-sm"></i>
+                </button>
+                <h2 class="text-base font-bold text-white"><i class="fas fa-edit mr-2 text-blue-400"></i>数据编辑</h2>
+            </div>
+            <div class="flex gap-2">
+                <select id="edit-month-select" class="edit-input w-auto text-xs py-2 px-3" onchange="switchEditMonth(this.value)"></select>
+                <button onclick="copyFromPrevMonth()" class="touch-btn px-3 py-2 rounded-lg bg-amber-500/20 text-amber-400 text-xs hover:bg-amber-500/30 transition border border-amber-500/20">
+                    <i class="fas fa-copy mr-1"></i>复制上月
+                </button>
+                <button onclick="restoreFromLocalStorage()" class="touch-btn px-3 py-2 rounded-lg bg-purple-500/20 text-purple-400 text-xs hover:bg-purple-500/30 transition border border-purple-500/20">
+                    <i class="fas fa-undo mr-1"></i>恢复备份
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class="max-w-2xl mx-auto px-4 py-4 pb-32" id="edit-form"></div>
+    <div class="fixed bottom-0 left-0 right-0 p-4 bg-[#0B1120] border-t border-slate-800 z-10">
+        <div class="max-w-2xl mx-auto flex gap-3">
+            <button onclick="addNewMonth()" class="touch-btn flex-1 py-3 rounded-lg bg-emerald-500/20 text-emerald-400 text-sm hover:bg-emerald-500/30 transition border border-emerald-500/20">
+                <i class="fas fa-plus mr-1"></i>新增月份
+            </button>
+            <button onclick="saveAndClose()" class="touch-btn flex-1 py-3 rounded-lg bg-blue-500 text-white text-sm hover:bg-blue-600 transition font-medium">
+                <i class="fas fa-check mr-1"></i>保存并更新
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- 分享提示 -->
+<div id="share-tip" class="hidden fixed top-14 left-0 right-0 z-20 bg-emerald-500/10 border-b border-emerald-500/20 px-4 py-2">
+    <div class="max-w-6xl mx-auto flex items-center justify-between">
+        <p class="text-xs text-emerald-400"><i class="fas fa-check-circle mr-1"></i>数据已更新！复制浏览器地址栏链接即可分享全年数据</p>
+        <button onclick="dismissShareTip()" class="text-emerald-400 text-xs"><i class="fas fa-times"></i></button>
+    </div>
+</div>
+
+<!-- 看板内容 -->
+<main class="max-w-6xl mx-auto px-4 pt-4 pb-8 space-y-5" id="dashboard">
+    <div class="flex items-center justify-between">
+        <h2 class="text-sm font-semibold text-slate-400" id="current-view-label">--</h2>
+        <span class="text-xs text-slate-600" id="data-period-display">--</span>
+    </div>
+
+    <!-- KPI卡片 -->
+    <section class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3" id="kpi-section"></section>
+
+    <!-- KPI流程展开区（点击自动化流程数展开） -->
+    <section id="kpi-flows-expand" class="mt-3 kpi-flows-expand-section" style="display: none;">
+        <div class="glass rounded-xl p-4 border border-indigo-500/20">
+            <div class="flex items-center justify-between mb-3">
+                <h3 class="text-sm font-bold text-slate-200" id="kpi-flows-expand-title">
+                    <i class="fas fa-cog text-indigo-400 mr-1.5"></i><span id="kpi-flows-expand-label">自动化流程清单</span>
+                </h3>
+                <button onclick="toggleKpiFlowsExpand()" class="touch-btn px-2 py-1 rounded text-xs text-slate-400 hover:text-slate-200 hover:bg-slate-700/50 transition">
+                    <i class="fas fa-times mr-1"></i>收起
+                </button>
+            </div>
+            <div class="space-y-1.5" id="kpi-flows-expand-list"></div>
+        </div>
+    </section>
+
+    <!-- ROI -->
+    <section class="glass rounded-xl p-4 card-hover">
+        <div class="flex items-center justify-between mb-4">
+            <h2 class="text-base font-bold text-slate-100" id="roi-title">投入与回报明细</h2>
+            <div class="flex gap-2 print-hide">
+                <button onclick="toggleROIDetail('invest')" class="touch-btn px-3 py-1.5 rounded-lg bg-slate-800/50 text-slate-300 text-xs hover:bg-slate-700/50 transition border border-slate-700"><i class="fas fa-eye mr-1"></i>投入</button>
+                <button onclick="toggleROIDetail('return')" class="touch-btn px-3 py-1.5 rounded-lg bg-emerald-500/10 text-emerald-400 text-xs hover:bg-emerald-500/20 transition border border-emerald-500/20"><i class="fas fa-eye mr-1"></i>回报</button>
+            </div>
+        </div>
+        <div class="space-y-3 mb-4">
+            <div>
+                <div class="flex justify-between text-xs mb-1.5"><span class="text-slate-400">累计投入</span><span class="font-semibold text-slate-300">¥<span id="roi-invest-total">--</span>万</span></div>
+                <div class="progress-bar-bg"><div class="progress-bar-fill bg-slate-500" id="roi-invest-bar" style="width: 0%"></div></div>
+            </div>
+            <div>
+                <div class="flex justify-between text-xs mb-1.5"><span class="text-slate-400">累计回报</span><span class="font-semibold text-emerald-400">¥<span id="roi-return-total">--</span>万</span></div>
+                <div class="progress-bar-bg"><div class="progress-bar-fill bg-emerald-500" id="roi-return-bar" style="width: 0%"></div></div>
+            </div>
+        </div>
+        <div id="roi-invest-detail" class="hidden bg-slate-800/50 rounded-lg p-3 mb-3 border border-slate-700">
+            <h3 class="text-xs font-semibold text-slate-300 mb-2">投入明细</h3><div class="space-y-1.5" id="invest-items"></div>
+        </div>
+        <div id="roi-return-detail" class="hidden bg-emerald-500/5 rounded-lg p-3 border border-emerald-500/20">
+            <h3 class="text-xs font-semibold text-emerald-400 mb-2">回报明细</h3><div class="space-y-1.5" id="return-items"></div>
+        </div>
+    </section>
+
+    <!-- 部门价值分布 -->
+    <section class="glass rounded-xl p-4 card-hover">
+        <h2 class="text-base font-bold text-slate-100 mb-4" id="dept-title"><i class="fas fa-building text-purple-400 mr-1.5"></i>部门价值分布</h2>
+        <div style="height: 200px;" id="dept-chart-container">
+            <canvas id="deptChart"></canvas>
+        </div>
+        <p class="text-[10px] text-slate-500 text-center mt-2" id="dept-empty-msg" style="display:none">暂无流程数据，无法展示部门分布</p>
+    </section>
+
+    <!-- 趋势图 -->
+    <section class="glass rounded-xl p-4 card-hover">
+        <div class="flex items-center justify-between mb-4">
+            <h2 class="text-base font-bold text-slate-100" id="trend-title">趋势分析</h2>
+            <div class="flex gap-2 text-[10px]">
+                <span class="flex items-center gap-1 text-slate-400"><span class="w-2 h-2 rounded bg-emerald-500"></span>月节省</span>
+                <span class="flex items-center gap-1 text-slate-400"><span class="w-2 h-0.5 bg-blue-500"></span>累计ROI</span>
+            </div>
+        </div>
+        <div style="height: 240px;"><canvas id="trendChart"></canvas></div>
+    </section>
+
+    <!-- 价值故事 -->
+    <section>
+        <h2 class="text-base font-bold text-slate-100 mb-3" id="stories-title"><i class="fas fa-thumbtack text-rose-400 mr-1.5"></i>本月价值故事</h2>
+        <div class="space-y-4" id="stories-container"></div>
+    </section>
+
+    <!-- 数据说明 -->
+    <section class="glass rounded-xl p-4">
+        <div class="space-y-4">
+            <div>
+                <h3 class="text-xs font-semibold text-slate-300 mb-2"><i class="fas fa-file-alt text-slate-500 mr-1.5"></i>数据说明</h3>
+                <ul class="space-y-1.5 text-xs text-slate-400">
+                    <li>• 数据来源：<span id="data-source">--</span></li>
+                    <li>• 成本核算：<span id="data-cost">--</span></li>
+                    <li>• 数据周期：<span id="data-period-note">--</span></li>
+                    <li>• 下次更新：<span id="data-next" class="font-medium text-slate-300">--</span></li>
+                </ul>
+            </div>
+            <div class="border-t border-slate-700/50 pt-4">
+                <h3 class="text-xs font-semibold text-slate-300 mb-2"><i class="fas fa-headset text-slate-500 mr-1.5"></i>技术支持</h3>
+                <div class="flex items-center gap-2.5">
+                    <div class="w-8 h-8 rounded-full bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center text-white text-[10px] font-bold">引木</div>
+                    <div>
+                        <p class="text-xs font-medium text-slate-300">由 <span id="provider-name">--</span> 提供技术支持</p>
+                        <p class="text-xs text-slate-500">顾问：<span id="advisor-name">--</span> | <span id="advisor-phone">--</span></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+
+<script>
+// ═══════════════════════════════════════════════════════════════
+// 默认数据：包含多个月份
+// ═══════════════════════════════════════════════════════════════
+function createDefaultMonth(monthName, period) {
+    return {
+        monthName, period, nextUpdate: "",
+        kpi: [
+            { id: "hours", title: "累计节省工时", value: "--", unit: "小时", mom: "--", momPct: "--", trans: "--", icon: "clock", color: "amber" },
+            { id: "headcount", title: "节省人力数", value: "--", unit: "人", mom: "--", momPct: "--", trans: "--", icon: "user", color: "blue" },
+            { id: "flows", title: "自动化流程数", value: "--", unit: "个", mom: "--", momPct: "--", trans: "--", icon: "cog", color: "indigo" },
+            { id: "cost", title: "人力成本节省", value: "--", unit: "万", mom: "--", momPct: "--", trans: "--", icon: "coins", color: "emerald" },
+            { id: "roi", title: "AI投入产出比", value: "--", unit: ": 1", mom: "--", momPct: "up", trans: "--", icon: "bullseye", color: "white", highlight: true }
+        ],
+        roiDetail: {
+            invest: { total: 0, items: [{name: "软件服务费", value: 0}, {name: "实施部署费", value: 0}, {name: "年度运维费", value: 0}] },
+            return: { total: 0, items: [{name: "人力节省折算", value: 0}, {name: "效率提升折算", value: 0}, {name: "风险规避价值", value: 0}] }
+        },
+        flows: [],
+        stories: [
+            { dept: "--", title: "--", scenario: "--", before: "--", after: "--", results: [{label: "--", value: "--"}, {label: "--", value: "--"}, {label: "--", value: "--"}] }
+        ]
+    };
+}
+
+const DEFAULT_DATA = {
+    clientName: "北谷农业",
+    isYearlyView: false,
+    currentMonthIndex: 4,
+    providerName: "引木管理咨询",
+    advisorName: "法师（健昕）",
+    advisorPhone: "17600697399",
+    months: [
+        {
+            monthName: "1月",
+            period: "2026.01",
+            nextUpdate: "2026年2月28日",
+            kpi: [
+                {
+                    id: "hours",
+                    title: "累计节省工时",
+                    value: "0",
+                    unit: "小时",
+                    mom: "--",
+                    momPct: "--",
+                    trans: "--",
+                    icon: "clock",
+                    color: "amber"
+                },
+                {
+                    id: "headcount",
+                    title: "节省人力数",
+                    value: "0",
+                    unit: "",
+                    mom: "--",
+                    momPct: "--",
+                    trans: "--",
+                    icon: "user",
+                    color: "blue"
+                },
+                {
+                    id: "flows",
+                    title: "自动化流程数",
+                    value: "0",
+                    unit: "个",
+                    mom: "--",
+                    momPct: "--",
+                    trans: "--",
+                    icon: "cog",
+                    color: "indigo"
+                },
+                {
+                    id: "cost",
+                    title: "人力成本节省",
+                    value: "0",
+                    unit: "",
+                    mom: "--",
+                    momPct: "--",
+                    trans: "--",
+                    icon: "coins",
+                    color: "emerald"
+                },
+                {
+                    id: "roi",
+                    title: "AI投入产出比",
+                    value: "",
+                    unit: "",
+                    mom: "累计趋势",
+                    momPct: "up",
+                    trans: "累计趋势中",
+                    icon: "bullseye",
+                    color: "white",
+                    highlight: true
+                }
+            ],
+            roiDetail: {
+                invest: {
+                    total: 2.1,
+                    items: [
+                        {
+                            name: "软件订阅/授权费",
+                            value: 0
+                        },
+                        {
+                            name: "系统实施/部署费",
+                            value: 1.8
+                        },
+                        {
+                            name: "培训与运维费",
+                            value: 0.3
+                        }
+                    ]
+                },
+                return: {
+                    total: 0,
+                    items: [
+                        {
+                            name: "",
+                            value: 0
+                        },
+                        {
+                            name: "",
+                            value: 0
+                        },
+                        {
+                            name: "",
+                            value: 0
+                        }
+                    ]
+                }
+            },
+            flows: [
+                {
+                    name: "",
+                    dept: "",
+                    monthlyVolume: "",
+                    savedPerTime: "",
+                    monthlySaved: "",
+                    status: "running"
+                }
+            ],
+            stories: [],
+            dataNote: {
+                source: "北谷农业月度确认 + 智效系统日志",
+                costBasis: "按约定人力成本 40元/小时 计算",
+                period: "2026年1月"
+            }
+        },
+        {
+            monthName: "2月",
+            period: "2026.02",
+            nextUpdate: "2026年2月28日",
+            kpi: [
+                {
+                    id: "hours",
+                    title: "累计节省工时",
+                    value: "0",
+                    unit: "小时",
+                    mom: "--",
+                    momPct: "--",
+                    trans: "--",
+                    icon: "clock",
+                    color: "amber"
+                },
+                {
+                    id: "headcount",
+                    title: "节省人力数",
+                    value: "0",
+                    unit: "",
+                    mom: "--",
+                    momPct: "--",
+                    trans: "--",
+                    icon: "user",
+                    color: "blue"
+                },
+                {
+                    id: "flows",
+                    title: "自动化流程数",
+                    value: "0",
+                    unit: "个",
+                    mom: "--",
+                    momPct: "--",
+                    trans: "--",
+                    icon: "cog",
+                    color: "indigo"
+                },
+                {
+                    id: "cost",
+                    title: "人力成本节省",
+                    value: "0",
+                    unit: "",
+                    mom: "--",
+                    momPct: "--",
+                    trans: "--",
+                    icon: "coins",
+                    color: "emerald"
+                },
+                {
+                    id: "roi",
+                    title: "AI投入产出比",
+                    value: "",
+                    unit: "",
+                    mom: "累计趋势",
+                    momPct: "up",
+                    trans: "累计趋势中",
+                    icon: "bullseye",
+                    color: "white",
+                    highlight: true
+                }
+            ],
+            roiDetail: {
+                invest: {
+                    total: 2.1,
+                    items: [
+                        {
+                            name: "软件订阅/授权费",
+                            value: 0
+                        },
+                        {
+                            name: "系统实施/部署费",
+                            value: 1.8
+                        },
+                        {
+                            name: "培训与运维费",
+                            value: 0.3
+                        }
+                    ]
+                },
+                return: {
+                    total: 0,
+                    items: [
+                        {
+                            name: "",
+                            value: 0
+                        },
+                        {
+                            name: "",
+                            value: 0
+                        },
+                        {
+                            name: "",
+                            value: 0
+                        }
+                    ]
+                }
+            },
+            flows: [
+                {
+                    name: "",
+                    dept: "",
+                    monthlyVolume: "",
+                    savedPerTime: "",
+                    monthlySaved: "",
+                    status: "running"
+                }
+            ],
+            stories: [],
+            dataNote: {
+                source: "北谷农业月度确认 + 智效系统日志",
+                costBasis: "按约定人力成本 40元/小时 计算",
+                period: "2026年1月"
+            }
+        },
+        {
+            monthName: "3月",
+            period: "2026.03",
+            nextUpdate: "2026年2月28日",
+            kpi: [
+                {
+                    id: "hours",
+                    title: "累计节省工时",
+                    value: "0",
+                    unit: "小时",
+                    mom: "--",
+                    momPct: "--",
+                    trans: "--",
+                    icon: "clock",
+                    color: "amber"
+                },
+                {
+                    id: "headcount",
+                    title: "节省人力数",
+                    value: "0",
+                    unit: "",
+                    mom: "--",
+                    momPct: "--",
+                    trans: "--",
+                    icon: "user",
+                    color: "blue"
+                },
+                {
+                    id: "flows",
+                    title: "自动化流程数",
+                    value: "0",
+                    unit: "个",
+                    mom: "--",
+                    momPct: "--",
+                    trans: "--",
+                    icon: "cog",
+                    color: "indigo"
+                },
+                {
+                    id: "cost",
+                    title: "人力成本节省",
+                    value: "0",
+                    unit: "",
+                    mom: "--",
+                    momPct: "--",
+                    trans: "--",
+                    icon: "coins",
+                    color: "emerald"
+                },
+                {
+                    id: "roi",
+                    title: "AI投入产出比",
+                    value: "",
+                    unit: "",
+                    mom: "累计趋势",
+                    momPct: "up",
+                    trans: "累计趋势中",
+                    icon: "bullseye",
+                    color: "white",
+                    highlight: true
+                }
+            ],
+            roiDetail: {
+                invest: {
+                    total: 2.1,
+                    items: [
+                        {
+                            name: "软件订阅/授权费",
+                            value: 0
+                        },
+                        {
+                            name: "系统实施/部署费",
+                            value: 1.8
+                        },
+                        {
+                            name: "培训与运维费",
+                            value: 0.3
+                        }
+                    ]
+                },
+                return: {
+                    total: 0,
+                    items: [
+                        {
+                            name: "",
+                            value: 0
+                        },
+                        {
+                            name: "",
+                            value: 0
+                        },
+                        {
+                            name: "",
+                            value: 0
+                        }
+                    ]
+                }
+            },
+            flows: [
+                {
+                    name: "",
+                    dept: "",
+                    monthlyVolume: "",
+                    savedPerTime: "",
+                    monthlySaved: "",
+                    status: "running"
+                }
+            ],
+            stories: [],
+            dataNote: {
+                source: "北谷农业月度确认 + 智效系统日志",
+                costBasis: "按约定人力成本 40元/小时 计算",
+                period: "2026年1月"
+            }
+        },
+        {
+            monthName: "4月",
+            period: "2026.04",
+            nextUpdate: "2026年5月28日",
+            kpi: [
+                {
+                    id: "hours",
+                    title: "累计节省工时",
+                    value: "23.5",
+                    unit: "小时",
+                    mom: "+23.5小时",
+                    momPct: "100",
+                    trans: "约 0.0人/月",
+                    icon: "clock",
+                    color: "amber"
+                },
+                {
+                    id: "headcount",
+                    title: "节省人力数",
+                    value: "1",
+                    unit: "人",
+                    mom: "+1人",
+                    momPct: "100",
+                    trans: "约释放1个全职",
+                    icon: "user",
+                    color: "blue"
+                },
+                {
+                    id: "flows",
+                    title: "自动化流程数",
+                    value: "11",
+                    unit: "个",
+                    mom: "+11个",
+                    momPct: "100",
+                    trans: "覆盖6个部门",
+                    icon: "cog",
+                    color: "indigo"
+                },
+                {
+                    id: "cost",
+                    title: "人力成本节省",
+                    value: "0.6",
+                    unit: "万",
+                    mom: "+0.1万",
+                    momPct: "100",
+                    trans: "相当于省出0.0个年薪",
+                    icon: "coins",
+                    color: "emerald"
+                },
+                {
+                    id: "roi",
+                    title: "AI投入产出比",
+                    value: "0.7",
+                    unit: ": 1",
+                    mom: "累计趋势",
+                    momPct: "up",
+                    trans: "每投入1元，回报0.7元",
+                    icon: "bullseye",
+                    color: "white",
+                    highlight: true
+                }
+            ],
+            roiDetail: {
+                invest: {
+                    total: 2.1,
+                    items: [
+                        {
+                            name: "软件订阅/授权费",
+                            value: 0
+                        },
+                        {
+                            name: "系统实施/部署费",
+                            value: 1.8
+                        },
+                        {
+                            name: "培训与运维费",
+                            value: 0.3
+                        }
+                    ]
+                },
+                return: {
+                    total: 1.4,
+                    items: [
+                        {
+                            name: "人力节省折算",
+                            value: 0.6
+                        },
+                        {
+                            name: "运营成本节省",
+                            value: 0.6
+                        },
+                        {
+                            name: "返工成本节省",
+                            value: 0.2
+                        }
+                    ]
+                }
+            },
+            flows: [
+                {
+                    name: "组织发展及异动周报输出",
+                    dept: "人资部",
+                    monthlyVolume: "4",
+                    savedPerTime: "0.5",
+                    monthlySaved: "2",
+                    status: "running"
+                },
+                {
+                    name: "离职信息同步",
+                    dept: "人资部",
+                    monthlyVolume: "5",
+                    savedPerTime: "0.2",
+                    monthlySaved: "1",
+                    status: "running"
+                },
+                {
+                    name: "入职信息同步及拉群",
+                    dept: "人资部",
+                    monthlyVolume: "5",
+                    savedPerTime: "0.2",
+                    monthlySaved: "1",
+                    status: "running"
+                },
+                {
+                    name: "转正一个月倒计时",
+                    dept: "人资部",
+                    monthlyVolume: "5",
+                    savedPerTime: "0.2",
+                    monthlySaved: "1",
+                    status: "running"
+                },
+                {
+                    name: "面试时间修改提醒",
+                    dept: "人资部",
+                    monthlyVolume: "5",
+                    savedPerTime: "0.2",
+                    monthlySaved: "1",
+                    status: "running"
+                },
+                {
+                    name: "周年提醒及年度重置",
+                    dept: "人资部",
+                    monthlyVolume: "70",
+                    savedPerTime: "0.1",
+                    monthlySaved: "7",
+                    status: "running"
+                },
+                {
+                    name: "新人首月、次月汇报提醒",
+                    dept: "人资部",
+                    monthlyVolume: "10",
+                    savedPerTime: "0.1",
+                    monthlySaved: "1",
+                    status: "running"
+                },
+                {
+                    name: "招聘数据周报",
+                    dept: "人资部",
+                    monthlyVolume: "4",
+                    savedPerTime: "2",
+                    monthlySaved: "8",
+                    status: "running"
+                },
+                {
+                    name: "转正流程状态自动修改",
+                    dept: "人资部",
+                    monthlyVolume: "5",
+                    savedPerTime: "0.1",
+                    monthlySaved: "0.5",
+                    status: "running"
+                },
+                {
+                    name: "主动离职流程状态自动修改",
+                    dept: "人资部",
+                    monthlyVolume: "5",
+                    savedPerTime: "0.1",
+                    monthlySaved: "0.5",
+                    status: "running"
+                },
+                {
+                    name: "被动流程状态自动修改",
+                    dept: "人资部",
+                    monthlyVolume: "5",
+                    savedPerTime: "0.1",
+                    monthlySaved: "0.5",
+                    status: "running"
+                }
+            ],
+            stories: [],
+            dataNote: {
+                source: "北谷农业月度确认 + 引木系统日志",
+                costBasis: "按约定人力成本 50元/小时 计算",
+                period: "2026年"
+            }
+        },
+        {
+            monthName: "5月",
+            period: "2026.05",
+            nextUpdate: "2026年6月28日",
+            kpi: [
+                {
+                    id: "hours",
+                    title: "累计节省工时",
+                    value: "233.5",
+                    unit: "小时",
+                    mom: "+210小时",
+                    momPct: "894",
+                    trans: "约 0.1人/月",
+                    icon: "clock",
+                    color: "amber"
+                },
+                {
+                    id: "headcount",
+                    title: "节省人力数",
+                    value: "4",
+                    unit: "人",
+                    mom: "+3人",
+                    momPct: "300",
+                    trans: "约释放4个全职",
+                    icon: "user",
+                    color: "blue"
+                },
+                {
+                    id: "flows",
+                    title: "自动化流程数",
+                    value: "13",
+                    unit: "个",
+                    mom: "+2个",
+                    momPct: "18",
+                    trans: "覆盖7个部门",
+                    icon: "cog",
+                    color: "indigo"
+                },
+                {
+                    id: "cost",
+                    title: "人力成本节省",
+                    value: "2.6",
+                    unit: "万",
+                    mom: "+2.9万",
+                    momPct: "483",
+                    trans: "相当于省出0.3个年薪",
+                    icon: "coins",
+                    color: "emerald"
+                },
+                {
+                    id: "roi",
+                    title: "AI投入产出比",
+                    value: "2.9",
+                    unit: ": 1",
+                    mom: "累计趋势",
+                    momPct: "up",
+                    trans: "每投入1元，回报2.9元",
+                    icon: "bullseye",
+                    color: "white",
+                    highlight: true
+                }
+            ],
+            roiDetail: {
+                invest: {
+                    total: 2.1,
+                    items: [
+                        {
+                            name: "软件订阅/授权费",
+                            value: 0
+                        },
+                        {
+                            name: "系统实施/部署费",
+                            value: 1.8
+                        },
+                        {
+                            name: "培训与运维费",
+                            value: 0.3
+                        }
+                    ]
+                },
+                return: {
+                    total: 6.1,
+                    items: [
+                        {
+                            name: "人力节省折算",
+                            value: 2.6
+                        },
+                        {
+                            name: "运营成本降低",
+                            value: 2.6
+                        },
+                        {
+                            name: "返工成本节省",
+                            value: 0.9
+                        }
+                    ]
+                }
+            },
+            flows: [
+                {
+                    name: "组织发展及异动周报输出",
+                    dept: "人资部",
+                    monthlyVolume: "4",
+                    savedPerTime: "0.5",
+                    monthlySaved: "2",
+                    status: "running"
+                },
+                {
+                    name: "离职信息同步",
+                    dept: "人资部",
+                    monthlyVolume: "5",
+                    savedPerTime: "0.2",
+                    monthlySaved: "1",
+                    status: "running"
+                },
+                {
+                    name: "入职信息同步及拉群",
+                    dept: "人资部",
+                    monthlyVolume: "5",
+                    savedPerTime: "0.2",
+                    monthlySaved: "1",
+                    status: "running"
+                },
+                {
+                    name: "转正一个月倒计时",
+                    dept: "人资部",
+                    monthlyVolume: "5",
+                    savedPerTime: "0.2",
+                    monthlySaved: "1",
+                    status: "running"
+                },
+                {
+                    name: "面试时间修改提醒",
+                    dept: "人资部",
+                    monthlyVolume: "5",
+                    savedPerTime: "0.2",
+                    monthlySaved: "1",
+                    status: "running"
+                },
+                {
+                    name: "周年提醒及年度重置",
+                    dept: "人资部",
+                    monthlyVolume: "70",
+                    savedPerTime: "0.1",
+                    monthlySaved: "7",
+                    status: "running"
+                },
+                {
+                    name: "新人首月、次月汇报提醒",
+                    dept: "人资部",
+                    monthlyVolume: "10",
+                    savedPerTime: "0.1",
+                    monthlySaved: "1",
+                    status: "running"
+                },
+                {
+                    name: "招聘数据周报",
+                    dept: "人资部",
+                    monthlyVolume: "1",
+                    savedPerTime: "2",
+                    monthlySaved: "2",
+                    status: "running"
+                },
+                {
+                    name: "转正流程状态自动修改",
+                    dept: "人资部",
+                    monthlyVolume: "5",
+                    savedPerTime: "0.1",
+                    monthlySaved: "0.5",
+                    status: "running"
+                },
+                {
+                    name: "主动离职流程状态自动修改",
+                    dept: "人资部",
+                    monthlyVolume: "5",
+                    savedPerTime: "0.1",
+                    monthlySaved: "0.5",
+                    status: "running"
+                },
+                {
+                    name: "被动流程状态自动修改",
+                    dept: "人资部",
+                    monthlyVolume: "5",
+                    savedPerTime: "0.1",
+                    monthlySaved: "0.5",
+                    status: "running"
+                },
+                {
+                    name: "360评估收集及结果自动输出",
+                    dept: "人资部",
+                    monthlyVolume: "0.25",
+                    savedPerTime: "160",
+                    monthlySaved: "40",
+                    status: "running"
+                },
+                {
+                    name: "黑龙江零售商自助对账表（三方对账）",
+                    dept: "财务部",
+                    monthlyVolume: "22",
+                    savedPerTime: "4",
+                    monthlySaved: "176",
+                    status: "running"
+                }
+            ],
+            stories: [
+                {
+                    dept: "财务部",
+                    title: "三方对账效率提升",
+                    scenario: "因内勤目前对账工作停留在wps文件表格且涉及到数据敏感不能实现实时对账，导致人工1v1对账，效率极低且耗费工时较高，近一个月对账周期且无法实现月度对账效果，返工严重",
+                    before: "无法实现财务、销售、零售商三方对账",
+                    after: "实时智能表格+自动化提醒+表格减负",
+                    results: [
+                        {
+                            label: "三方实时月度对账",
+                            value: "月度对账工时节省近20天"
+                        },
+                        {
+                            label: "数据隔离+表格减负",
+                            value: "80多表格减负为2张表"
+                        },
+                        {
+                            label: "异常数据自动提醒",
+                            value: "异常数据8小时内处理"
+                        }
+                    ]
+                }
+            ],
+            dataNote: {
+                source: "北谷农业月度确认 + 引木系统日志",
+                costBasis: "按约定人力成本 50元/小时 计算",
+                period: "2026年"
+            }
+        },
+        {
+            monthName: "6月",
+            period: "2026.06",
+            nextUpdate: "2026年7月28日",
+            kpi: [
+                {
+                    id: "hours",
+                    title: "累计节省工时",
+                    value: "409.5",
+                    unit: "小时",
+                    mom: "+176小时",
+                    momPct: "75",
+                    trans: "约 0.2人/月",
+                    icon: "clock",
+                    color: "amber"
+                },
+                {
+                    id: "headcount",
+                    title: "节省人力数",
+                    value: "6",
+                    unit: "人",
+                    mom: "+2人",
+                    momPct: "50",
+                    trans: "约释放6个全职",
+                    icon: "user",
+                    color: "blue"
+                },
+                {
+                    id: "flows",
+                    title: "自动化流程数",
+                    value: "14",
+                    unit: "个",
+                    mom: "+1个",
+                    momPct: "8",
+                    trans: "覆盖7个部门",
+                    icon: "cog",
+                    color: "indigo"
+                },
+                {
+                    id: "cost",
+                    title: "人力成本节省",
+                    value: "3.9",
+                    unit: "万",
+                    mom: "+0万",
+                    momPct: "0",
+                    trans: "相当于省出0.3个年薪",
+                    icon: "coins",
+                    color: "emerald"
+                },
+                {
+                    id: "roi",
+                    title: "AI投入产出比",
+                    value: "4.3",
+                    unit: ": 1",
+                    mom: "累计趋势",
+                    momPct: "up",
+                    trans: "每投入1元，回报4.3元",
+                    icon: "bullseye",
+                    color: "white",
+                    highlight: true
+                }
+            ],
+            roiDetail: {
+                invest: {
+                    total: 2.1,
+                    items: [
+                        {
+                            name: "软件订阅/授权费",
+                            value: 0
+                        },
+                        {
+                            name: "系统实施/部署费",
+                            value: 1.8
+                        },
+                        {
+                            name: "培训与运维费",
+                            value: 0.3
+                        }
+                    ]
+                },
+                return: {
+                    total: 9.1,
+                    items: [
+                        {
+                            name: "人力节省折算",
+                            value: 3.9
+                        },
+                        {
+                            name: "运营成本降低",
+                            value: 3.9
+                        },
+                        {
+                            name: "返工成本节省",
+                            value: 1.3
+                        }
+                    ]
+                }
+            },
+            flows: [
+                {
+                    name: "组织发展及异动周报输出",
+                    dept: "人资部",
+                    monthlyVolume: "4",
+                    savedPerTime: "0.5",
+                    monthlySaved: "2",
+                    status: "running"
+                },
+                {
+                    name: "离职信息同步",
+                    dept: "人资部",
+                    monthlyVolume: "5",
+                    savedPerTime: "0.2",
+                    monthlySaved: "1",
+                    status: "running"
+                },
+                {
+                    name: "入职信息同步及拉群",
+                    dept: "人资部",
+                    monthlyVolume: "5",
+                    savedPerTime: "0.2",
+                    monthlySaved: "1",
+                    status: "running"
+                },
+                {
+                    name: "转正一个月倒计时",
+                    dept: "人资部",
+                    monthlyVolume: "5",
+                    savedPerTime: "0.2",
+                    monthlySaved: "1",
+                    status: "running"
+                },
+                {
+                    name: "面试时间修改提醒",
+                    dept: "人资部",
+                    monthlyVolume: "5",
+                    savedPerTime: "0.2",
+                    monthlySaved: "1",
+                    status: "running"
+                },
+                {
+                    name: "周年提醒及年度重置",
+                    dept: "人资部",
+                    monthlyVolume: "70",
+                    savedPerTime: "0.1",
+                    monthlySaved: "7",
+                    status: "running"
+                },
+                {
+                    name: "新人首月、次月汇报提醒",
+                    dept: "人资部",
+                    monthlyVolume: "10",
+                    savedPerTime: "0.1",
+                    monthlySaved: "1",
+                    status: "running"
+                },
+                {
+                    name: "招聘数据周报",
+                    dept: "人资部",
+                    monthlyVolume: "1",
+                    savedPerTime: "2",
+                    monthlySaved: "2",
+                    status: "running"
+                },
+                {
+                    name: "转正流程状态自动修改",
+                    dept: "人资部",
+                    monthlyVolume: "5",
+                    savedPerTime: "0.1",
+                    monthlySaved: "0.5",
+                    status: "running"
+                },
+                {
+                    name: "主动离职流程状态自动修改",
+                    dept: "人资部",
+                    monthlyVolume: "5",
+                    savedPerTime: "0.1",
+                    monthlySaved: "0.5",
+                    status: "running"
+                },
+                {
+                    name: "被动流程状态自动修改",
+                    dept: "人资部",
+                    monthlyVolume: "5",
+                    savedPerTime: "0.1",
+                    monthlySaved: "0.5",
+                    status: "running"
+                },
+                {
+                    name: "360评估收集及结果自动输出",
+                    dept: "人资部",
+                    monthlyVolume: "0.25",
+                    savedPerTime: "160",
+                    monthlySaved: "40",
+                    status: "running"
+                },
+                {
+                    name: "黑龙江零售商自助对账表（三方对账）",
+                    dept: "财务部",
+                    monthlyVolume: "22",
+                    savedPerTime: "4",
+                    monthlySaved: "176",
+                    status: "running"
+                },
+                {
+                    name: "广西零售商自助对账表（三方对账）",
+                    dept: "财务部",
+                    monthlyVolume: "22",
+                    savedPerTime: "4",
+                    monthlySaved: "176",
+                    status: "running"
+                }
+            ],
+            stories: [
+                {
+                    dept: "--",
+                    title: "--",
+                    scenario: "--",
+                    before: "--",
+                    after: "--",
+                    results: [
+                        {
+                            label: "--",
+                            value: "--"
+                        },
+                        {
+                            label: "--",
+                            value: "--"
+                        },
+                        {
+                            label: "--",
+                            value: "--"
+                        }
+                    ]
+                }
+            ],
+            dataNote: {
+                source: "北谷农业月度确认 + 引木系统日志",
+                costBasis: "按约定人力成本 50元/小时 计算",
+                period: "2026年"
+            }
+        }
+    ],
+    trend: {
+        labels: [
+            "1月",
+            "2月",
+            "3月",
+            "4月",
+            "5月",
+            "6月",
+            "7月",
+            "8月",
+            "9月",
+            "10月",
+            "11月",
+            "12月"
+        ],
+        monthlyCost: [
+            null,
+            null,
+            null,
+            1.4,
+            6.1,
+            9.1,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+        ],
+        cumulativeROI: [
+            null,
+            null,
+            null,
+            2,
+            8.7,
+            13,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+        ]
+    },
+    dataNote: {
+        source: "北谷智能表格+引木员工效率调研",
+        costBasis: "按岗位月薪6500元/月核算",
+        period: "2026"
+    }
+};
+
+
+let DATA = JSON.parse(JSON.stringify(DEFAULT_DATA));
+let charts = {};
+let isEditMode = false;
+let editingMonthIndex = 0;
+let kpiFlowsExpanded = false;
+
+// ═══════════════════════════════════════════════════════════════
+// 数据存取：URL hash 编码
+// ═══════════════════════════════════════════════════════════════
+function loadDataFromURL() {
+    const hash = window.location.hash.slice(1);
+    if (hash) {
+        try {
+            const decoded = atob(hash);
+            const jsonStr = decodeURIComponent(decoded);
+            const parsed = JSON.parse(jsonStr);
+            if (parsed && parsed.months && parsed.months.length > 0) {
+                DATA = parsed;
+                console.log('✅ 从URL加载数据成功，月份数:', DATA.months.length);
+                DATA.months.forEach((m, i) => {
+                    console.log(`  ${m.monthName}: KPI=${m.kpi?.length || 0}, flows=${m.flows?.length || 0}, stories=${m.stories?.length || 0}`);
+                });
+                // 同时保存到 localStorage 作为后备
+                try {
+                    localStorage.setItem('dashboard_data_v2', JSON.stringify(DATA));
+                    console.log('💾 已同步保存到 localStorage');
+                } catch (e) {
+                    console.warn('⚠️ localStorage 保存失败:', e.message);
+                }
+                return true;
+            }
+        } catch (e) {
+            console.error('❌ 从URL加载数据失败:', e.message, 'Hash长度:', hash.length);
+        }
+    }
+    
+    // URL 加载失败或为空，尝试从 localStorage 加载
+    try {
+        const saved = localStorage.getItem('dashboard_data_v2');
+        if (saved) {
+            const parsed = JSON.parse(saved);
+            if (parsed && parsed.months && parsed.months.length > 0) {
+                DATA = parsed;
+                console.log('✅ 从 localStorage 加载数据成功，月份数:', DATA.months.length);
+                DATA.months.forEach((m, i) => {
+                    console.log(`  ${m.monthName}: KPI=${m.kpi?.length || 0}, flows=${m.flows?.length || 0}, stories=${m.stories?.length || 0}`);
+                });
+                // 恢复 URL hash
+                const jsonStr = JSON.stringify(DATA);
+                const base64 = btoa(encodeURIComponent(jsonStr));
+                window.location.hash = base64;
+                return true;
+            }
+        }
+    } catch (e) {
+        console.error('❌ 从 localStorage 加载数据失败:', e.message);
+    }
+    
+    console.log('ℹ️ 使用默认示例数据');
+    return false;
+}
+
+function saveDataToURL() {
+    const jsonStr = JSON.stringify(DATA);
+    const base64 = btoa(encodeURIComponent(jsonStr));
+    window.location.hash = base64;
+    // 同时保存到 localStorage 防止 URL 截断导致数据丢失
+    try {
+        localStorage.setItem('dashboard_data_v2', jsonStr);
+        console.log('💾 数据已保存到 localStorage');
+    } catch (e) {
+        console.warn('⚠️ localStorage 保存失败:', e.message);
+    }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// 辅助函数：解析KPI数值字符串
+// ═══════════════════════════════════════════════════════════════
+function parseKPIValue(str) {
+    if (!str || str === '--' || str === '') return 0;
+    const cleaned = str.replace(/,/g, '').replace(/[^0-9.]/g, '');
+    return parseFloat(cleaned) || 0;
+}
+
+function formatNumber(num) {
+    if (num === 0) return '0';
+    if (num >= 1000) return num.toLocaleString('en-US', { maximumFractionDigits: 1 });
+    return Number.isInteger(num) ? num.toString() : num.toFixed(1).replace(/\.0$/, '');
+}
+
+// ═══════════════════════════════════════════════════════════════
+// 全年数据汇总计算
+// ═══════════════════════════════════════════════════════════════
+function calculateYearlyData() {
+    const months = DATA.months;
+    const validMonths = months.filter(m => m.kpi[0].value !== "--");
+    if (validMonths.length === 0) return null;
+    
+    // 累加各月KPI数值（节省人力数取全年最大值，非累加）
+    let totalHours = 0;
+    let totalHeadcount = 0;
+    let totalCost = 0;
+    
+    validMonths.forEach(m => {
+        totalHours += parseKPIValue(m.kpi[0].value);
+        totalHeadcount = Math.max(totalHeadcount, parseKPIValue(m.kpi[1].value));
+        totalCost += parseKPIValue(m.kpi[3].value);
+    });
+    
+    // 投入：取最后一个月（投入已是累计值，不累加）
+    const investTotal = validMonths[validMonths.length - 1].roiDetail.invest.total;
+    // 回报：取最后一个月（回报已是累计值，不累加）
+    const returnTotal = validMonths[validMonths.length - 1].roiDetail.return.total;
+    
+    // 当前ROI = 总回报 / 总投入
+    const currentROI = investTotal > 0 ? (returnTotal / investTotal).toFixed(1) : '0';
+    
+    // 汇总所有流程（去重，取最新状态）
+    const allFlows = [];
+    const flowMap = {};
+    validMonths.forEach(m => {
+        m.flows.forEach(f => {
+            if (f.name && f.name.trim() !== '' && f.name !== '--') {
+                flowMap[f.name] = f; // 后面的覆盖前面的，取最新状态
+            }
+        });
+    });
+    Object.values(flowMap).forEach(f => allFlows.push(f));
+    const totalFlows = allFlows.length;
+    
+    // 汇总所有故事（附带月份标记）
+    const allStories = [];
+    validMonths.forEach(m => {
+        m.stories.forEach(s => {
+            if (s.title !== "--" && s.scenario !== "--") allStories.push({ ...s, _month: m.monthName });
+        });
+    });
+    
+    return {
+        totalHours: formatNumber(totalHours),
+        totalHeadcount: formatNumber(totalHeadcount),
+        totalFlows,
+        totalCost: formatNumber(totalCost),
+        currentROI,
+        investTotal, returnTotal,
+        monthCount: validMonths.length,
+        allFlows, allStories,
+        latestMonth: validMonths[validMonths.length - 1]
+    };
+}
+
+// ═══════════════════════════════════════════════════════════════
+// 月份切换
+// ═══════════════════════════════════════════════════════════════
+function renderMonthTabs() {
+    const container = document.getElementById('month-tabs');
+    const isYearly = DATA.isYearlyView;
+    
+    let html = `<button onclick="switchToYearly()" class="year-tab ${isYearly ? 'active' : ''}"><i class="fas fa-chart-pie mr-1"></i>全年总览</button>`;
+    
+    html += DATA.months.map((m, i) => {
+        const hasData = m.kpi[0].value !== "--";
+        const isActive = !isYearly && i === DATA.currentMonthIndex;
+        return `<button onclick="switchMonth(${i})" class="month-tab ${isActive ? 'active' : ''} ${!hasData ? 'opacity-40' : ''}">${m.monthName}</button>`;
+    }).join('');
+    
+    container.innerHTML = html;
+}
+
+function switchToYearly() {
+    DATA.isYearlyView = true;
+    renderMonthTabs();
+    renderAll();
+}
+
+function switchMonth(index) {
+    DATA.isYearlyView = false;
+    DATA.currentMonthIndex = index;
+    renderMonthTabs();
+    renderAll();
+}
+
+function getCurrentMonth() {
+    return DATA.months[DATA.currentMonthIndex] || DATA.months[0];
+}
+
+// ═══════════════════════════════════════════════════════════════
+// 渲染引擎
+// ═══════════════════════════════════════════════════════════════
+function renderAll() {
+    const isYearly = DATA.isYearlyView;
+    const yearly = isYearly ? calculateYearlyData() : null;
+    
+    const currentMonth = getCurrentMonth();
+    console.log('🎨 renderAll:', isYearly ? '全年视图' : currentMonth.monthName, 
+                'currentMonthIndex=', DATA.currentMonthIndex,
+                'flows=', currentMonth.flows?.length || 0,
+                'kpi=', currentMonth.kpi?.map(k => k.value).join(', '));
+    
+    document.getElementById('current-view-label').textContent = isYearly ? '2026全年数据总览' : (getCurrentMonth().monthName + '数据概览');
+    document.getElementById('data-period-display').textContent = isYearly ? '累计 ' + (yearly?.monthCount || 0) + ' 个月' : getCurrentMonth().period;
+    
+    // 标题切换
+    document.getElementById('roi-title').textContent = isYearly ? '全年投入与回报汇总' : '投入与回报明细';
+    document.getElementById('trend-title').textContent = isYearly ? '全年趋势走势' : '趋势分析';
+    document.getElementById('stories-title').innerHTML = isYearly ? '<i class="fas fa-thumbtack text-rose-400 mr-1.5"></i>全部价值故事（' + (yearly?.allStories.length || 0) + '个）' : '<i class="fas fa-thumbtack text-rose-400 mr-1.5"></i>本月价值故事';
+    
+    // 准备流程数据用于KPI展开
+    const kpiFlows = isYearly && yearly ? yearly.allFlows : (getCurrentMonth().flows || []);
+    const validFlows = kpiFlows.filter(f => f.name && f.name.trim() !== '' && f.name !== '--');
+    
+    renderKPI(isYearly, yearly, validFlows);
+    renderROIDetail(isYearly, yearly);
+    renderDeptChart(isYearly, yearly);
+    renderTrendChart();
+    renderStories(isYearly, yearly);
+    renderFooter(isYearly, yearly);
+    
+    // 如果KPI展开区处于打开状态，刷新内容
+    if (kpiFlowsExpanded) {
+        renderKpiFlowsExpand(validFlows, isYearly);
+        document.getElementById('kpi-flows-expand').style.display = 'block';
+        const btnText = document.getElementById('kpi-flows-btn-text');
+        if (btnText) btnText.textContent = '收起流程清单（' + validFlows.length + '个）';
+        const btnIcon = btnText?.parentElement?.querySelector('i');
+        if (btnIcon) { btnIcon.className = 'fas fa-chevron-up text-[10px]'; }
+    }
+}
+
+function renderKPI(isYearly, yearly, flows) {
+    const container = document.getElementById('kpi-section');
+    const colorMap = {
+        amber: { bg: 'bg-amber-500/10', text: 'text-amber-400' },
+        blue: { bg: 'bg-blue-500/10', text: 'text-blue-400' },
+        indigo: { bg: 'bg-indigo-500/10', text: 'text-indigo-400' },
+        emerald: { bg: 'bg-emerald-500/10', text: 'text-emerald-400' },
+        white: { bg: 'bg-white/10', text: 'text-white' }
+    };
+    
+    let kpiData;
+    if (isYearly && yearly) {
+        // 全年视图：使用累加后的数据构建虚拟KPI数组
+        kpiData = [
+            { id: "hours", title: "累计节省工时", value: yearly.totalHours, unit: "小时", mom: "全年累计", momPct: "up", trans: `共 ${yearly.monthCount} 个月`, icon: "clock", color: "amber" },
+            { id: "headcount", title: "节省人力数", value: yearly.totalHeadcount, unit: "人", mom: "全年最大", momPct: "up", trans: `共 ${yearly.monthCount} 个月`, icon: "user", color: "blue" },
+            { id: "flows", title: "自动化流程数", value: yearly.totalFlows.toString(), unit: "个", mom: "全部流程", momPct: "up", trans: `去重后共 ${yearly.totalFlows} 个`, icon: "cog", color: "indigo" },
+            { id: "cost", title: "人力成本节省", value: yearly.totalCost, unit: "万", mom: "全年累计", momPct: "up", trans: `共 ${yearly.monthCount} 个月`, icon: "coins", color: "emerald" },
+            { id: "roi", title: "AI投入产出比", value: yearly.currentROI, unit: ": 1", mom: "全年平均", momPct: "up", trans: `总回报 ¥${yearly.returnTotal}万 / 总投入 ¥${yearly.investTotal}万`, icon: "bullseye", color: "white", highlight: true }
+        ];
+    } else {
+        // 单月视图：使用当月数据
+        kpiData = getCurrentMonth().kpi;
+    }
+    
+    container.innerHTML = kpiData.map((k, i) => {
+        const c = colorMap[k.color] || colorMap.blue;
+        const isLast = i === 4;
+        const colClass = isLast ? 'col-span-2 md:col-span-1' : '';
+        const highlightStyle = k.highlight ? 'background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); position: relative; overflow: hidden;' : '';
+        const glow = k.highlight ? '<div style="position:absolute;top:-50%;right:-20%;width:200px;height:200px;background:radial-gradient(circle,rgba(59,130,246,0.2) 0%,transparent 70%);border-radius:50%;"></div>' : '';
+        
+        // 环比趋势可视化
+        let trendIcon, trendColor, trendBg, trendLabel;
+        const momPctNum = parseFloat(k.momPct);
+        if (k.momPct === 'up') {
+            trendIcon = 'fa-arrow-up-long';
+            trendColor = 'text-emerald-400';
+            trendBg = 'bg-emerald-400';
+            trendLabel = k.mom;
+        } else if (isNaN(momPctNum) || momPctNum === 0) {
+            trendIcon = 'fa-minus';
+            trendColor = 'text-slate-400';
+            trendBg = 'bg-slate-500';
+            trendLabel = k.mom;
+        } else if (momPctNum > 0) {
+            trendIcon = 'fa-arrow-up-long';
+            trendColor = 'text-emerald-400';
+            trendBg = 'bg-emerald-400';
+            trendLabel = `${k.mom} <span class="text-slate-500 font-normal ml-1">+${k.momPct}%</span>`;
+        } else {
+            trendIcon = 'fa-arrow-down-long';
+            trendColor = 'text-rose-400';
+            trendBg = 'bg-rose-400';
+            trendLabel = `${k.mom} <span class="text-slate-500 font-normal ml-1">${k.momPct}%</span>`;
+        }
+        
+        return `
+            <div class="${colClass} glass rounded-xl p-4 text-center card-hover relative" style="${highlightStyle}">
+                ${glow}
+                <div class="w-9 h-9 rounded-full ${c.bg} flex items-center justify-center mx-auto mb-2 relative z-10">
+                    <i class="fas fa-${k.icon} ${c.text} text-sm"></i>
+                </div>
+                <p class="text-xs text-slate-400 mb-1 relative z-10">${k.title}</p>
+                <div class="kpi-number ${k.highlight ? 'text-white' : 'text-white'} relative z-10" ${k.highlight ? 'style="font-size:36px;"' : ''}>${k.value === '--' ? '0' : k.value}</div>
+                <p class="text-xs text-slate-400 mb-2 relative z-10">${k.unit === '--' ? '' : k.unit}</p>
+                <div class="border-t ${k.highlight ? 'border-white/10' : 'border-slate-700/50'} pt-2 relative z-10">
+                    <div class="flex items-center gap-1.5 justify-center">
+                        <span class="w-1 h-4 rounded-full ${trendBg} flex-shrink-0"></span>
+                        <i class="fas ${trendIcon} ${trendColor} text-[10px] flex-shrink-0"></i>
+                        <span class="text-xs font-medium ${trendColor}">${trendLabel}</span>
+                    </div>
+                    <p class="text-[10px] text-slate-500 mt-1">${k.trans}</p>
+                </div>
+                ${k.id === 'flows' ? `<div class="mt-2 pt-2 border-t border-slate-700/30 relative z-10">
+                    <button onclick="event.stopPropagation(); toggleKpiFlowsExpand()" class="kpi-expand-btn touch-btn w-full py-1.5 rounded-lg text-xs text-indigo-400 hover:text-indigo-300 hover:bg-indigo-500/10 transition flex items-center justify-center gap-1">
+                        <i class="fas fa-${kpiFlowsExpanded ? 'chevron-up' : 'list-ul'} text-[10px]"></i>
+                        <span id="kpi-flows-btn-text">${kpiFlowsExpanded ? '收起流程清单' : '展开查看流程'}（${flows.length}个）</span>
+                    </button>
+                </div>` : ''}
+            </div>
+        `;
+    }).join('');
+}
+
+function renderROIDetail(isYearly, yearly) {
+    const m = isYearly && yearly ? { roiDetail: { invest: { total: yearly.investTotal, items: [] }, return: { total: yearly.returnTotal, items: [] } } } : getCurrentMonth();
+    if (isYearly && yearly) {
+        // 全年：汇总所有月份的投入/回报明细（按名称聚合）
+        const validMonths = DATA.months.filter(mm => mm.kpi[0].value !== "--");
+        
+        // 聚合投入明细（同名累加）
+        const investAgg = {};
+        validMonths.forEach(mm => {
+            (mm.roiDetail.invest.items || []).forEach(item => {
+                if (item.name && item.value > 0) {
+                    investAgg[item.name] = (investAgg[item.name] || 0) + item.value;
+                }
+            });
+        });
+        m.roiDetail.invest.items = Object.entries(investAgg).map(([name, value]) => ({ name, value }));
+        
+        // 聚合回报明细（同名累加）
+        const returnAgg = {};
+        validMonths.forEach(mm => {
+            (mm.roiDetail.return.items || []).forEach(item => {
+                if (item.name && item.value > 0) {
+                    returnAgg[item.name] = (returnAgg[item.name] || 0) + item.value;
+                }
+            });
+        });
+        m.roiDetail.return.items = Object.entries(returnAgg).map(([name, value]) => ({ name, value }));
+    }
+    
+    const d = m.roiDetail;
+    document.getElementById('roi-invest-total').textContent = d.invest?.total || '--';
+    document.getElementById('roi-return-total').textContent = d.return?.total || '--';
+
+    const max = Math.max(d.invest?.total || 1, d.return?.total || 1);
+    document.getElementById('roi-invest-bar').style.width = ((d.invest?.total || 0) / max * 100) + '%';
+    document.getElementById('roi-return-bar').style.width = ((d.return?.total || 0) / max * 100) + '%';
+
+    document.getElementById('invest-items').innerHTML = (d.invest?.items || []).map(item => `
+        <div class="flex justify-between items-center py-1.5 border-b border-slate-700/50 last:border-0">
+            <span class="text-xs text-slate-400">${item.name}</span>
+            <span class="text-xs font-semibold text-slate-300">¥${item.value}万</span>
+        </div>
+    `).join('');
+
+    document.getElementById('return-items').innerHTML = (d.return?.items || []).map(item => `
+        <div class="flex justify-between items-center py-1.5 border-b border-emerald-500/20 last:border-0">
+            <span class="text-xs text-emerald-400">${item.name}</span>
+            <span class="text-xs font-semibold text-emerald-300">¥${item.value}万</span>
+        </div>
+    `).join('');
+}
+
+function renderDeptChart(isYearly, yearly) {
+    if (charts.dept) charts.dept.destroy();
+    
+    // 聚合部门工时
+    const deptMap = {};
+    const flows = isYearly && yearly ? yearly.allFlows : (getCurrentMonth().flows || []);
+    flows.forEach(f => {
+        if (!f.name || f.name.trim() === '' || f.name === '--') return;
+        const dept = f.dept || '未分类';
+        const hours = parseFloat((f.monthlySaved || '').replace(/[^0-9.]/g, '')) || 0;
+        deptMap[dept] = (deptMap[dept] || 0) + hours;
+    });
+    
+    const depts = Object.keys(deptMap).sort((a, b) => deptMap[b] - deptMap[a]);
+    const values = depts.map(d => deptMap[d]);
+    
+    const chartContainer = document.getElementById('dept-chart-container');
+    const emptyMsg = document.getElementById('dept-empty-msg');
+    const title = document.getElementById('dept-title');
+    
+    if (title) {
+        title.innerHTML = isYearly ? '<i class="fas fa-building text-purple-400 mr-1.5"></i>部门价值分布（全年累计）' : '<i class="fas fa-building text-purple-400 mr-1.5"></i>部门价值分布';
+    }
+    
+    if (depts.length === 0) {
+        if (chartContainer) chartContainer.style.display = 'none';
+        if (emptyMsg) emptyMsg.style.display = 'block';
+        return;
+    }
+    
+    if (chartContainer) chartContainer.style.display = 'block';
+    if (emptyMsg) emptyMsg.style.display = 'none';
+    
+    // 配色
+    const colors = ['#a78bfa', '#818cf8', '#60a5fa', '#38bdf8', '#22d3ee', '#34d399', '#fbbf24', '#f472b6'];
+    
+    const ctx = document.getElementById('deptChart').getContext('2d');
+    charts.dept = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: depts,
+            datasets: [{
+                label: '月省工时（小时）',
+                data: values,
+                backgroundColor: depts.map((_, i) => colors[i % colors.length] + '99'),
+                borderColor: depts.map((_, i) => colors[i % colors.length]),
+                borderWidth: 1,
+                borderRadius: 4,
+                barThickness: Math.max(20, Math.min(36, 400 / depts.length))
+            }]
+        },
+        options: {
+            indexAxis: 'y',
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    backgroundColor: 'rgba(15, 23, 42, 0.95)',
+                    padding: 10,
+                    cornerRadius: 6,
+                    titleFont: { size: 12 },
+                    bodyFont: { size: 11 },
+                    callbacks: {
+                        label: ctx => ` ${ctx.raw} 小时/月`
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    grid: { color: 'rgba(255,255,255,0.05)' },
+                    ticks: { color: '#94a3b8', font: { size: 10 }, callback: v => v + 'h' }
+                },
+                y: {
+                    grid: { display: false },
+                    ticks: { color: '#e2e8f0', font: { size: 11, weight: '500' } }
+                }
+            }
+        }
+    });
+}
+
+function renderTrendChart() {
+    if (charts.trend) charts.trend.destroy();
+    
+    // 自动从KPI数据构建趋势（无需手动编辑趋势图数据点）
+    const labels = [];
+    const monthlyCost = [];
+    const cumulativeROI = [];
+    
+    DATA.months.forEach((m, i) => {
+        if (m.kpi[3].value !== '--' && m.kpi[3].value !== '') {
+            labels.push(m.monthName);
+            monthlyCost.push(parseKPIValue(m.kpi[3].value));
+        }
+        if (m.kpi[4].value !== '--' && m.kpi[4].value !== '') {
+            // 确保数组对齐
+            if (cumulativeROI.length < labels.length) {
+                while (cumulativeROI.length < labels.length) cumulativeROI.push(null);
+            }
+            cumulativeROI[cumulativeROI.length === labels.length - 1 ? cumulativeROI.length : cumulativeROI.length] = parseKPIValue(m.kpi[4].value);
+        }
+    });
+    // 对齐两个数组
+    while (cumulativeROI.length < labels.length) cumulativeROI.push(null);
+    
+    if (labels.length === 0) return;
+    
+    const ctx = document.getElementById('trendChart').getContext('2d');
+    charts.trend = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels,
+            datasets: [
+                { label: '月节省成本（万元）', data: monthlyCost, backgroundColor: 'rgba(16, 185, 129, 0.7)', borderColor: 'rgba(16, 185, 129, 1)', borderWidth: 1, borderRadius: 4, order: 2, yAxisID: 'y' },
+                { label: '累计ROI', data: cumulativeROI, type: 'line', borderColor: '#3b82f6', backgroundColor: 'rgba(59, 130, 246, 0.1)', borderWidth: 2, pointBackgroundColor: '#3b82f6', pointRadius: 4, pointHoverRadius: 6, fill: true, tension: 0.4, order: 1, yAxisID: 'y1' }
+            ]
+        },
+        options: {
+            responsive: true, maintainAspectRatio: false,
+            interaction: { mode: 'index', intersect: false },
+            plugins: { legend: { display: false }, tooltip: { backgroundColor: 'rgba(15, 23, 42, 0.95)', padding: 10, cornerRadius: 6, titleFont: { size: 12 }, bodyFont: { size: 11 }, borderColor: 'rgba(255,255,255,0.1)', borderWidth: 1 } },
+            scales: {
+                x: { grid: { display: false }, ticks: { color: '#94a3b8', font: { size: 11 } } },
+                y: { type: 'linear', display: true, position: 'left', grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#94a3b8', font: { size: 10 }, callback: v => v + '万' } },
+                y1: { type: 'linear', display: true, position: 'right', grid: { display: false }, ticks: { color: '#60a5fa', font: { size: 10 }, callback: v => v + 'x' } }
+            }
+        }
+    });
+}
+
+function toggleKpiFlowsExpand() {
+    kpiFlowsExpanded = !kpiFlowsExpanded;
+    const section = document.getElementById('kpi-flows-expand');
+    const btnText = document.getElementById('kpi-flows-btn-text');
+    
+    // 获取当前流程数据
+    const isYearly = DATA.isYearlyView;
+    const yearly = isYearly ? calculateYearlyData() : null;
+    const rawFlows = isYearly && yearly ? yearly.allFlows : (getCurrentMonth().flows || []);
+    const flows = rawFlows.filter(f => f.name && f.name.trim() !== '' && f.name !== '--');
+    
+    if (kpiFlowsExpanded) {
+        renderKpiFlowsExpand(flows, isYearly);
+        section.style.display = 'block';
+        if (btnText) btnText.textContent = '收起流程清单（' + flows.length + '个）';
+        // 更新按钮图标
+        const btnIcon = btnText?.parentElement?.querySelector('i');
+        if (btnIcon) { btnIcon.className = 'fas fa-chevron-up text-[10px]'; }
+        // 滚动到展开区
+        setTimeout(() => { section.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }, 100);
+    } else {
+        section.style.display = 'none';
+        if (btnText) btnText.textContent = '展开查看流程（' + flows.length + '个）';
+        const btnIcon = btnText?.parentElement?.querySelector('i');
+        if (btnIcon) { btnIcon.className = 'fas fa-list-ul text-[10px]'; }
+    }
+}
+
+function renderKpiFlowsExpand(flows, isYearly) {
+    const container = document.getElementById('kpi-flows-expand-list');
+    const label = document.getElementById('kpi-flows-expand-label');
+    if (!container) return;
+    
+    if (label) {
+        label.textContent = isYearly ? '全年自动化流程清单（' + flows.length + '个）' : '本月自动化流程清单（' + flows.length + '个）';
+    }
+    
+    if (flows.length === 0) {
+        container.innerHTML = '<p class="text-xs text-slate-500 text-center py-3">暂无自动化流程数据</p>';
+        return;
+    }
+    
+    container.innerHTML = flows.map((flow, idx) => {
+        const statusClass = flow.status === 'running' ? 'status-running' : flow.status === 'optimizing' ? 'status-optimizing' : 'status-pending';
+        const statusText = flow.status === 'running' ? '运行中' : flow.status === 'optimizing' ? '优化中' : '待上线';
+        const statusDot = flow.status === 'running' ? '#34d399' : flow.status === 'optimizing' ? '#fbbf24' : '#60a5fa';
+        return `
+        <div class="kpi-flow-item flex items-center justify-between px-3 py-2 rounded-lg bg-slate-800/20 border border-slate-700/20">
+            <div class="flex items-center gap-2.5 min-w-0 flex-1">
+                <span class="w-2 h-2 rounded-full flex-shrink-0" style="background: ${statusDot};"></span>
+                <span class="text-sm text-slate-200 truncate">${flow.name}</span>
+                <span class="px-1.5 py-0.5 rounded text-[10px] font-medium flex-shrink-0 ${statusClass}">${statusText}</span>
+            </div>
+            <div class="flex items-center gap-4 flex-shrink-0 ml-3">
+                <span class="text-xs text-slate-500">${flow.dept}</span>
+                <span class="text-xs font-semibold text-emerald-400">${flow.monthlySaved}</span>
+            </div>
+        </div>`;
+    }).join('');
+}
+
+function exportReport() {
+    if (isEditMode) { toggleEdit(); }
+    if (kpiFlowsExpanded) { toggleKpiFlowsExpand(); }
+    document.getElementById('pdf-tip-modal').classList.remove('hidden');
+}
+
+function doPrintPDF() {
+    setTimeout(() => { window.print(); }, 300);
+}
+
+function renderStories(isYearly, yearly) {
+    const container = document.getElementById('stories-container');
+    let stories;
+    
+    if (isYearly && yearly) {
+        // 全年：已附带 _month 字段，按月份顺序
+        stories = yearly.allStories;
+    } else {
+        // 单月：过滤空数据
+        stories = (getCurrentMonth().stories || []).filter(s => s.title !== "--" && s.scenario !== "--");
+    }
+    
+    if (stories.length === 0) {
+        container.innerHTML = '<p class="text-xs text-slate-500 text-center py-4">暂无价值故事</p>';
+        return;
+    }
+    
+    container.innerHTML = stories.map(story => `
+        <div class="glass story-card-dark rounded-xl p-4 card-hover relative">
+            <div class="flex items-center gap-2 mb-3">
+                <span class="px-1.5 py-0.5 rounded bg-blue-500/20 text-blue-400 text-xs font-semibold">${story.dept}</span>
+                ${story._month ? `<span class="px-1.5 py-0.5 rounded bg-slate-700/80 text-slate-300 text-[10px] font-medium">${story._month}</span>` : ''}
+                <h3 class="text-base font-bold text-white">${story.title}</h3>
+            </div>
+            <div class="space-y-2.5 mb-4">
+                <div class="bg-slate-800/50 rounded-lg p-2.5">
+                    <p class="text-[10px] text-slate-500 mb-1">场景</p>
+                    <p class="text-xs text-slate-300">${story.scenario}</p>
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                    <div class="bg-rose-500/5 rounded-lg p-2.5 border border-rose-500/10">
+                        <p class="text-[10px] text-rose-400 mb-1"><i class="fas fa-times-circle mr-1"></i>之前</p>
+                        <p class="text-xs text-slate-300">${story.before}</p>
+                    </div>
+                    <div class="bg-emerald-500/5 rounded-lg p-2.5 border border-emerald-500/10">
+                        <p class="text-[10px] text-emerald-400 mb-1"><i class="fas fa-check-circle mr-1"></i>现在</p>
+                        <p class="text-xs text-slate-300">${story.after}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t border-slate-700/50 pt-3">
+                <p class="text-[10px] text-slate-500 mb-2">核心成果</p>
+                <div class="flex gap-3">
+                    ${story.results.map(r => `<div class="text-center flex-1"><p class="text-base font-bold text-white">${r.value}</p><p class="text-[10px] text-slate-400">${r.label}</p></div>`).join('')}
+                </div>
+            </div>
+        </div>
+    `).join('');
+}
+
+function renderFooter(isYearly, yearly) {
+    const m = isYearly && yearly ? yearly.latestMonth : getCurrentMonth();
+    document.getElementById('data-source').textContent = DATA.dataNote.source;
+    document.getElementById('data-cost').textContent = DATA.dataNote.costBasis;
+    document.getElementById('data-period-note').textContent = isYearly && yearly ? '2026年1月-' + yearly.latestMonth.monthName : DATA.dataNote.period;
+    document.getElementById('data-next').textContent = m.nextUpdate;
+    document.getElementById('provider-name').textContent = DATA.providerName;
+    document.getElementById('advisor-name').textContent = DATA.advisorName;
+    document.getElementById('advisor-phone').textContent = DATA.advisorPhone;
+}
+
+// ═══════════════════════════════════════════════════════════════
+// 编辑模式
+// ═══════════════════════════════════════════════════════════════
+function cancelEdit() {
+    isEditMode = false;
+    document.getElementById('edit-panel').classList.add('hidden');
+    document.getElementById('edit-btn').innerHTML = '<i class="fas fa-edit mr-1"></i>编辑数据';
+}
+
+function autoCalcFromFlows() {
+    try {
+    // 扫描DOM收集所有流程
+    const flows = [];
+    let i = 0;
+    while (true) {
+        const nameEl = document.getElementById(`e-flow-${i}-name`);
+        if (!nameEl) break;
+        const monthlyEl = document.getElementById(`e-flow-${i}-monthly`);
+        const monthlySavedVal = monthlyEl ? monthlyEl.value : '0';
+        flows.push({
+            name: nameEl.value.trim(),
+            monthlySaved: monthlySavedVal
+        });
+        i++;
+    }
+    
+    // 统计有效流程（有名称的）
+    const validFlows = flows.filter(f => f.name !== '');
+    const flowCount = validFlows.length;
+    
+    // 计算月省工时总和
+    let totalHours = 0;
+    validFlows.forEach(f => {
+        const numStr = f.monthlySaved.replace(/[^0-9.]/g, '');
+        const val = parseFloat(numStr) || 0;
+        totalHours += val;
+    });
+    
+    const headcount = totalHours / 1740;
+    
+    // KPI[2] = 自动化流程数
+    document.getElementById('e-kpi-2-value').value = flowCount;
+    document.getElementById('e-kpi-2-unit').value = '个';
+    
+    // KPI[0] = 累计节省工时
+    document.getElementById('e-kpi-0-value').value = totalHours.toLocaleString();
+    document.getElementById('e-kpi-0-unit').value = '小时';
+    
+    // KPI[1] = 节省人力数
+    document.getElementById('e-kpi-1-value').value = headcount.toFixed(1).replace(/\.0$/, '');
+    document.getElementById('e-kpi-1-unit').value = '人';
+    
+    // KPI[3] = 人力成本节省 → 同步 ROI 回报明细第一项「人力节省折算」
+    // 如果 ROI 回报明细填了值则用它，否则回退到公式计算
+    const return0El = document.getElementById('e-return-val-0');
+    const return0Val = return0El ? parseFloat(return0El.value) || 0 : 0;
+    const costWan = return0Val > 0 ? return0Val : totalHours * 40 / 10000;
+    document.getElementById('e-kpi-3-value').value = return0Val > 0 ? return0Val.toString() : costWan.toFixed(1).replace(/\.0$/, '');
+    document.getElementById('e-kpi-3-unit').value = '万';
+    
+    // 自动计算环比和人话
+    for (let j = 0; j < 5; j++) { autoCalcKPI(j); }
+    updateInvestTotal();
+    
+    console.log('✅ 自动计算完成：流程数=' + flowCount + ', 月省工时=' + totalHours + ', 人力数=' + headcount.toFixed(1) + ', 成本=' + costWan.toFixed(1) + '万');
+    } catch (e) {
+        console.error('❌ autoCalcFromFlows 出错:', e.message);
+    }
+}
+
+function updateInvestTotal() {
+    // 计算本月投入小计
+    let monthTotal = 0;
+    for (let i = 0; i < 3; i++) {
+        const el = document.getElementById('e-invest-val-' + i);
+        if (el) monthTotal += parseFloat(el.value) || 0;
+    }
+    const monthEl = document.getElementById('e-invest-month-total');
+    if (monthEl) monthEl.value = monthTotal.toFixed(1).replace(/\.0$/, '');
+    
+    // 计算累计投入 = 前(editingMonthIndex)个月的总投入 + 本月小计
+    // 前几个月的投入从 DATA 读取
+    let cumulative = 0;
+    for (let idx = 0; idx < editingMonthIndex; idx++) {
+        const prevMonth = DATA.months[idx];
+        if (prevMonth && prevMonth.roiDetail && prevMonth.roiDetail.invest) {
+            cumulative += prevMonth.roiDetail.invest.monthTotal || 0;
+        }
+    }
+    cumulative += monthTotal;
+    
+    const totalEl = document.getElementById('e-invest-total');
+    if (totalEl) totalEl.value = cumulative.toFixed(1).replace(/\.0$/, '');
+    autoCalcROI();
+}
+
+// 直接对 DATA 对象计算 KPI 环比对比，不依赖 DOM
+// 用于 saveAndClose 中 DOM 值可能未触发 autoCalcKPI 时兜底
+function computeAllKPIComparisons() {
+    const currIdx = editingMonthIndex;
+    const curr = DATA.months[currIdx];
+    if (!curr) return;
+    
+    const prev = currIdx > 0 ? DATA.months[currIdx - 1] : null;
+    
+    function parseNum(str) {
+        if (!str || str === '--' || str === '') return 0;
+        const cleaned = str.replace(/,/g, '').replace(/[^0-9.]/g, '');
+        return parseFloat(cleaned) || 0;
+    }
+    function fmtNum(n) {
+        return Number.isInteger(n) ? n.toString() : n.toFixed(1).replace(/\\.0$/, '');
+    }
+    
+    const kpiConfigs = [
+        { idx: 0, title: '累计节省工时', unit: '小时', transTemplate: (v) => `约 ${(v / 1740).toFixed(1)}人/月` },
+        { idx: 1, title: '节省人力数', unit: '人', transTemplate: (v) => `约释放${Math.round(v)}个全职` },
+        { idx: 2, title: '自动化流程数', unit: '个', transTemplate: (v) => `覆盖${Math.max(1, Math.round(v / 2))}个部门` },
+        { idx: 3, title: '人力成本节省', unit: '万', transTemplate: (v) => `相当于省出${(v / 12).toFixed(1)}个年薪` }
+    ];
+    
+    for (const cfg of kpiConfigs) {
+        const k = curr.kpi[cfg.idx];
+        const currVal = parseNum(k.value);
+        const prevVal = prev ? parseNum(prev.kpi[cfg.idx].value) : 0;
+        
+        if (currVal > 0 && (currIdx === 0 || prevVal === 0)) {
+            const momValue = cfg.idx === 0 ? currVal.toLocaleString() : fmtNum(currVal);
+            k.mom = `+${momValue}${cfg.unit}`;
+            k.momPct = '100';
+            k.trans = cfg.transTemplate(currVal);
+        } else if (currVal > 0 && prevVal > 0) {
+            const diff = currVal - prevVal;
+            const pct = Math.round((diff / prevVal) * 100);
+            const sign = diff >= 0 ? '+' : '';
+            const momValue = cfg.idx === 0 ? Math.abs(diff).toLocaleString() : fmtNum(Math.abs(diff));
+            k.mom = `${sign}${momValue}${cfg.unit}`;
+            k.momPct = pct.toString();
+            k.trans = cfg.transTemplate(currVal);
+        } else {
+            k.mom = '--';
+            k.momPct = '--';
+            k.trans = '--';
+        }
+    }
+}
+
+function autoCalcROI() {
+    // 读取累计投入（从 e-invest-total，已由 updateInvestTotal 计算好）
+    let investTotal = 0;
+    const investTotalEl = document.getElementById('e-invest-total');
+    if (investTotalEl) investTotal = parseFloat(investTotalEl.value) || 0;
+    
+    // 计算回报总计（本月变化值求和）
+    let returnMonthTotal = 0;
+    for (let i = 0; i < 3; i++) {
+        const el = document.getElementById(`e-return-val-${i}`);
+        if (el) returnMonthTotal += parseFloat(el.value) || 0;
+    }
+    
+    // 累计回报 = 前几个月的累计回报 + 本月回报变化
+    let cumulativeReturn = 0;
+    for (let idx = 0; idx < editingMonthIndex; idx++) {
+        const prevMonth = DATA.months[idx];
+        if (prevMonth && prevMonth.roiDetail && prevMonth.roiDetail.return) {
+            cumulativeReturn += prevMonth.roiDetail.return.total || 0;
+        }
+    }
+    cumulativeReturn += returnMonthTotal;
+    
+    // 更新回报总计显示
+    const returnTotalEl = document.getElementById('e-return-total');
+    if (returnTotalEl) returnTotalEl.value = cumulativeReturn.toFixed(1).replace(/\.0$/, '');
+    
+    // 计算ROI = 累计回报 / 累计投入
+    let roiValue = '';
+    if (investTotal > 0) {
+        roiValue = (cumulativeReturn / investTotal).toFixed(1).replace(/\.0$/, '');
+    }
+    
+    // 更新KPI[4]（AI投入产出比）的value
+    const kpi4Value = document.getElementById('e-kpi-4-value');
+    if (kpi4Value) {
+        kpi4Value.value = roiValue;
+        // 同步更新ROI的mom/pct/trans显示
+        autoCalcKPI(4);
+    }
+    
+    // 同步 KPI[3]（人力成本节省）← ROI 回报明细第一项「人力节省折算」
+    const kpi3Val = document.getElementById('e-return-val-0');
+    const kpi3El = document.getElementById('e-kpi-3-value');
+    if (kpi3Val && kpi3El) {
+        const return0 = parseFloat(kpi3Val.value) || 0;
+        if (return0 > 0) kpi3El.value = return0;
+    }
+    
+    console.log(`✅ ROI自动计算：累计投入=${investTotal}万, 累计回报=${cumulativeReturn}万, ROI=${roiValue}`);
+}
+
+function autoCalcKPI(idx) {
+    try {
+        const currIdx = editingMonthIndex;
+        const curr = DATA.months[currIdx];
+        
+        // 获取当前输入的数值
+        const valueInput = document.getElementById(`e-kpi-${idx}-value`);
+        const currValStr = valueInput ? valueInput.value : '';
+        
+        // 解析数值
+        function parseNum(str) {
+            if (!str || str === '--' || str === '') return 0;
+            const cleaned = str.replace(/,/g, '').replace(/[^0-9.]/g, '');
+            return parseFloat(cleaned) || 0;
+        }
+        
+        function fmtNum(n) {
+            return Number.isInteger(n) ? n.toString() : n.toFixed(1).replace(/\.0$/, '');
+        }
+        
+        const currVal = parseNum(currValStr);
+        
+        // KPI 配置
+        const kpiConfigs = [
+            { idx: 0, title: '累计节省工时', unit: '小时', transTemplate: (v) => `约 ${(v / 1740).toFixed(1)}人/月` },
+            { idx: 1, title: '节省人力数', unit: '人', transTemplate: (v) => `约释放${Math.round(v)}个全职` },
+            { idx: 2, title: '自动化流程数', unit: '个', transTemplate: (v) => `覆盖${Math.max(1, Math.round(v / 2))}个部门` },
+            { idx: 3, title: '人力成本节省', unit: '万', transTemplate: (v) => `相当于省出${(v / 12).toFixed(1)}个年薪` }
+        ];
+        
+        // ROI 特殊处理
+        if (idx === 4) {
+            const momDisplay = document.getElementById(`e-kpi-4-mom-display`);
+            const pctDisplay = document.getElementById(`e-kpi-4-pct-display`);
+            const transDisplay = document.getElementById(`e-kpi-4-trans-display`);
+            const momHidden = document.getElementById(`e-kpi-4-mom`);
+            const pctHidden = document.getElementById(`e-kpi-4-pct`);
+            const transHidden = document.getElementById(`e-kpi-4-trans`);
+            
+            if (momDisplay) momDisplay.textContent = '累计趋势';
+            if (pctDisplay) pctDisplay.textContent = 'up';
+            const transText = currValStr && currValStr !== '--' ? `每投入1元，回报${currValStr}元` : '累计趋势中';
+            if (transDisplay) transDisplay.textContent = transText;
+            
+            if (momHidden) momHidden.value = '累计趋势';
+            if (pctHidden) pctHidden.value = 'up';
+            if (transHidden) transHidden.value = transText;
+            return;
+        }
+        
+        const cfg = kpiConfigs[idx];
+        if (!cfg) return;
+        
+        // 获取上月数据（上月为空则默认为0）
+        let prevVal = 0;
+        if (currIdx > 0) {
+            const prev = DATA.months[currIdx - 1];
+            if (prev && prev.kpi[idx]) {
+                prevVal = parseNum(prev.kpi[idx].value);
+            }
+        }
+        
+        // 计算环比和上升%
+        let momText = '--';
+        let pctText = '--';
+        let transText = '--';
+        
+        if (currVal > 0) {
+            if (currIdx === 0 || prevVal === 0) {
+                // 首月或上月为0：按初始值处理
+                const momValue = idx === 0 ? currVal.toLocaleString() : fmtNum(currVal);
+                const momUnitStr = cfg.unit === '万' ? '万' : (idx === 2 ? '个' : cfg.unit);
+                momText = `+${momValue}${momUnitStr}`;
+                pctText = '100';
+                transText = cfg.transTemplate(currVal);
+            } else {
+                // 有上月数据：计算环比
+                const diff = currVal - prevVal;
+                const pct = prevVal > 0 ? Math.round((diff / prevVal) * 100) : 100;
+                
+                const momSign = diff >= 0 ? '+' : '';
+                const momValue = idx === 0 ? diff.toLocaleString() : fmtNum(diff);
+                const momUnitStr = cfg.unit === '万' ? '万' : (idx === 2 ? '个' : cfg.unit);
+                
+                momText = `${momSign}${momValue}${momUnitStr}`;
+                pctText = pct.toString();
+                transText = cfg.transTemplate(currVal);
+            }
+        }
+        
+        // 更新显示
+        const momDisplay = document.getElementById(`e-kpi-${idx}-mom-display`);
+        const pctDisplay = document.getElementById(`e-kpi-${idx}-pct-display`);
+        const transDisplay = document.getElementById(`e-kpi-${idx}-trans-display`);
+        const momHidden = document.getElementById(`e-kpi-${idx}-mom`);
+        const pctHidden = document.getElementById(`e-kpi-${idx}-pct`);
+        const transHidden = document.getElementById(`e-kpi-${idx}-trans`);
+        
+        if (momDisplay) momDisplay.textContent = momText;
+        if (pctDisplay) pctDisplay.textContent = pctText + (pctText !== '--' ? '%' : '');
+        if (transDisplay) transDisplay.textContent = transText;
+        
+        if (momHidden) momHidden.value = momText;
+        if (pctHidden) pctHidden.value = pctText;
+        if (transHidden) transHidden.value = transText;
+        
+    } catch (err) {
+        console.error('autoCalcKPI error:', err);
+    }
+}
+
+function autoCalcAllKPI() {
+    for (let i = 0; i < 5; i++) {
+        autoCalcKPI(i);
+    }
+}
+
+function addFlow() {
+    // 先保存当前表单数据，避免丢失
+    collectFormData();
+    const m = DATA.months[editingMonthIndex];
+    m.flows.unshift({
+        name: "",
+        dept: "",
+        monthlyVolume: "",
+        savedPerTime: "",
+        monthlySaved: "",
+        status: "running"
+    });
+    renderEditForm();
+    // 滚动到顶部新添加的流程（倒序后新项在最前面）
+    setTimeout(() => {
+        const container = document.getElementById('flows-edit-container');
+        if (container) container.firstElementChild?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }, 50);
+}
+
+function removeFlow(index) {
+    if (!confirm('确定删除流程 ' + (index + 1) + '？此操作不可恢复')) return;
+    // 先保存当前表单数据，避免丢失其他流程
+    collectFormData();
+    const m = DATA.months[editingMonthIndex];
+    m.flows.splice(index, 1);
+    renderEditForm();
+}
+
+function clearKPI(index) {
+    if (!confirm('确定清空 KPI ' + (index + 1) + ' 的所有数据？')) return;
+    document.getElementById('e-kpi-' + index + '-value').value = '';
+    document.getElementById('e-kpi-' + index + '-unit').value = '';
+    document.getElementById('e-kpi-' + index + '-mom').value = '';
+    document.getElementById('e-kpi-' + index + '-pct').value = '';
+    document.getElementById('e-kpi-' + index + '-trans').value = '';
+    
+    // 清空显示区域
+    const momDisplay = document.getElementById('e-kpi-' + index + '-mom-display');
+    const pctDisplay = document.getElementById('e-kpi-' + index + '-pct-display');
+    const transDisplay = document.getElementById('e-kpi-' + index + '-trans-display');
+    if (momDisplay) momDisplay.textContent = '--';
+    if (pctDisplay) pctDisplay.textContent = '--';
+    if (transDisplay) transDisplay.textContent = '--';
+}
+
+function clearAllKPI() {
+    if (!confirm('确定清空所有5个KPI的数据？')) return;
+    for (let i = 0; i < 5; i++) {
+        document.getElementById('e-kpi-' + i + '-value').value = '';
+        document.getElementById('e-kpi-' + i + '-unit').value = '';
+        document.getElementById('e-kpi-' + i + '-mom').value = '';
+        document.getElementById('e-kpi-' + i + '-pct').value = '';
+        document.getElementById('e-kpi-' + i + '-trans').value = '';
+        
+        const momDisplay = document.getElementById('e-kpi-' + i + '-mom-display');
+        const pctDisplay = document.getElementById('e-kpi-' + i + '-pct-display');
+        const transDisplay = document.getElementById('e-kpi-' + i + '-trans-display');
+        if (momDisplay) momDisplay.textContent = '--';
+        if (pctDisplay) pctDisplay.textContent = '--';
+        if (transDisplay) transDisplay.textContent = '--';
+    }
+}
+
+function clearROI() {
+    if (!confirm('确定清空本月投入和回报数据？')) return;
+    // 清空本月投入
+    for (let i = 0; i < 3; i++) {
+        const el = document.getElementById('e-invest-val-' + i);
+        if (el) el.value = '0';
+    }
+    updateInvestTotal();
+    // 清空本月回报
+    document.getElementById('e-return-total').value = '0';
+    for (let i = 0; i < 3; i++) {
+        const el = document.getElementById('e-return-val-' + i);
+        if (el) el.value = '0';
+    }
+    autoCalcROI();
+}
+
+function clearInvestItems() {
+    if (!confirm('确定清空本月投入数据？')) return;
+    for (let i = 0; i < 3; i++) {
+        const el = document.getElementById('e-invest-val-' + i);
+        if (el) el.value = '0';
+    }
+    updateInvestTotal();
+}
+
+function clearReturnItems() {
+    if (!confirm('确定清空所有回报明细？')) return;
+    for (let i = 0; i < 3; i++) {
+        document.getElementById('e-return-name-' + i).value = '';
+        document.getElementById('e-return-val-' + i).value = '0';
+    }
+}
+
+function addStory() {
+    const m = DATA.months[editingMonthIndex];
+    m.stories.unshift({ dept: "", title: "", scenario: "", before: "", after: "", results: [{ label: "", value: "" }, { label: "", value: "" }, { label: "", value: "" }] });
+    renderEditForm();
+}
+
+function removeStory(index) {
+    if (!confirm('确定删除故事 ' + (index + 1) + '（含所有字段）？')) return;
+    const m = DATA.months[editingMonthIndex];
+    m.stories.splice(index, 1);
+    renderEditForm();
+}
+
+function removeAllStories() {
+    const m = DATA.months[editingMonthIndex];
+    if (m.stories.length === 0) return;
+    if (!confirm('确定删除全部 ' + m.stories.length + ' 个价值故事？此操作不可撤销。')) return;
+    m.stories = [];
+    renderEditForm();
+}
+
+function clearDataNote() {
+    if (!confirm('确定清空数据说明？')) return;
+    document.getElementById('e-note-source').value = '';
+    document.getElementById('e-note-cost').value = '';
+    document.getElementById('e-note-period').value = '';
+}
+
+function toggleEdit() {
+    isEditMode = !isEditMode;
+    const panel = document.getElementById('edit-panel');
+    const btn = document.getElementById('edit-btn');
+    
+    if (isEditMode) {
+        panel.classList.remove('hidden');
+        btn.innerHTML = '<i class="fas fa-times mr-1"></i>关闭编辑';
+        editingMonthIndex = DATA.currentMonthIndex;
+        renderEditForm();
+    } else {
+        panel.classList.add('hidden');
+        btn.innerHTML = '<i class="fas fa-edit mr-1"></i>编辑数据';
+    }
+}
+
+function switchEditMonth(index) {
+    // 先保存当前月份数据，再切换
+    collectFormData();
+    editingMonthIndex = parseInt(index);
+    renderEditForm();
+}
+
+function copyFromPrevMonth() {
+    if (editingMonthIndex === 0) {
+        alert('已经是第一个月，没有上月数据可复制');
+        return;
+    }
+    // 先保存当前表单数据（虽然会被覆盖，但养成好习惯）
+    collectFormData();
+    const prev = DATA.months[editingMonthIndex - 1];
+    DATA.months[editingMonthIndex] = JSON.parse(JSON.stringify(prev));
+    DATA.months[editingMonthIndex].monthName = getMonthNameByIndex(editingMonthIndex);
+    DATA.months[editingMonthIndex].period = getPeriodByIndex(editingMonthIndex);
+    DATA.months[editingMonthIndex].nextUpdate = '2026年' + (editingMonthIndex + 2) + '月28日';
+    // 智能处理：流程保留名称/部门/状态，清空数字字段
+    DATA.months[editingMonthIndex].flows.forEach(f => {
+        f.monthlyVolume = '';
+        f.savedPerTime = '';
+        f.monthlySaved = '';
+    });
+    // 清空价值故事（内容创作需人工）
+    DATA.months[editingMonthIndex].stories = [];
+    // 清空KPI数值（待重新填写或自动计算）
+    DATA.months[editingMonthIndex].kpi.forEach(k => { k.value = ''; });
+    // 清空回报明细（每月变化）
+    DATA.months[editingMonthIndex].roiDetail.return.items.forEach(item => { item.value = 0; });
+    DATA.months[editingMonthIndex].roiDetail.return.total = 0;
+    // 投入：保留项目名称结构，清空本月数值（每月重新填）
+    DATA.months[editingMonthIndex].roiDetail.invest.items.forEach(item => { item.value = 0; });
+    DATA.months[editingMonthIndex].roiDetail.invest.monthTotal = 0;
+    DATA.months[editingMonthIndex].roiDetail.invest.total = DATA.months[editingMonthIndex - 1].roiDetail.invest.total || 0;
+    renderEditForm();
+    alert('✅ 已智能继承上月结构，请修改本月数据');
+}
+
+function getMonthNameByIndex(i) {
+    return (i + 1) + '月';
+}
+
+function getPeriodByIndex(i) {
+    return '2026.' + String(i + 1).padStart(2, '0');
+}
+
+function addNewMonth() {
+    if (DATA.months.length >= 12) {
+        alert('最多12个月');
+        return;
+    }
+    const newIndex = DATA.months.length;
+    const newMonth = createDefaultMonth(getMonthNameByIndex(newIndex), getPeriodByIndex(newIndex));
+    newMonth.nextUpdate = '2026年' + (newIndex + 2) + '月28日';
+    // 智能继承：如果有上月数据，自动带出流程列表（清空数字）
+    if (DATA.months.length > 0) {
+        const lastMonth = DATA.months[DATA.months.length - 1];
+        if (lastMonth.flows.length > 0) {
+            newMonth.flows = JSON.parse(JSON.stringify(lastMonth.flows));
+            newMonth.flows.forEach(f => {
+                f.monthlyVolume = '';
+                f.savedPerTime = '';
+                f.monthlySaved = '';
+            });
+        }
+        // 继承投入项目名称结构，清空数值
+        if (lastMonth.roiDetail && lastMonth.roiDetail.invest && lastMonth.roiDetail.invest.items) {
+            newMonth.roiDetail.invest.items = JSON.parse(JSON.stringify(lastMonth.roiDetail.invest.items));
+            newMonth.roiDetail.invest.items.forEach(item => { item.value = 0; });
+            newMonth.roiDetail.invest.monthTotal = 0;
+            newMonth.roiDetail.invest.total = lastMonth.roiDetail.invest.total || 0;
+        }
+    }
+    DATA.months.push(newMonth);
+    editingMonthIndex = newIndex;
+    
+    renderEditForm();
+    alert('✅ 已新增 ' + newMonth.monthName + '，请填写数据');
+}
+
+function renderEditForm() {
+    const m = DATA.months[editingMonthIndex];
+    const form = document.getElementById('edit-form');
+    
+    // ═══════════════════════════════════════════════════════════════
+    // 防御性数据修复：确保所有必要字段存在，防止 .map() 崩溃
+    // ═══════════════════════════════════════════════════════════════
+    if (!m.kpi || !Array.isArray(m.kpi) || m.kpi.length === 0) {
+        m.kpi = [
+            { id: "hours", title: "累计节省工时", value: "", unit: "", mom: "", momPct: "", trans: "", icon: "clock", color: "amber" },
+            { id: "headcount", title: "节省人力数", value: "", unit: "", mom: "", momPct: "", trans: "", icon: "user", color: "blue" },
+            { id: "flows", title: "自动化流程数", value: "", unit: "", mom: "", momPct: "", trans: "", icon: "cog", color: "indigo" },
+            { id: "cost", title: "人力成本节省", value: "", unit: "", mom: "", momPct: "", trans: "", icon: "coins", color: "emerald" },
+            { id: "roi", title: "AI投入产出比", value: "", unit: "", mom: "", momPct: "", trans: "", icon: "bullseye", color: "white", highlight: true }
+        ];
+    }
+    if (!m.roiDetail) m.roiDetail = {};
+    if (!m.roiDetail.invest) m.roiDetail.invest = { total: 0, monthTotal: 0, items: [] };
+    if (!m.roiDetail.invest.items || !Array.isArray(m.roiDetail.invest.items)) m.roiDetail.invest.items = [];
+    while (m.roiDetail.invest.items.length < 3) m.roiDetail.invest.items.push({ name: "", value: 0 });
+    if (m.roiDetail.invest.monthTotal === undefined) m.roiDetail.invest.monthTotal = 0;
+    if (!m.roiDetail.return) m.roiDetail.return = { total: 0, items: [] };
+    if (!m.roiDetail.return.items || !Array.isArray(m.roiDetail.return.items)) m.roiDetail.return.items = [];
+    while (m.roiDetail.return.items.length < 3) m.roiDetail.return.items.push({ name: "", value: 0 });
+    if (!m.flows || !Array.isArray(m.flows)) m.flows = [];
+    if (!m.stories || !Array.isArray(m.stories)) m.stories = [];
+    // 不再强制补全为2条，用户可按需添加/删除
+    m.stories.forEach(s => {
+        if (!s.results || !Array.isArray(s.results)) s.results = [];
+        while (s.results.length < 3) s.results.push({ label: "", value: "" });
+    });
+    if (!DATA.dataNote) DATA.dataNote = { source: "", costBasis: "", period: "" };
+    
+    const select = document.getElementById('edit-month-select');
+    select.innerHTML = DATA.months.map((mm, i) => `<option value="${i}" ${i === editingMonthIndex ? 'selected' : ''}>${mm.monthName}</option>`).join('');
+    
+    form.innerHTML = `
+        <div class="edit-section">
+            <div class="edit-section-title">📅 ${m.monthName} 基础信息</div>
+            <div class="grid grid-cols-2 gap-3">
+                <div><label class="edit-label">月份名称</label><input type="text" id="e-monthName" class="edit-input" value="${m.monthName}"></div>
+                <div><label class="edit-label">月份序号</label><input type="text" class="edit-input" value="${editingMonthIndex + 1}" disabled style="opacity:0.5"></div>
+                <div><label class="edit-label">数据周期</label><input type="text" class="edit-input" value="2026.${String(editingMonthIndex + 1).padStart(2, '0')}" disabled style="opacity:0.5"></div>
+                <div><label class="edit-label">下次更新</label><input type="text" class="edit-input" value="2026年${editingMonthIndex + 2}月28日" disabled style="opacity:0.5"></div>
+            </div>
+        </div>
+
+        <div class="edit-section">
+            <div class="edit-section-title">🏢 全局信息（改一次即可）</div>
+            <div class="grid grid-cols-2 gap-3">
+                <div><label class="edit-label">客户名称</label><input type="text" id="e-client" class="edit-input" value="${DATA.clientName}"></div>
+                <div><label class="edit-label">服务商</label><input type="text" id="e-provider" class="edit-input" value="${DATA.providerName}"></div>
+                <div><label class="edit-label">顾问姓名</label><input type="text" id="e-advisor" class="edit-input" value="${DATA.advisorName}"></div>
+                <div><label class="edit-label">顾问电话</label><input type="text" id="e-phone" class="edit-input" value="${DATA.advisorPhone}"></div>
+            </div>
+            <div class="mt-3 pt-3 border-t border-slate-700/30">
+                <div class="edit-section-title text-xs mb-2">📝 数据说明（全局）</div>
+                <div class="grid grid-cols-1 gap-2">
+                    <div><label class="edit-label">数据来源</label><input type="text" id="e-note-source" class="edit-input" value="${DATA.dataNote.source}"></div>
+                    <div><label class="edit-label">成本核算</label><input type="text" id="e-note-cost" class="edit-input" value="${DATA.dataNote.costBasis}"></div>
+                    <div><label class="edit-label">周期说明</label><input type="text" id="e-note-period" class="edit-input" value="${DATA.dataNote.period}"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="edit-section">
+            <div class="edit-section-title flex items-center justify-between">
+                <span>💰 核心 KPI（只需填数值和单位，其余自动计算）</span>
+                <button onclick="clearAllKPI()" class="w-7 h-7 rounded-md bg-rose-500/10 text-rose-400 hover:bg-rose-500/20 hover:text-rose-300 transition flex items-center justify-center" title="清空所有KPI">
+                    <i class="fas fa-trash-alt text-xs"></i>
+                </button>
+            </div>
+            <div class="space-y-3">
+                ${m.kpi.map((k, i) => `
+                    <div class="bg-slate-800/30 rounded-lg p-3 relative">
+                        <div class="flex items-center justify-between mb-2">
+                            <div class="text-xs text-slate-500 font-semibold">${k.title}</div>
+                            <button onclick="clearKPI(${i})" class="w-7 h-7 rounded-md bg-rose-500/10 text-rose-400 hover:bg-rose-500/20 hover:text-rose-300 transition flex items-center justify-center" title="清空此KPI">
+                                <i class="fas fa-trash-alt text-xs"></i>
+                            </button>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2">
+                            <div><label class="edit-label">数值${i === 4 ? ' <span class="text-[10px] text-slate-500">自动计算</span>' : ''}</label><input type="text" id="e-kpi-${i}-value" class="edit-input" value="${k.value === '--' ? '' : k.value}" ${i === 4 ? 'readonly style="opacity:0.7; cursor:default;"' : 'oninput="autoCalcKPI(${i})"'}></div>
+                            <div><label class="edit-label">单位</label><input type="text" id="e-kpi-${i}-unit" class="edit-input" value="${k.unit === '--' ? '' : k.unit}"></div>
+                        </div>
+                        <div class="mt-2 pt-2 border-t border-slate-700/30">
+                            <div class="flex gap-3 text-xs">
+                                <span class="text-slate-500">环比：<span class="text-blue-400" id="e-kpi-${i}-mom-display">${k.mom || '--'}</span></span>
+                                <span class="text-slate-500">上升：<span class="text-emerald-400" id="e-kpi-${i}-pct-display">${k.momPct || '--'}${k.momPct && k.momPct !== 'up' && k.momPct !== '--' ? '%' : ''}</span></span>
+                            </div>
+                            <div class="text-xs text-slate-500 mt-1">人话：<span class="text-slate-300" id="e-kpi-${i}-trans-display">${k.trans || '--'}</span></div>
+                        </div>
+                        <!-- 隐藏的输入框用于 collectFormData 收集 -->
+                        <input type="hidden" id="e-kpi-${i}-mom" value="${k.mom}">
+                        <input type="hidden" id="e-kpi-${i}-pct" value="${k.momPct}">
+                        <input type="hidden" id="e-kpi-${i}-trans" value="${k.trans}">
+                    </div>
+                `).join('')}
+            </div>
+        </div>
+
+        <div class="edit-section">
+            <div class="edit-section-title flex items-center justify-between">
+                <span>📊 ROI 投入回报（本月）</span>
+                <button onclick="clearROI()" class="w-7 h-7 rounded-md bg-rose-500/10 text-rose-400 hover:bg-rose-500/20 hover:text-rose-300 transition flex items-center justify-center" title="清空本月数据">
+                    <i class="fas fa-trash-alt text-xs"></i>
+                </button>
+            </div>
+            <p class="text-xs text-slate-500 mb-2">下面填的是<span class="text-blue-400">本月新增</span>的投入和回报，累计值自动汇总</p>
+            
+            <!-- 本月投入 -->
+            <div class="mb-3">
+                <div class="flex items-center justify-between mb-2">
+                    <div class="text-xs text-slate-400 font-semibold">💸 本月新增投入</div>
+                    <button onclick="clearInvestItems()" class="w-6 h-6 rounded bg-rose-500/10 text-rose-400 hover:bg-rose-500/20 hover:text-rose-300 transition flex items-center justify-center" title="清空本月投入">
+                        <i class="fas fa-trash-alt text-[10px]"></i>
+                    </button>
+                </div>
+                ${(() => {
+                    const invItems = m.roiDetail.invest.items || [{name: "软件服务费", value: 0}, {name: "实施部署费", value: 0}, {name: "年度运维费", value: 0}];
+                    return invItems.map((item, i) => `
+                        <div class="grid grid-cols-2 gap-2 mb-2">
+                            <input type="text" id="e-invest-name-${i}" class="edit-input" value="${item.name}" placeholder="投入项${i+1}">
+                            <input type="number" id="e-invest-val-${i}" class="edit-input" step="0.1" value="${item.value}" oninput="updateInvestTotal()">
+                        </div>
+                    `).join('');
+                })()}
+                <div class="grid grid-cols-2 gap-3 mt-2">
+                    <div><label class="edit-label">本月投入小计（万·自动）</label><input type="number" id="e-invest-month-total" class="edit-input" step="0.1" value="0" readonly style="opacity:0.7; cursor:default; background:#0f172a;"></div>
+                    <div><label class="edit-label">累计投入（万·自动）</label><input type="number" id="e-invest-total" class="edit-input" step="0.1" value="${m.roiDetail.invest.total}" readonly style="opacity:0.7; cursor:default; background:#0f172a;"></div>
+                </div>
+            </div>
+            
+            <!-- 本月回报 -->
+            <div class="pt-3 border-t border-slate-700/30">
+                <div class="flex items-center justify-between mb-2">
+                    <div class="text-xs text-slate-400 font-semibold">📈 本月回报变化</div>
+                    <button onclick="clearReturnItems()" class="w-6 h-6 rounded bg-rose-500/10 text-rose-400 hover:bg-rose-500/20 hover:text-rose-300 transition flex items-center justify-center" title="清空回报明细">
+                        <i class="fas fa-trash-alt text-[10px]"></i>
+                    </button>
+                </div>
+                ${m.roiDetail.return.items.map((item, i) => `
+                    <div class="grid grid-cols-2 gap-2 mb-2">
+                        <input type="text" id="e-return-name-${i}" class="edit-input" value="${item.name}">
+                        <input type="number" id="e-return-val-${i}" class="edit-input" step="0.1" value="${item.value}" oninput="autoCalcROI()">
+                    </div>
+                `).join('')}
+                <div class="mt-2"><label class="edit-label">累计回报（万·自动）</label><input type="number" id="e-return-total" class="edit-input" step="0.1" value="${m.roiDetail.return.total}" readonly style="opacity:0.7; cursor:default; background:#0f172a;"></div>
+            </div>
+        </div>
+
+        <div class="edit-section">
+            <div class="edit-section-title flex items-center justify-between">
+                <span>⚙️ 自动化流程（当前 ${m.flows.length} 条）</span>
+                <div class="flex gap-2">
+                    <button onclick="autoCalcFromFlows()" class="touch-btn px-3 py-1.5 rounded-md bg-blue-500/20 text-blue-400 text-xs hover:bg-blue-500/30 transition border border-blue-500/20" title="根据流程自动计算KPI">
+                        <i class="fas fa-calculator mr-1"></i>自动计算
+                    </button>
+                    <button onclick="addFlow()" class="w-7 h-7 rounded-md bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 hover:text-emerald-300 transition flex items-center justify-center" title="添加新流程">
+                        <i class="fas fa-plus text-xs"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="space-y-3" id="flows-edit-container">
+                ${m.flows.map((flow, i) => `
+                    <div class="bg-slate-800/30 rounded-lg p-3 relative" id="flow-block-${i}">
+                        <div class="flex items-center justify-between mb-2">
+                            <div class="text-xs text-slate-500 font-semibold">流程 ${i+1}</div>
+                            <button onclick="removeFlow(${i})" class="w-7 h-7 rounded-md bg-rose-500/10 text-rose-400 hover:bg-rose-500/20 hover:text-rose-300 transition flex items-center justify-center" title="删除此流程">
+                                <i class="fas fa-trash-alt text-xs"></i>
+                            </button>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2">
+                            <div><label class="edit-label">名称</label><input type="text" id="e-flow-${i}-name" class="edit-input" value="${flow.name}"></div>
+                            <div><label class="edit-label">部门</label><input type="text" id="e-flow-${i}-dept" class="edit-input" value="${flow.dept}"></div>
+                            <div><label class="edit-label">月均处理量</label><input type="text" id="e-flow-${i}-volume" class="edit-input" value="${flow.monthlyVolume}"></div>
+                            <div><label class="edit-label">单次节省</label><input type="text" id="e-flow-${i}-saved" class="edit-input" value="${flow.savedPerTime}"></div>
+                            <div><label class="edit-label">月省工时</label><input type="text" id="e-flow-${i}-monthly" class="edit-input" value="${flow.monthlySaved}"></div>
+                            <div><label class="edit-label">状态</label>
+                                <select id="e-flow-${i}-status" class="edit-input">
+                                    <option value="running" ${flow.status === 'running' ? 'selected' : ''}>运行中</option>
+                                    <option value="optimizing" ${flow.status === 'optimizing' ? 'selected' : ''}>优化中</option>
+                                    <option value="pending" ${flow.status === 'pending' ? 'selected' : ''}>待上线</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                `).join('')}
+            </div>
+        </div>
+
+        <div class="edit-section">
+            <div class="edit-section-title flex items-center justify-between">
+                <span>📖 价值故事（${m.stories.length}条）</span>
+                <div class="flex gap-2">
+                    <button onclick="addStory()" class="touch-btn px-3 py-1.5 rounded-md bg-emerald-500/10 text-emerald-400 text-xs hover:bg-emerald-500/20 transition border border-emerald-500/20" title="添加新故事">
+                        <i class="fas fa-plus mr-1"></i>添加故事
+                    </button>
+                    ${m.stories.length > 0 ? `<button onclick="removeAllStories()" class="w-7 h-7 rounded-md bg-rose-500/10 text-rose-400 hover:bg-rose-500/20 hover:text-rose-300 transition flex items-center justify-center" title="删除所有故事">
+                        <i class="fas fa-trash-alt text-xs"></i>
+                    </button>` : ''}
+                </div>
+            </div>
+            <div class="space-y-4" id="stories-edit-container">
+                ${m.stories.length === 0 ? '<p class="text-xs text-slate-500 text-center py-3">暂无价值故事，点击「添加故事」新建</p>' : ''}
+                ${m.stories.map((story, i) => `
+                    <div class="bg-slate-800/30 rounded-lg p-3 relative" id="story-block-${i}">
+                        <div class="flex items-center justify-between mb-2">
+                            <div class="text-xs text-slate-500 font-semibold">故事 ${i+1}</div>
+                            <button onclick="removeStory(${i})" class="w-7 h-7 rounded-md bg-rose-500/10 text-rose-400 hover:bg-rose-500/20 hover:text-rose-300 transition flex items-center justify-center" title="删除此故事">
+                                <i class="fas fa-trash-alt text-xs"></i>
+                            </button>
+                        </div>
+                        <div class="space-y-2">
+                            <div class="grid grid-cols-2 gap-2">
+                                <div><label class="edit-label">部门</label><input type="text" id="e-story-${i}-dept" class="edit-input" value="${story.dept}"></div>
+                                <div><label class="edit-label">标题</label><input type="text" id="e-story-${i}-title" class="edit-input" value="${story.title}"></div>
+                            </div>
+                            <div><label class="edit-label">场景描述</label><input type="text" id="e-story-${i}-scenario" class="edit-input" value="${story.scenario}"></div>
+                            <div class="grid grid-cols-2 gap-2">
+                                <div><label class="edit-label">之前（痛点）</label><input type="text" id="e-story-${i}-before" class="edit-input" value="${story.before}"></div>
+                                <div><label class="edit-label">现在（方案）</label><input type="text" id="e-story-${i}-after" class="edit-input" value="${story.after}"></div>
+                            </div>
+                            <div class="grid grid-cols-3 gap-2">
+                                ${story.results.map((r, j) => `
+                                    <div><label class="edit-label">成果${j+1}标签</label><input type="text" id="e-story-${i}-r${j}-label" class="edit-input" value="${r.label}"></div>
+                                    <div><label class="edit-label">成果${j+1}数值</label><input type="text" id="e-story-${i}-r${j}-value" class="edit-input" value="${r.value}"></div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    </div>
+                `).join('')}
+            </div>
+        </div>
+    `;
+    autoCalcAllKPI();
+    autoCalcROI();
+}
+
+function collectFormData() {
+    const m = DATA.months[editingMonthIndex];
+    if (!m) {
+        console.error('❌ collectFormData: editingMonthIndex=' + editingMonthIndex + ' 月份不存在');
+        return;
+    }
+    
+    const el = (id) => document.getElementById(id);
+    
+    DATA.clientName = (el('e-client')?.value) || DATA.clientName;
+    DATA.providerName = (el('e-provider')?.value) || DATA.providerName;
+    DATA.advisorName = (el('e-advisor')?.value) || DATA.advisorName;
+    DATA.advisorPhone = (el('e-phone')?.value) || DATA.advisorPhone;
+    
+    // 全局数据说明
+    DATA.dataNote.source = (el('e-note-source')?.value) || DATA.dataNote.source;
+    DATA.dataNote.costBasis = (el('e-note-cost')?.value) || DATA.dataNote.costBasis;
+    DATA.dataNote.period = (el('e-note-period')?.value) || DATA.dataNote.period;
+    
+    m.monthName = (el('e-monthName')?.value) || m.monthName;
+    m.period = '2026.' + String(editingMonthIndex + 1).padStart(2, '0');
+    m.nextUpdate = '2026年' + (editingMonthIndex + 2) + '月28日';
+
+    m.kpi.forEach((k, i) => {
+        const valEl = el(`e-kpi-${i}-value`);
+        const unitEl = el(`e-kpi-${i}-unit`);
+        const momEl = el(`e-kpi-${i}-mom`);
+        const pctEl = el(`e-kpi-${i}-pct`);
+        const transEl = el(`e-kpi-${i}-trans`);
+        if (!valEl) return;
+        let val = valEl.value;
+        let unit = unitEl ? unitEl.value : '';
+        if (val === '--') val = '';
+        if (unit === '--') unit = '';
+        k.value = val;
+        k.unit = unit;
+        k.mom = momEl ? momEl.value : k.mom;
+        k.momPct = pctEl ? pctEl.value : k.momPct;
+        k.trans = transEl ? transEl.value : k.trans;
+    });
+
+    // 投入：收集本月新增投入项
+    var monthInvestTotal = 0;
+    var monthInvestItems = [];
+    for (var gi = 0; gi < 3; gi++) {
+        var gName = document.getElementById('e-invest-name-' + gi);
+        var gVal = document.getElementById('e-invest-val-' + gi);
+        var gv = parseFloat((gVal ? gVal.value : 0)) || 0;
+        monthInvestTotal += gv;
+        monthInvestItems.push({name: (gName ? gName.value : '') || '', value: gv});
+    }
+    // 存储本月投入
+    m.roiDetail.invest.monthTotal = monthInvestTotal;
+    m.roiDetail.invest.items = monthInvestItems;
+    
+    // 重新计算所有月份的累计投入
+    let runningInvest = 0;
+    DATA.months.forEach(function(mo) {
+        runningInvest += (mo.roiDetail.invest.monthTotal || 0);
+        mo.roiDetail.invest.total = runningInvest;
+    });
+    // 累计投入（当前月份）取自 DOM
+    m.roiDetail.invest.total = parseFloat((el('e-invest-total')?.value) || runningInvest);
+    
+    // 回报：收集本月回报变化，重新计算累计回报
+    var monthReturnTotal = 0;
+    m.roiDetail.return.items.forEach((item, i) => {
+        item.name = (el(`e-return-name-${i}`)?.value) || item.name;
+        item.value = parseFloat((el(`e-return-val-${i}`)?.value) || 0);
+        monthReturnTotal += item.value;
+    });
+    // 重新计算所有月份的累计回报
+    let runningReturn = 0;
+    DATA.months.forEach(function(mo) {
+        // 重新计算每个月的回报小计（从 items 求和）
+        let moReturn = 0;
+        (mo.roiDetail.return.items || []).forEach(function(it) {
+            moReturn += (it.value || 0);
+        });
+        runningReturn += moReturn;
+        mo.roiDetail.return.total = runningReturn;
+    });
+    m.roiDetail.return.total = parseFloat((el('e-return-total')?.value) || runningReturn);
+
+    // 流程 - 动态收集（扫描DOM，不依赖数组长度）
+    const newFlows = [];
+    let fi = 0;
+    while (true) {
+        const nameEl = document.getElementById(`e-flow-${fi}-name`);
+        if (!nameEl) break;
+        const deptEl = document.getElementById(`e-flow-${fi}-dept`);
+        const volumeEl = document.getElementById(`e-flow-${fi}-volume`);
+        const savedEl = document.getElementById(`e-flow-${fi}-saved`);
+        const monthlyEl = document.getElementById(`e-flow-${fi}-monthly`);
+        const statusEl = document.getElementById(`e-flow-${fi}-status`);
+        
+        // 防御性检查：如果任何一个输入框不存在，停止扫描
+        if (!deptEl || !volumeEl || !savedEl || !monthlyEl || !statusEl) {
+            console.warn(`流程 ${fi} 的某些输入框不存在，停止扫描`);
+            break;
+        }
+        
+        newFlows.push({
+            name: nameEl.value,
+            dept: deptEl.value,
+            monthlyVolume: volumeEl.value,
+            savedPerTime: savedEl.value,
+            monthlySaved: monthlyEl.value,
+            status: statusEl.value
+        });
+        fi++;
+    }
+    console.log(`📊 collectFormData: 收集到 ${fi} 个流程`);
+    DATA.months[editingMonthIndex].flows = newFlows;
+
+    // 故事 - 动态收集（扫描DOM，不依赖数组长度）
+    const newStories = [];
+    let si = 0;
+    while (true) {
+        const deptEl = document.getElementById(`e-story-${si}-dept`);
+        if (!deptEl) break;
+        const titleEl = document.getElementById(`e-story-${si}-title`);
+        const scenarioEl = document.getElementById(`e-story-${si}-scenario`);
+        const beforeEl = document.getElementById(`e-story-${si}-before`);
+        const afterEl = document.getElementById(`e-story-${si}-after`);
+        if (!titleEl || !scenarioEl || !beforeEl || !afterEl) break;
+        
+        const results = [];
+        for (let j = 0; j < 3; j++) {
+            const labelEl = document.getElementById(`e-story-${si}-r${j}-label`);
+            const valueEl = document.getElementById(`e-story-${si}-r${j}-value`);
+            if (!labelEl || !valueEl) break;
+            results.push({ label: labelEl.value, value: valueEl.value });
+        }
+        newStories.push({
+            dept: deptEl.value,
+            title: titleEl.value,
+            scenario: scenarioEl.value,
+            before: beforeEl.value,
+            after: afterEl.value,
+            results: results
+        });
+        si++;
+    }
+    DATA.months[editingMonthIndex].stories = newStories;
+
+    // 数据说明已改为全局设置，不再保存到每月
+    // m.dataNote.source = document.getElementById('e-note-source').value;
+    // m.dataNote.costBasis = document.getElementById('e-note-cost').value;
+    // m.dataNote.period = document.getElementById('e-note-period').value;
+}
+
+function saveAndClose() {
+    try {
+        console.log('💾 saveAndClose: 开始保存...');
+        // ⚠️ 必须先收集表单数据，再自动计算！
+        // 因为 autoCalcFromFlows 会覆写 DOM 中 KPI 0-3 的输入框，
+        // 如果先 autoCalc 再 collectFormData，用户的编辑就被覆盖了
+        collectFormData();
+        console.log('💾 saveAndClose: collectFormData 完成，flows=' + DATA.months[editingMonthIndex].flows.length);
+        autoCalcFromFlows();
+        console.log('💾 saveAndClose: autoCalcFromFlows 完成');
+        // 计算所有 KPI 的环比对比（mom/pct/trans）
+        computeAllKPIComparisons();
+        console.log('💾 saveAndClose: computeAllKPIComparisons 完成');
+        saveDataToURL();
+        console.log('💾 saveAndClose: saveDataToURL 完成');
+        DATA.currentMonthIndex = editingMonthIndex;
+        DATA.isYearlyView = false;
+        renderMonthTabs();
+        renderAll();
+        console.log('💾 saveAndClose: renderAll 完成');
+        toggleEdit();
+        
+        const tip = document.getElementById('share-tip');
+        if (tip) {
+            tip.classList.remove('hidden');
+            setTimeout(() => tip.classList.add('hidden'), 8000);
+        }
+        console.log('✅ saveAndClose: 保存并更新成功');
+    } catch (e) {
+        console.error('❌ saveAndClose 出错:', e.message, e.stack);
+        alert('保存失败: ' + e.message + '\\n\\n请截图此错误信息反馈');
+    }
+}
+
+function dismissShareTip() {
+    document.getElementById('share-tip').classList.add('hidden');
+}
+
+
+function restoreFromLocalStorage() {
+    try {
+        const saved = localStorage.getItem('dashboard_data_v2');
+        if (!saved) {
+            alert('❌ 本地没有备份数据');
+            return;
+        }
+        const parsed = JSON.parse(saved);
+        if (parsed && parsed.months && parsed.months.length > 0) {
+            if (!confirm('确定从本地备份恢复数据？当前未保存的修改将丢失。')) return;
+            DATA = parsed;
+            saveDataToURL();
+            renderMonthTabs();
+            renderAll();
+            alert('✅ 从本地备份恢复成功！共 ' + DATA.months.length + ' 个月');
+        } else {
+            alert('❌ 本地备份数据格式不正确');
+        }
+    } catch (e) {
+        alert('❌ 恢复失败: ' + e.message);
+    }
+}
+
+// 交互
+function toggleROIDetail(type) {
+    const investEl = document.getElementById('roi-invest-detail');
+    const returnEl = document.getElementById('roi-return-detail');
+    if (type === 'invest') {
+        investEl.classList.toggle('hidden');
+        returnEl.classList.add('hidden');
+    } else {
+        returnEl.classList.toggle('hidden');
+        investEl.classList.add('hidden');
+    }
+}
+
+// 导出完整数据（localStorage → JSON 文件下载）
+// 导出完整数据（当前内存 DATA → JSON 文件下载）
+function exportData() {
+    try {
+        if (typeof DATA === 'undefined' || !DATA) {
+            alert('⚠️ 数据还未加载，请稍后再试。');
+            return;
+        }
+        const jsonStr = JSON.stringify(DATA, null, 2);
+        if (jsonStr === '{}' || jsonStr === 'null') {
+            alert('⚠️ 当前数据为空，请先确认页面已显示正确数据。');
+            return;
+        }
+        const blob = new Blob([jsonStr], { type: 'application/json;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        const clientName = (DATA.clientName || "北谷农业").replace(/[^\u4e00-\u9fa5a-zA-Z0-9]/g, "_");
+        const today = new Date();
+        const dateStr = today.getFullYear() + String(today.getMonth()+1).padStart(2,"0") + String(today.getDate()).padStart(2,"0");
+        a.href = url;
+        a.download = clientName + "_效率数据_" + dateStr + ".json";
+        document.body.appendChild(a);
+        a.click();
+        setTimeout(function() { document.body.removeChild(a); URL.revokeObjectURL(url); }, 100);
+        console.log('✅ 数据已导出：', a.download, '(' + jsonStr.length + ' 字符)');
+    } catch (e) {
+        console.error('❌ 导出失败：', e);
+        alert('导出失败：' + e.message);
+    }
+}
+
+// 初始化
+window.addEventListener('DOMContentLoaded', () => {
+    const hasURLData = loadDataFromURL();
+    renderMonthTabs();
+    renderAll();
+    
+    if (hasURLData) {
+        console.log('✅ 已从 URL 加载全年数据');
+    } else {
+        console.log('ℹ️ 使用默认示例数据（1-3月），点击"全年总览"或各月份查看');
+    }
+});
+</script>
+
+</body>
+</html>
