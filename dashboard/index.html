@@ -1745,10 +1745,11 @@ function renderROIDetail(isYearly, yearly) {
 function renderTrendChart() {
     if (charts.trend) charts.trend.destroy();
     
-    const validIndices = DATA.trend.monthlyCost.map((v, i) => v !== null ? i : -1).filter(i => i !== -1);
-    const labels = validIndices.map(i => DATA.trend.labels[i]);
-    const monthlyCost = validIndices.map(i => DATA.trend.monthlyCost[i]);
-    const cumulativeROI = validIndices.map(i => DATA.trend.cumulativeROI[i]);
+    // 显示 1-6月，无数据月份展示 0（趋势更直观）
+    const showCount = 6;
+    const labels = DATA.trend.labels.slice(0, showCount);
+    const monthlyCost = labels.map((_, i) => DATA.trend.monthlyCost[i] || 0);
+    const cumulativeROI = labels.map((_, i) => DATA.trend.cumulativeROI[i] || 0);
     
     const ctx = document.getElementById('trendChart').getContext('2d');
     charts.trend = new Chart(ctx, {
