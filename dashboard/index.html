@@ -1647,7 +1647,7 @@ function renderKPI(isYearly, yearly, flows) {
     
     // trans 转换公式：根据实际数值动态生成底部小字
     const transFormulas = {
-        hours: (v) => `约 ${(v / 1740).toFixed(1)} 人/月`,
+        hours: (v) => `约 ${(v / 8).toFixed(1)} 人天`,
         headcount: (v) => `约释放${Math.round(v)}个全职`,
         flows: (v) => `覆盖${Math.max(1, Math.round(v / 2))}个部门`,
         cost: (v) => `相当于省出${(v / 12).toFixed(1)}个年薪`,
