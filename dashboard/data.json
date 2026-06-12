@@ -1,0 +1,31 @@
+{
+  "_updatedAt": "2026-06-12T17:17:00+08:00",
+  "clientName": "北谷农业",
+  "activeYear": 2026,
+  "allYears": {},
+  "currentMonthIndex": 5,
+  "isYearlyView": true,
+  "months": [
+    {
+      "monthName": "2026年1月",
+      "kpi": [
+        {"name": "AI流程数", "value": 3, "unit": "个", "trend": "up", "trendVal": "新启动"},
+        {"name": "月均提效", "value": 60, "unit": "%", "trend": "up", "trendVal": "+60%"},
+        {"name": "月均节省工时", "value": 48, "unit": "小时", "trend": "up", "trendVal": "+48h"},
+        {"name": "累计投入", "value": 0.3, "unit": "万元", "trend": "up", "trendVal": "¥3000"},
+        {"name": "ROI比值", "value": 2.5, "unit": "倍", "trend": "up", "trendVal": "2.5x"}
+      ],
+      "flows": [
+        {"name": "智能客服", "hoursSaved": 20, "status": "running"},
+        {"name": "文档自动生成", "hoursSaved": 16, "status": "optimizing"},
+        {"name": "数据报表", "hoursSaved": 12, "status": "running"}
+      ],
+      "stories": [
+        {"title": "智能客服上线", "desc": "接入AI客服系统，处理80%常见咨询，释放客服人力"}
+      ],
+      "roiDetail": {"invest": [{"label": "AI工具订阅", "value": 0.2}, {"label": "培训成本", "value": 0.1}], "return": [{"label": "人力节省", "value": 0.75}]},
+      "dataNote": {"source": "北谷农业内部数据", "period": "2026年1月", "costBasis": "含工具订阅+人力培训"}
+    }
+  ],
+  "trend": {"labels": ["1月","2月","3月","4月","5月","6月","7月","8月","9月","10月","11月","12月"], "monthlyCost": [0.3], "cumulativeROI": [2.5]}
+}
