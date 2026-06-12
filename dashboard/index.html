@@ -1698,7 +1698,7 @@ function renderKPI(isYearly, yearly, flows) {
                         ${k.momPct !== 'up' ? '<i class="fas fa-arrow-up mr-0.5 text-[11px]"></i>' : ''}${k.mom}
                         ${k.momPct !== 'up' ? `<span class="text-slate-500 font-normal ml-1">+${k.momPct}%</span>` : ''}
                     </p>
-                    <p class="text-xs text-slate-500 mt-0.5">${k.trans}</p>
+                    <p class="text-xs text-white/60 mt-0.5">${k.trans}</p>
                 </div>
                 ${k.id === 'flows' ? `<div class="mt-2 pt-2 border-t border-slate-700/30 relative z-10">
                     <button onclick="event.stopPropagation(); toggleKpiFlowsExpand()" class="kpi-expand-btn touch-btn w-full py-1.5 rounded-lg text-xs text-indigo-400 hover:text-indigo-300 hover:bg-indigo-500/10 transition flex items-center justify-center gap-1">
