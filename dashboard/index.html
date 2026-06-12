@@ -208,7 +208,7 @@
                     <li>• 数据来源：<span id="data-source">--</span></li>
                     <li>• 成本核算：<span id="data-cost">--</span></li>
                     <li>• 数据周期：<span id="data-period-note">--</span></li>
-                    <li>• 下次更新：<span id="data-next" class="font-medium text-slate-300">--</span></li>
+                    <li>• 最新更新：<span id="data-next" class="font-medium text-slate-300">--</span></li>
                 </ul>
             </div>
             <div class="border-t border-slate-700/50 pt-4">
@@ -1650,7 +1650,7 @@ function renderKPI(isYearly, yearly, flows) {
         hours: (v) => `约 ${(v / 8).toFixed(1)} 人天`,
         headcount: (v) => `约释放${Math.round(v)}个全职`,
         flows: (v) => `覆盖${Math.max(1, Math.round(v / 2))}个部门`,
-        cost: (v) => `相当于省出${(v / 12).toFixed(1)}个年薪`,
+        cost: (v) => `AI 直接为你赚回 ¥${Math.round(v)} 万`,
         roi: (v) => `每投入1元回报${v}元`
     };
     
@@ -1918,7 +1918,8 @@ function renderFooter(isYearly, yearly) {
     document.getElementById('data-source').textContent = DATA.dataNote.source;
     document.getElementById('data-cost').textContent = DATA.dataNote.costBasis;
     document.getElementById('data-period-note').textContent = isYearly && yearly ? '2026年1月-' + yearly.latestMonth.monthName : DATA.dataNote.period;
-    document.getElementById('data-next').textContent = m.nextUpdate;
+    const now = new Date();
+    document.getElementById('data-next').textContent = `${now.getFullYear()}年${now.getMonth() + 1}月${now.getDate()}日`;
     document.getElementById('provider-name').textContent = DATA.providerName;
     document.getElementById('advisor-name').textContent = DATA.advisorName;
     document.getElementById('advisor-phone').textContent = DATA.advisorPhone;
