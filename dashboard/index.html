@@ -1384,6 +1384,28 @@ function loadDataFromURL() {
         console.error('❌ 从 localStorage 加载数据失败:', e.message);
     }
     
+    // 兼容尝试从 v4（多年份格式）恢复
+    try {
+        const saved = localStorage.getItem('dashboard_data_v4');
+        if (saved) {
+            const parsed = JSON.parse(saved);
+            if (parsed && parsed.years) {
+                const activeYear = parsed.activeYear || 2026;
+                const yearData = parsed.years[activeYear];
+                if (yearData && yearData.months && yearData.months.length > 0) {
+                    DATA.months = yearData.months;
+                    DATA.clientName = parsed.clientName || DATA.clientName;
+                    DATA.currentMonthIndex = Math.min(parsed.currentMonthIndex || 0, DATA.months.length - 1);
+                    if (parsed.trend) DATA.trend = parsed.trend;
+                    console.log('✅ 从 localStorage v4 恢复数据成功，月份数:', DATA.months.length);
+                    return true;
+                }
+            }
+        }
+    } catch (e) {
+        console.error('❌ 从 localStorage v4 恢复失败:', e.message);
+    }
+    
     console.log('ℹ️ 显示 DEFAULT_DATA（1-6月真实数据）');
     return false;
 }
