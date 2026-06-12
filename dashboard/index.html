@@ -54,6 +54,17 @@
         .kpi-flow-item:hover { background: rgba(255,255,255,0.04); }
         .kpi-expand-btn { transition: all 0.2s; }
         .kpi-expand-btn:hover { color: #818cf8; }
+        /* 年份面板 */
+        .year-panel-wrap { position: absolute; top: 100%; left: 0; margin-top: 8px; background: #1e293b; border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 12px; min-width: 180px; z-index: 40; box-shadow: 0 16px 48px rgba(0,0,0,0.5); }
+        .year-item { display: block; width: 100%; padding: 7px 10px; border-radius: 8px; font-size: 13px; color: #94a3b8; text-align: left; transition: all 0.15s; background: transparent; border: none; cursor: pointer; }
+        .year-item:hover { background: rgba(255,255,255,0.05); color: #e2e8f0; }
+        .year-item.active { background: rgba(16,185,129,0.15); color: #34d399; font-weight: 600; }
+        .year-inp { background: #0f172a; border: 1px solid #334155; color: #e2e8f0; padding: 6px 10px; border-radius: 8px; font-size: 13px; width: 100px; }
+        .year-inp:focus { outline: none; border-color: #60a5fa; }
+        .year-create-btn { padding: 6px 14px; border-radius: 8px; font-size: 12px; background: rgba(16,185,129,0.2); color: #34d399; border: 1px solid rgba(16,185,129,0.3); cursor: pointer; white-space: nowrap; transition: all 0.15s; }
+        .year-create-btn:hover { background: rgba(16,185,129,0.3); }
+        .year-badge { cursor: pointer; transition: all 0.15s; display: inline-flex; align-items: center; gap: 4px; }
+        .year-badge:hover { opacity: 0.8; }
     </style>
 </head>
 <body class="min-h-screen">
@@ -74,7 +85,15 @@
             </button>
         </div>
         <!-- 月份切换：全年 + 各月 -->
-        <div class="month-scroll flex gap-1.5" id="month-tabs"></div>
+        <div class="flex items-center gap-2">
+            <div class="relative">
+                <span class="year-badge text-xs text-slate-400 px-2 py-1 rounded-md border border-slate-700/50" id="year-badge" ondblclick="toggleYearPanel()" title="双击切换年份">
+                    <span id="year-badge-text">2026</span>年 ▼
+                </span>
+                <div id="year-panel" class="year-panel-wrap hidden"></div>
+            </div>
+            <div class="month-scroll flex gap-1.5 flex-1" id="month-tabs"></div>
+        </div>
     </div>
 </nav>
 
@@ -254,6 +273,8 @@ const DEFAULT_DATA = {
     clientName: "北谷农业",
     isYearlyView: false,
     currentMonthIndex: 4,
+    activeYear: 2026,
+    allYears: {},
     providerName: "引木管理咨询",
     advisorName: "法师（健昕）",
     advisorPhone: "17600697399",
@@ -1338,6 +1359,75 @@ let editingMonthIndex = 0;
 let kpiFlowsExpanded = false;
 
 // ═══════════════════════════════════════════════════════════════
+// 年份管理（UI层切换，不改 DATA.months 结构）
+// ═══════════════════════════════════════════════════════════════
+function switchYear(year) {
+    year = parseInt(year);
+    if (year === DATA.activeYear) { closeYearPanel(); return; }
+    if (!DATA.allYears[year]) { alert(year + '年不存在，请先创建'); return; }
+    // 保存当前年份数据
+    DATA.allYears[DATA.activeYear] = { months: DATA.months, trend: JSON.parse(JSON.stringify(DATA.trend)) };
+    // 加载新年份
+    DATA.activeYear = year;
+    DATA.months = DATA.allYears[year].months || [];
+    DATA.trend = DATA.allYears[year].trend ? JSON.parse(JSON.stringify(DATA.allYears[year].trend)) : { labels: ["1月","2月","3月","4月","5月","6月","7月","8月","9月","10月","11月","12月"], monthlyCost: [], cumulativeROI: [] };
+    DATA.currentMonthIndex = 0;
+    DATA.isYearlyView = false;
+    renderMonthTabs();
+    renderAll();
+    closeYearPanel();
+    saveDataToURL();
+}
+
+function createYear(year) {
+    year = parseInt(year);
+    if (isNaN(year) || year < 2020 || year > 2099) { alert('请输入有效年份 (2020-2099)'); return; }
+    if (DATA.allYears[year]) { alert(year + '年已存在'); return; }
+    // 保存当前年份数据
+    DATA.allYears[DATA.activeYear] = { months: DATA.months, trend: JSON.parse(JSON.stringify(DATA.trend)) };
+    // 创建新年份
+    DATA.allYears[year] = { months: [], trend: { labels: ["1月","2月","3月","4月","5月","6月","7月","8月","9月","10月","11月","12月"], monthlyCost: [], cumulativeROI: [] } };
+    DATA.activeYear = year;
+    DATA.months = [];
+    DATA.trend = JSON.parse(JSON.stringify(DATA.allYears[year].trend));
+    DATA.currentMonthIndex = 0;
+    DATA.isYearlyView = false;
+    renderMonthTabs();
+    renderAll();
+    closeYearPanel();
+    saveDataToURL();
+    alert('✅ 已创建并切换到 ' + year + ' 年，请点击「编辑数据」开始填写');
+}
+
+function toggleYearPanel() {
+    const panel = document.getElementById('year-panel');
+    panel.classList.contains('hidden') ? showYearPanel() : closeYearPanel();
+}
+
+function showYearPanel() {
+    const panel = document.getElementById('year-panel');
+    const years = Object.keys(DATA.allYears).sort();
+    let html = '<div class="text-xs text-slate-400 mb-2">切换年份</div>';
+    years.forEach(y => {
+        const count = DATA.allYears[y].months ? DATA.allYears[y].months.length : 0;
+        html += '<button onclick="switchYear(' + y + ')" class="year-item ' + (parseInt(y) === DATA.activeYear ? 'active' : '') + '">' + y + '年 <span class="text-slate-500 text-[10px]">(' + count + '/12月)</span></button>';
+    });
+    html += '<div class="border-t border-slate-700/30 my-2"></div>';
+    html += '<div class="flex gap-2"><input type="number" id="new-year-input" class="year-inp" placeholder="如 2027" min="2020" max="2099"><button onclick="createYearFromInput()" class="year-create-btn">+ 创建</button></div>';
+    panel.innerHTML = html;
+    panel.classList.remove('hidden');
+}
+
+function createYearFromInput() {
+    const input = document.getElementById('new-year-input');
+    if (!input || !input.value) { alert('请输入年份'); return; }
+    createYear(input.value);
+}
+
+function closeYearPanel() { document.getElementById('year-panel').classList.add('hidden'); }
+// ═══════════════════════════════════════════════════════════════
+
+// ═══════════════════════════════════════════════════════════════
 // 数据存取：URL hash 编码
 // ═══════════════════════════════════════════════════════════════
 function loadDataFromURL() {
@@ -1349,15 +1439,12 @@ function loadDataFromURL() {
             const parsed = JSON.parse(jsonStr);
             if (parsed && parsed.months && parsed.months.length > 0) {
                 DATA = parsed;
+                migrateAllYears();
                 console.log('✅ 从URL加载数据成功，月份数:', DATA.months.length);
-                DATA.months.forEach((m, i) => {
-                    console.log(`  ${m.monthName}: KPI=${m.kpi?.length || 0}, flows=${m.flows?.length || 0}, stories=${m.stories?.length || 0}`);
-                });
                 normalizeROIData();
-                // 同时保存到 localStorage 作为后备
                 try {
-                    localStorage.setItem('dashboard_data_v3', JSON.stringify(DATA));
-                    console.log('💾 已同步保存到 localStorage');
+                    localStorage.setItem('dashboard_data_v5', JSON.stringify(DATA));
+                    console.log('💾 已同步保存到 localStorage v5');
                 } catch (e) {
                     console.warn('⚠️ localStorage 保存失败:', e.message);
                 }
@@ -1368,23 +1455,21 @@ function loadDataFromURL() {
         }
     }
     
-    // URL 加载失败或为空，尝试从 localStorage 加载
     try {
-        // v3 key: 旧 v2 缓存自动作废
-        const saved = localStorage.getItem('dashboard_data_v3');
+        const saved = localStorage.getItem('dashboard_data_v5');
         if (saved) {
             const parsed = JSON.parse(saved);
             if (parsed && parsed.months && parsed.months.length > 0) {
                 DATA = parsed;
-                console.log('✅ 从 localStorage 加载数据成功，月份数:', DATA.months.length);
+                migrateAllYears();
+                console.log('✅ 从 localStorage v5 加载数据成功，月份数:', DATA.months.length);
                 return true;
             }
         }
     } catch (e) {
-        console.error('❌ 从 localStorage 加载数据失败:', e.message);
+        console.error('❌ 从 localStorage v5 加载数据失败:', e.message);
     }
     
-    // 兼容尝试从 v4（多年份格式）恢复
     try {
         const saved = localStorage.getItem('dashboard_data_v4');
         if (saved) {
@@ -1394,9 +1479,12 @@ function loadDataFromURL() {
                 const yearData = parsed.years[activeYear];
                 if (yearData && yearData.months && yearData.months.length > 0) {
                     DATA.months = yearData.months;
+                    DATA.activeYear = activeYear;
+                    DATA.allYears = {};
+                    DATA.allYears[activeYear] = { months: yearData.months, trend: parsed.trend || yearData.trend || null };
+                    if (yearData.trend) DATA.trend = yearData.trend;
                     DATA.clientName = parsed.clientName || DATA.clientName;
                     DATA.currentMonthIndex = Math.min(parsed.currentMonthIndex || 0, DATA.months.length - 1);
-                    if (parsed.trend) DATA.trend = parsed.trend;
                     console.log('✅ 从 localStorage v4 恢复数据成功，月份数:', DATA.months.length);
                     return true;
                 }
@@ -1406,18 +1494,63 @@ function loadDataFromURL() {
         console.error('❌ 从 localStorage v4 恢复失败:', e.message);
     }
     
+    try {
+        const saved = localStorage.getItem('dashboard_data_v3');
+        if (saved) {
+            const parsed = JSON.parse(saved);
+            if (parsed && parsed.months && parsed.months.length > 0) {
+                DATA = parsed;
+                migrateAllYears();
+                console.log('✅ 从 localStorage v3 加载数据成功，月份数:', DATA.months.length);
+                return true;
+            }
+        }
+    } catch (e) {
+        console.error('❌ 从 localStorage v3 加载数据失败:', e.message);
+    }
+    
     console.log('ℹ️ 显示 DEFAULT_DATA（1-6月真实数据）');
     return false;
 }
 
+// 向后兼容：旧的 migrateDataStructure 改为调用 migrateAllYears
+function migrateDataStructure() {
+    migrateAllYears();
+}
+
+// ═══════════════════════════════════════════════════════════════
+// 多年份数据迁移（不改 DATA.months 结构）
+// ═══════════════════════════════════════════════════════════════
+function migrateAllYears() {
+    if (!DATA.activeYear) DATA.activeYear = 2026;
+    if (!DATA.allYears) DATA.allYears = {};
+    // 如果 allYears 为空但 months 有数据，自动迁入
+    const currentYear = DATA.activeYear;
+    if (!DATA.allYears[currentYear]) {
+        DATA.allYears[currentYear] = {
+            months: DATA.months || [],
+            trend: DATA.trend ? JSON.parse(JSON.stringify(DATA.trend)) : { labels: ["1月","2月","3月","4月","5月","6月","7月","8月","9月","10月","11月","12月"], monthlyCost: [], cumulativeROI: [] }
+        };
+        console.log('🔄 数据已迁入 allYears[' + currentYear + ']，月份数=' + (DATA.months ? DATA.months.length : 0));
+    }
+}
+
 function saveDataToURL() {
     const jsonStr = JSON.stringify(DATA);
-    // 只保存到 localStorage，不再自动写 hash（保持 URL 干净）
+    // 同时写 localStorage 和 URL hash（双保险）
     try {
-        localStorage.setItem('dashboard_data_v3', jsonStr);
-        console.log('💾 数据已保存');
+        localStorage.setItem('dashboard_data_v5', jsonStr);
+        console.log('💾 数据已保存到 localStorage v5');
     } catch (e) {
         console.warn('⚠️ localStorage 保存失败:', e.message);
+    }
+    // 写 URL hash（保持旧链接有效，也方便新链接分享）
+    try {
+        const base64 = btoa(encodeURIComponent(jsonStr));
+        window.history.replaceState(null, '', '#' + base64);
+        console.log('💾 数据已写入 URL hash');
+    } catch (e) {
+        console.warn('⚠️ URL hash 写入失败:', e.message);
     }
 }
 
@@ -1636,8 +1769,8 @@ function renderAll() {
                 'flows=', currentMonth.flows?.length || 0,
                 'kpi=', currentMonth.kpi?.map(k => k.value).join(', '));
     
-    document.getElementById('current-view-label').textContent = isYearly ? '2026全年数据总览' : (getCurrentMonth().monthName + '数据概览');
-    document.getElementById('data-period-display').textContent = isYearly ? '累计 ' + (yearly?.monthCount || 0) + ' 个月' : getCurrentMonth().period;
+    document.getElementById('current-view-label').textContent = isYearly ? DATA.activeYear + '全年数据总览' : (getCurrentMonth().monthName + '数据概览');
+    document.getElementById('year-badge-text').textContent = DATA.activeYear;
     
     // 标题切换
     document.getElementById('roi-title').textContent = isYearly ? '全年投入与回报汇总' : '投入与回报明细';
@@ -1947,7 +2080,7 @@ function renderFooter(isYearly, yearly) {
     const m = isYearly && yearly ? yearly.latestMonth : getCurrentMonth();
     document.getElementById('data-source').textContent = DATA.dataNote.source;
     document.getElementById('data-cost').textContent = DATA.dataNote.costBasis;
-    document.getElementById('data-period-note').textContent = isYearly && yearly ? '2026年1月-' + yearly.latestMonth.monthName : DATA.dataNote.period;
+    document.getElementById('data-period-note').textContent = isYearly && yearly ? DATA.activeYear + '年1月-' + yearly.latestMonth.monthName : DATA.dataNote.period;
     const now = new Date();
     document.getElementById('data-next').textContent = `${now.getFullYear()}年${now.getMonth() + 1}月${now.getDate()}日`;
     document.getElementById('provider-name').textContent = DATA.providerName;
@@ -2327,7 +2460,7 @@ function getMonthNameByIndex(i) {
 }
 
 function getPeriodByIndex(i) {
-    return '2026.' + String(i + 1).padStart(2, '0');
+    return DATA.activeYear + '.' + String(i + 1).padStart(2, '0');
 }
 
 function addNewMonth() {
@@ -2337,7 +2470,7 @@ function addNewMonth() {
     }
     const newIndex = DATA.months.length;
     const newMonth = createDefaultMonth(getMonthNameByIndex(newIndex), getPeriodByIndex(newIndex));
-    newMonth.nextUpdate = '2026年' + (newIndex + 2) + '月28日';
+    newMonth.nextUpdate = DATA.activeYear + '年' + (newIndex + 2) + '月28日';
     DATA.months.push(newMonth);
     editingMonthIndex = newIndex;
     
@@ -2722,7 +2855,7 @@ function exportToFile() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = '北谷农业-全年数据.json';
+    a.download = '北谷农业-' + DATA.activeYear + '年数据.json';
     a.click();
     URL.revokeObjectURL(url);
 }
@@ -2740,6 +2873,7 @@ function importFromFile() {
                 const parsed = JSON.parse(event.target.result);
                 if (parsed && parsed.months && parsed.months.length > 0) {
                     DATA = parsed;
+                    migrateAllYears();
                     saveDataToURL();
                     renderMonthTabs();
                     renderAll();
@@ -2758,7 +2892,7 @@ function importFromFile() {
 
 function restoreFromLocalStorage() {
     try {
-        const saved = localStorage.getItem('dashboard_data_v3');
+        const saved = localStorage.getItem('dashboard_data_v5') || localStorage.getItem('dashboard_data_v3');
         if (!saved) {
             alert('❌ 本地没有备份数据');
             return;
@@ -2767,6 +2901,7 @@ function restoreFromLocalStorage() {
         if (parsed && parsed.months && parsed.months.length > 0) {
             if (!confirm('确定从本地备份恢复数据？当前未保存的修改将丢失。')) return;
             DATA = parsed;
+            migrateAllYears();
             saveDataToURL();
             renderMonthTabs();
             renderAll();
@@ -2795,9 +2930,19 @@ function toggleROIDetail(type) {
 // 初始化
 window.addEventListener('DOMContentLoaded', () => {
     const hasURLData = loadDataFromURL();
-    normalizeROIData(); // 无论数据来源，自动从 KPI + roiDetail 重建趋势数据
+    migrateAllYears();
+    normalizeROIData();
     renderMonthTabs();
     renderAll();
+    
+    // 点击面板外部关闭
+    document.addEventListener('click', (e) => {
+        const panel = document.getElementById('year-panel');
+        const badge = document.getElementById('year-badge');
+        if (panel && !panel.classList.contains('hidden') && !panel.contains(e.target) && !badge.contains(e.target)) {
+            closeYearPanel();
+        }
+    });
     
     if (hasURLData) {
         console.log('✅ 已从 URL 加载数据');
