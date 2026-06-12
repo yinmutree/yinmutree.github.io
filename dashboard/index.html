@@ -215,11 +215,11 @@
         </div>
         <div class="space-y-3 mb-4">
             <div>
-                <div class="flex justify-between text-sm mb-1.5"><span class="text-slate-300">累计投入</span><span class="font-semibold text-slate-200">¥<span id="roi-invest-total">--</span>万</span></div>
+                <div class="flex justify-between text-sm mb-1.5"><span class="text-slate-300" id="roi-invest-label">本月投入</span><span class="font-semibold text-slate-200">¥<span id="roi-invest-total">--</span>万</span></div>
                 <div class="progress-bar-bg"><div class="progress-bar-fill bg-slate-500" id="roi-invest-bar" style="width: 0%"></div></div>
             </div>
             <div>
-                <div class="flex justify-between text-sm mb-1.5"><span class="text-slate-300">累计回报</span><span class="font-semibold text-emerald-300">¥<span id="roi-return-total">--</span>万</span></div>
+                <div class="flex justify-between text-sm mb-1.5"><span class="text-slate-300" id="roi-return-label">本月回报</span><span class="font-semibold text-emerald-300">¥<span id="roi-return-total">--</span>万</span></div>
                 <div class="progress-bar-bg"><div class="progress-bar-fill bg-emerald-500" id="roi-return-bar" style="width: 0%"></div></div>
             </div>
         </div>
@@ -2108,27 +2108,12 @@ function renderROIDetail(isYearly, yearly) {
         m.roiDetail.return.items = [...lastMonth.roiDetail.return.items];
     }
     
-    // 计算显示用的 ROI 明细（不修改原始 DATA）
-    let displayROI = { ...m.roiDetail, invest: { ...m.roiDetail.invest }, return: { ...m.roiDetail.return } };
-    if (!isYearly) {
-        // 月度视图：累计回报 = 当月及之前所有月份回报之和
-        const currentIdx = DATA.currentMonthIndex;
-        let cumReturn = 0;
-        const cumReturnItems = {};
-        for (let i = 0; i <= currentIdx; i++) {
-            const month = DATA.months[i];
-            if (month && month.roiDetail && month.roiDetail.return && month.roiDetail.return.total != null) {
-                cumReturn += parseFloat(month.roiDetail.return.total);
-                (month.roiDetail.return.items || []).forEach(item => {
-                    if (item.name) cumReturnItems[item.name] = (cumReturnItems[item.name] || 0) + item.value;
-                });
-            }
-        }
-        displayROI.return.total = parseFloat(cumReturn.toFixed(1));
-        displayROI.return.items = Object.entries(cumReturnItems).map(([name, value]) => ({ name, value }));
-    }
+    // 动态标签：全年视图 vs 月度视图
+    document.getElementById('roi-invest-label').textContent = isYearly ? '全年投入' : '本月投入';
+    document.getElementById('roi-return-label').textContent = isYearly ? '全年回报' : '本月回报';
     
-    const d = displayROI;
+    // 月度视图：直接显示当月投入与回报，不累计
+    const d = m.roiDetail;
     document.getElementById('roi-invest-total').textContent = (d.invest?.total != null) ? Number(d.invest.total).toFixed(1).replace(/\.0$/, '') : '--';
     document.getElementById('roi-return-total').textContent = (d.return?.total != null) ? Number(d.return.total).toFixed(1).replace(/\.0$/, '') : '--';
 
