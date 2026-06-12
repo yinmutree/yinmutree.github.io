@@ -1459,12 +1459,20 @@ function normalizeROIData() {
         }
     });
     
-    // 4. 从KPI数据重建 cumulativeROI（确保一致性）
+    // 4. 从KPI和roiDetail数据自动重建趋势数据（不再手动编辑）
     if (DATA.trend) {
         DATA.trend.cumulativeROI = DATA.months.map(m => {
             const roiVal = m.kpi[4].value;
             if (roiVal && roiVal !== '--' && roiVal !== '') {
                 const n = parseFloat(roiVal);
+                if (!isNaN(n)) return n;
+            }
+            return null;
+        });
+        DATA.trend.monthlyCost = DATA.months.map(m => {
+            const retTotal = m.roiDetail?.return?.total;
+            if (retTotal != null && retTotal !== '') {
+                const n = parseFloat(retTotal);
                 if (!isNaN(n)) return n;
             }
             return null;
@@ -1785,8 +1793,8 @@ function renderTrendChart() {
         data: {
             labels,
             datasets: [
-                { label: '月节省成本（万元）', data: monthlyCost, backgroundColor: 'rgba(16, 185, 129, 0.7)', borderColor: 'rgba(16, 185, 129, 1)', borderWidth: 1, borderRadius: 4, order: 2, yAxisID: 'y' },
-                { label: '累计ROI', data: cumulativeROI, type: 'line', borderColor: '#3b82f6', backgroundColor: 'rgba(59, 130, 246, 0.1)', borderWidth: 2, pointBackgroundColor: '#3b82f6', pointRadius: 4, pointHoverRadius: 6, fill: true, tension: 0.4, order: 1, yAxisID: 'y1' }
+                { label: '月节省直接成本（万元）', data: monthlyCost, backgroundColor: 'rgba(16, 185, 129, 0.7)', borderColor: 'rgba(16, 185, 129, 1)', borderWidth: 1, borderRadius: 4, order: 2, yAxisID: 'y' },
+                { label: '月度ROI', data: cumulativeROI, type: 'line', borderColor: '#3b82f6', backgroundColor: 'rgba(59, 130, 246, 0.1)', borderWidth: 2, pointBackgroundColor: '#3b82f6', pointRadius: 4, pointHoverRadius: 6, fill: true, tension: 0.4, order: 1, yAxisID: 'y1' }
             ]
         },
         options: {
@@ -2226,12 +2234,6 @@ function clearReturnItems() {
     }
 }
 
-function clearTrend() {
-    if (!confirm('确定清空趋势图数据？')) return;
-    document.getElementById('e-trend-cost').value = '';
-    document.getElementById('e-trend-roi').value = '';
-}
-
 function addStory() {
     const m = DATA.months[editingMonthIndex];
     m.stories.push({ dept: "", title: "", scenario: "", before: "", after: "", results: [{ label: "", value: "" }, { label: "", value: "" }, { label: "", value: "" }] });
@@ -2474,20 +2476,6 @@ function renderEditForm() {
 
         <div class="edit-section">
             <div class="edit-section-title flex items-center justify-between">
-                <span>📈 趋势图 - ${m.monthName}数据点</span>
-                <button onclick="clearTrend()" class="w-7 h-7 rounded-md bg-rose-500/10 text-rose-400 hover:bg-rose-500/20 hover:text-rose-300 transition flex items-center justify-center" title="清空趋势图数据">
-                    <i class="fas fa-trash-alt text-xs"></i>
-                </button>
-            </div>
-            <div class="grid grid-cols-2 gap-3">
-                <div><label class="edit-label">月节省成本（万）</label><input type="number" id="e-trend-cost" class="edit-input" step="0.1" value="${DATA.trend.monthlyCost[editingMonthIndex] || ''}"></div>
-                <div><label class="edit-label">累计ROI</label><input type="number" id="e-trend-roi" class="edit-input" step="0.1" value="${DATA.trend.cumulativeROI[editingMonthIndex] || ''}"></div>
-            </div>
-            <p class="text-xs text-slate-500 mt-2">提示：填数字会显示在趋势图上，留空则不显示该月</p>
-        </div>
-
-        <div class="edit-section">
-            <div class="edit-section-title flex items-center justify-between">
                 <span>⚙️ 自动化流程（当前 ${m.flows.length} 条）</span>
                 <div class="flex gap-2">
                     <button onclick="autoCalcFromFlows()" class="touch-btn px-3 py-1.5 rounded-md bg-blue-500/20 text-blue-400 text-xs hover:bg-blue-500/30 transition border border-blue-500/20" title="根据流程自动计算KPI">
@@ -2615,10 +2603,6 @@ function collectFormData() {
         item.value = parseFloat(document.getElementById(`e-return-val-${i}`).value) || 0;
     });
 
-    const trendCost = document.getElementById('e-trend-cost').value;
-    const trendROI = document.getElementById('e-trend-roi').value;
-    DATA.trend.monthlyCost[editingMonthIndex] = trendCost ? parseFloat(trendCost) : null;
-    DATA.trend.cumulativeROI[editingMonthIndex] = trendROI ? parseFloat(trendROI) : null;
 
     // 流程 - 动态收集（扫描DOM，不依赖数组长度）
     const newFlows = [];
@@ -2693,6 +2677,7 @@ function saveAndClose() {
     autoCalcFromFlows();
     collectFormData();
     saveDataToURL();
+    normalizeROIData(); // 自动从 KPI + roiDetail 重建趋势数据
     DATA.currentMonthIndex = editingMonthIndex;
     DATA.isYearlyView = false;
     renderMonthTabs();
@@ -2788,6 +2773,7 @@ function toggleROIDetail(type) {
 // 初始化
 window.addEventListener('DOMContentLoaded', () => {
     const hasURLData = loadDataFromURL();
+    normalizeROIData(); // 无论数据来源，自动从 KPI + roiDetail 重建趋势数据
     renderMonthTabs();
     renderAll();
     
