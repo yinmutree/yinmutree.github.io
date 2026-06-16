@@ -101,10 +101,17 @@ nav{
 }
 .btn-ghost:hover{background:var(--grove-light)}
 .hero-visual{
-  display:flex;justify-content:center;align-items:center;
+  display:flex;flex-direction:column;justify-content:center;align-items:center;
   position:relative;
 }
-.tree-svg{width:100%;max-width:380px}
+.hero-logo{width:auto;height:auto;max-width:440px;max-height:320px;object-fit:cover;
+  object-position:center top;clip-path:polygon(0 0,100% 0,100% 65%,0 65%);
+}
+.hero-logo-brand{
+  display:block;text-align:center;margin-top:4px;
+  font-size:24px;font-weight:600;letter-spacing:0.08em;color:var(--forest);
+}
+.hero-logo-brand span{font-weight:400;color:var(--muted);margin-left:8px;font-size:20px}
 
 /* ── SECTION COMMON ── */
 .section-header{text-align:center;padding:80px 0 48px}
@@ -113,6 +120,52 @@ nav{
 .section-divider{
   width:40px;height:3px;background:var(--forest);border-radius:2px;
   margin:16px auto 0;
+}
+
+/* ── VISION & MISSION ── */
+.vm-section{padding-bottom:80px}
+.vm-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.vision-card{
+  background:var(--forest);border-radius:var(--radius);
+  padding:56px 48px;position:relative;overflow:hidden;
+  display:flex;flex-direction:column;justify-content:center;
+}
+.vision-card::before{
+  content:'';position:absolute;top:-60px;right:-60px;
+  width:200px;height:200px;border-radius:50%;
+  background:rgba(255,255,255,0.04);
+}
+.vision-label{
+  font-size:12px;color:rgba(255,255,255,0.5);
+  letter-spacing:0.15em;margin-bottom:16px;position:relative;z-index:1;
+}
+.vision-title{
+  font-size:26px;font-weight:600;color:var(--white);
+  line-height:1.45;position:relative;z-index:1;
+}
+.vision-quote{
+  margin-top:28px;padding-left:14px;
+  border-left:2.5px solid rgba(200,230,160,0.4);
+  font-size:14px;color:rgba(255,255,255,0.65);
+  line-height:1.7;position:relative;z-index:1;
+}
+.mission-card{
+  background:var(--white);border:1px solid rgba(45,90,61,0.2);
+  border-radius:var(--radius);padding:56px 48px;
+  display:flex;flex-direction:column;justify-content:center;text-align:center;
+  box-shadow:0 1px 4px rgba(45,90,61,0.06);
+}
+.mission-label{
+  font-size:12px;color:var(--muted);
+  letter-spacing:0.15em;margin-bottom:16px;
+}
+.mission-title{
+  font-size:30px;font-weight:600;color:var(--forest);
+  line-height:1.4;margin-bottom:24px;
+}
+.mission-desc{
+  font-size:14px;color:var(--muted);line-height:1.85;
+  max-width:360px;margin:0 auto;
 }
 
 /* ── ABOUT ── */
@@ -167,6 +220,7 @@ nav{
 .svc-card{
   background:var(--white);border:0.5px solid var(--border);
   border-radius:var(--radius);padding:32px 24px;
+  display:flex;flex-direction:column;
   transition:border-color .25s,transform .25s,box-shadow .25s;
 }
 .svc-card:hover{
@@ -196,7 +250,7 @@ nav{
 
 /* ── PRODUCTS ── */
 .products{padding-bottom:80px}
-.products-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.products-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
 .prod-card{
   background:var(--white);border:0.5px solid var(--border);
   border-radius:var(--radius);padding:32px 24px;
@@ -219,6 +273,88 @@ nav{
 }
 .prod-item:hover{background:var(--grove-light);color:var(--forest);border-color:var(--grove)}
 
+/* ── CASES ── */
+.cases{padding-bottom:80px}
+.cases-hero{
+  background:var(--forest);border-radius:var(--radius);
+  padding:48px 52px;position:relative;overflow:hidden;
+  display:grid;grid-template-columns:1fr auto;gap:40px;align-items:center;
+}
+.cases-hero::before{
+  content:'';position:absolute;top:-60px;right:-60px;
+  width:220px;height:220px;border-radius:50%;
+  background:rgba(255,255,255,0.04);
+}
+.cases-hero::after{
+  content:'';position:absolute;bottom:-40px;left:-40px;
+  width:160px;height:160px;border-radius:50%;
+  background:rgba(255,255,255,0.03);
+}
+.cases-info{position:relative;z-index:1}
+.cases-badge{
+  display:inline-block;padding:4px 14px;
+  background:rgba(255,255,255,0.1);border-radius:20px;
+  font-size:11px;color:rgba(255,255,255,0.6);
+  letter-spacing:0.08em;margin-bottom:14px;
+}
+.cases-client{font-size:24px;font-weight:600;color:var(--white);margin-bottom:8px}
+.cases-client-sub{font-size:14px;color:rgba(255,255,255,0.6);line-height:1.7;margin-bottom:20px}
+.cases-link{
+  display:inline-flex;align-items:center;gap:6px;
+  font-size:13px;color:rgba(200,230,160,0.8);
+  transition:color .2s;
+}
+.cases-link:hover{color:rgba(200,230,160,1)}
+.cases-link svg{width:14px;height:14px}
+.cases-stats{
+  display:grid;grid-template-columns:1fr 1fr;gap:14px;
+  position:relative;z-index:1;
+}
+.case-stat{
+  background:rgba(255,255,255,0.07);border-radius:10px;
+  padding:20px 22px;text-align:center;
+  border:1px solid rgba(255,255,255,0.06);
+}
+.case-stat-num{font-size:28px;font-weight:700;color:var(--white);margin-bottom:2px}
+.case-stat-num small{font-size:14px;font-weight:400;color:rgba(255,255,255,0.55)}
+.case-stat-label{font-size:11px;color:rgba(255,255,255,0.45);letter-spacing:0.04em}
+
+.cases-stories{margin-top:20px;display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.case-card{
+  background:var(--white);border:0.5px solid var(--border);
+  border-radius:var(--radius);padding:28px 24px;
+  transition:border-color .25s,transform .25s,box-shadow .25s;
+}
+.case-card:hover{
+  border-color:var(--grove);transform:translateY(-3px);
+  box-shadow:0 8px 24px rgba(45,90,61,0.08);
+}
+.case-dept{
+  font-size:11px;color:var(--grove);font-weight:600;
+  letter-spacing:0.06em;margin-bottom:8px;
+}
+.case-card h3{font-size:16px;font-weight:600;color:var(--forest);margin-bottom:14px;line-height:1.4}
+.case-before{
+  padding:14px 16px;background:var(--parchment);border-radius:8px;
+  margin-bottom:12px;
+}
+.case-before-title{font-size:11px;color:var(--heartwood);font-weight:600;letter-spacing:0.06em;margin-bottom:6px}
+.case-before-text{font-size:13px;color:var(--muted);line-height:1.65}
+.case-after{
+  padding:14px 16px;background:var(--grove-light);border-radius:8px;
+}
+.case-after-title{font-size:11px;color:var(--forest);font-weight:600;letter-spacing:0.06em;margin-bottom:6px}
+.case-after-text{font-size:13px;color:var(--forest);line-height:1.65;font-weight:500}
+.case-impact{
+  margin-top:14px;display:flex;flex-wrap:wrap;gap:8px;
+}
+.case-impact-tag{
+  display:flex;align-items:center;gap:4px;
+  padding:4px 10px;border:0.5px solid rgba(45,90,61,0.15);
+  border-radius:4px;font-size:11px;color:var(--grove);font-weight:600;
+}
+.case-impact-tag svg{width:12px;height:12px}
+
 /* ── VALUES ── */
 .values{padding-bottom:80px}
 .values-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
@@ -239,29 +375,33 @@ nav{
 
 /* ── FOUNDER ── */
 .founder{padding-bottom:80px}
+.founders-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px}
 .founder-card{
   background:var(--white);border:0.5px solid var(--border);
-  border-radius:var(--radius);padding:44px 48px;
-  display:grid;grid-template-columns:auto 1fr;gap:40px;align-items:center;
+  border-radius:var(--radius);padding:36px 32px;
+  display:grid;grid-template-columns:auto 1fr;gap:16px 20px;align-items:start;
 }
 .founder-avatar{
-  width:110px;height:110px;border-radius:50%;
+  width:100px;height:100px;border-radius:50%;
   background:var(--grove-light);
   display:flex;align-items:center;justify-content:center;
   flex-shrink:0;position:relative;overflow:hidden;
+  grid-row:1;grid-column:1;
 }
 .founder-avatar img{width:100%;height:100%;object-fit:cover}
-.founder-name{font-size:20px;font-weight:600;margin-bottom:6px}
-.founder-tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+.founder-header{grid-row:1;grid-column:2;display:flex;flex-direction:column;justify-content:center;min-height:100px}
+.founder-role{font-size:11px;color:var(--grove);font-weight:600;letter-spacing:0.06em;margin-bottom:4px}
+.founder-name{font-size:20px;font-weight:600;margin-bottom:8px}
+.founder-tags{grid-row:2;grid-column:1/-1;display:flex;flex-wrap:wrap;gap:6px;margin-bottom:4px}
 .founder-tag{
-  padding:3px 12px;border:0.5px solid var(--border);
-  border-radius:20px;font-size:12px;color:var(--muted);
+  padding:3px 10px;border:0.5px solid var(--border);
+  border-radius:20px;font-size:11px;color:var(--muted);
 }
 .founder-tag.mbti{background:var(--grove-light);color:var(--forest);border-color:var(--grove);font-weight:500}
-.founder-desc{font-size:14px;color:var(--muted);line-height:1.8;margin-bottom:14px}
-.founder-creds{display:flex;flex-wrap:wrap;gap:8px}
+.founder-desc{grid-row:3;grid-column:1/-1;font-size:13px;color:var(--muted);line-height:1.75;margin-bottom:4px}
+.founder-creds{grid-row:4;grid-column:1/-1;display:flex;flex-wrap:wrap;gap:6px}
 .cred-badge{
-  padding:5px 14px;background:var(--parchment);
+  padding:4px 10px;background:var(--parchment);
   border-radius:6px;font-size:12px;color:var(--heartwood);font-weight:500;
 }
 
@@ -305,6 +445,10 @@ footer{border-top:0.5px solid var(--border);padding:36px 0}
 .footer-links a{font-size:12px;color:var(--muted);transition:color .2s}
 .footer-links a:hover{color:var(--forest)}
 
+/* 隐藏访客后台入口 - 双击logo进入 */
+.admin-trigger{cursor:default;user-select:none;opacity:0.4;transition:opacity .2s}
+.admin-trigger:hover{opacity:0.7}
+
 /* ── ANIMATIONS ── */
 @keyframes fadeInUp{
   from{opacity:0;transform:translateY(20px)}
@@ -322,27 +466,57 @@ footer{border-top:0.5px solid var(--border);padding:36px 0}
   .hero h1{font-size:36px}
   .hero-sub{margin:0 auto 36px}
   .hero-actions{justify-content:center}
+  .hero-logo{max-width:360px;max-height:260px}
+  .hero-logo-brand{font-size:22px}
+  .hero-logo-brand span{font-size:18px}
+  .vm-grid{grid-template-columns:1fr}
+  .vision-card{padding:40px 32px}
+  .vision-title{font-size:22px}
+  .mission-card{padding:40px 32px}
+  .mission-title{font-size:26px}
   .about-card{grid-template-columns:1fr;gap:28px;padding:28px}
   .philosophy-grid{grid-template-columns:1fr;gap:28px}
   .services-grid{grid-template-columns:repeat(2,1fr)}
   .products-grid{grid-template-columns:1fr}
+  .cases-hero{grid-template-columns:1fr;padding:40px 32px}
+  .cases-stats{grid-template-columns:repeat(2,1fr)}
+  .cases-stories{grid-template-columns:1fr}
+  .case-stat-num{font-size:22px}
   .values-grid{grid-template-columns:repeat(2,1fr)}
-  .founder-card{grid-template-columns:1fr;gap:24px;padding:28px;text-align:center}
-  .founder-tags{justify-content:center}
-  .founder-creds{justify-content:center}
+  .founders-grid{grid-template-columns:1fr}
+  .founder-card{padding:28px 24px;gap:12px 16px}
+  .founder-avatar{width:90px;height:90px}
+  .founder-header{min-height:90px}
+  .founder-name{font-size:18px}
   .cta{padding:48px 28px}
 }
 @media(max-width:600px){
   .wrap{padding:0 20px}
   .hero{padding:110px 0 60px}
   .hero h1{font-size:30px}
+  .hero-logo{max-width:260px;max-height:190px}
+  .hero-logo-brand{font-size:18px;margin-top:4px}
+  .hero-logo-brand span{font-size:15px}
   .services-grid{grid-template-columns:1fr}
+  .svc-card{padding:24px 20px}
+  .prod-card{padding:24px 20px}
+  .cases-hero{padding:32px 24px}
+  .cases-client{font-size:20px}
+  .cases-stats{grid-template-columns:1fr 1fr}
+  .case-stat-num{font-size:20px}
+  .cases-stories{grid-template-columns:1fr}
   .nav-links{display:none}
   .nav-mobile-btn{display:block}
   .footer-inner{flex-direction:column;text-align:center}
   .footer-links{justify-content:center}
   .about-stats{grid-template-columns:1fr 1fr}
   .philosophy-compare{grid-template-columns:1fr}
+  .founder-card{padding:24px 18px;gap:10px 14px}
+  .founder-avatar{width:72px;height:72px}
+  .founder-header{min-height:72px}
+  .founder-name{font-size:17px;margin-bottom:6px}
+  .founder-role{font-size:10px}
+  .founder-tag{padding:2px 8px;font-size:10px}
 }
 </style>
 </head>
@@ -355,10 +529,12 @@ footer{border-top:0.5px solid var(--border);padding:36px 0}
       <img src="assets/logo.png" alt="引木 Yinmutree">
     </a>
     <div class="nav-links">
+      <a href="#vision">愿景</a>
       <a href="#about">关于</a>
       <a href="#philosophy">理念</a>
       <a href="#services">服务</a>
       <a href="#products">产品</a>
+      <a href="#cases">案例</a>
       <a href="#founder">创始人</a>
       <a href="#contact">联系</a>
     </div>
@@ -374,7 +550,7 @@ footer{border-top:0.5px solid var(--border);padding:36px 0}
     <div>
       <div class="hero-tag">企业AI落地 · 降本增效 · 组织赋能</div>
       <h1>让每一棵木<br>都能长成<span>森林</span></h1>
-      <p class="hero-sub">引木管理咨询工作室——用专业和耐心，陪伴企业与家庭找到自己的生长方向。</p>
+      <p class="hero-sub">引木管理咨询工作室——用专业和耐心，陪伴企业找到自己的生长方向。</p>
       <div class="hero-actions">
         <a href="#services" class="btn-primary">
           <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -384,35 +560,33 @@ footer{border-top:0.5px solid var(--border);padding:36px 0}
       </div>
     </div>
     <div class="hero-visual">
-      <svg class="tree-svg" viewBox="0 0 400 420" fill="none">
-        <!-- 柔光背景 -->
-        <circle cx="200" cy="190" r="170" fill="#2D5A3D" opacity="0.04"/>
-        <circle cx="200" cy="190" r="110" fill="#5A8F6E" opacity="0.06"/>
-        <!-- 地面阴影 -->
-        <ellipse cx="200" cy="370" rx="140" ry="14" fill="#2D5A3D" opacity="0.08"/>
-        <!-- 小树3（最右） -->
-        <rect x="287" y="295" width="8" height="55" rx="3" fill="#8B7355" opacity="0.7"/>
-        <ellipse cx="291" cy="284" rx="22" ry="24" fill="#2D5A3D" opacity="0.75"/>
-        <!-- 小树2（最左） -->
-        <rect x="97" y="285" width="9" height="60" rx="3" fill="#8B7355" opacity="0.7"/>
-        <ellipse cx="102" cy="272" rx="26" ry="28" fill="#5A8F6E" opacity="0.7"/>
-        <!-- 侧枝2 -->
-        <rect x="244" y="222" width="12" height="48" rx="3" fill="#8B7355" transform="rotate(16 244 222)"/>
-        <ellipse cx="260" cy="212" rx="36" ry="32" fill="#5A8F6E"/>
-        <!-- 侧枝1 -->
-        <rect x="144" y="228" width="12" height="50" rx="3" fill="#8B7355" transform="rotate(-18 144 228)"/>
-        <ellipse cx="132" cy="216" rx="38" ry="34" fill="#5A8F6E"/>
-        <!-- 主树干 -->
-        <rect x="190" y="200" width="20" height="140" rx="5" fill="#8B7355"/>
-        <!-- 主树冠 -->
-        <ellipse cx="200" cy="168" rx="68" ry="62" fill="#2D5A3D"/>
-        <!-- 树冠高光 -->
-        <ellipse cx="184" cy="150" rx="20" ry="18" fill="#5A8F6E" opacity="0.45"/>
-        <ellipse cx="218" cy="160" rx="14" ry="12" fill="#5A8F6E" opacity="0.35"/>
-        <!-- 根系暗示 -->
-        <path d="M195 340 Q180 355 170 360" stroke="#8B7355" stroke-width="2" fill="none" opacity="0.3"/>
-        <path d="M205 340 Q220 355 232 358" stroke="#8B7355" stroke-width="2" fill="none" opacity="0.3"/>
-      </svg>
+      <img src="assets/logo.png" alt="引木" class="hero-logo">
+      <span class="hero-logo-brand">引木<span>Yinmu</span></span>
+    </div>
+  </div>
+</section>
+
+<!-- ── VISION & MISSION ── -->
+<section class="vm-section" id="vision">
+  <div class="wrap">
+    <div class="vm-grid">
+      <div class="vision-card">
+        <div class="vision-label">我们要去的地方</div>
+        <div class="vision-title">
+          成为生态型组织<br>最值得信赖的成长伙伴<br>
+          <span style="font-size:20px;font-weight:500;opacity:0.85">帮助1000个组织实现持续进化</span>
+        </div>
+        <div class="vision-quote">"不做一夜成材的速成班，只做扎根泥土的长期主义者"</div>
+      </div>
+      <div class="mission-card">
+        <div class="mission-label">我们存在的意义</div>
+        <div class="mission-title">让每一棵木，<br>都能长成森林</div>
+        <div class="mission-desc">
+          我们相信，每个企业、每个人都是一颗待破土的种子、一棵待生枝出叶的木。<br><br>
+          引木所做的，就是提供阳光、水分与养分——<br>
+          让认知破土、让能力扎根、让价值成林。
+        </div>
+      </div>
     </div>
   </div>
 </section>
@@ -502,9 +676,9 @@ footer{border-top:0.5px solid var(--border);padding:36px 0}
       <p>认知破土 · 能力扎根 · 价值成林</p>
       <div class="section-divider"></div>
     </div>
-    <div class="services-grid" style="grid-template-columns:repeat(3,1fr)">
+    <div class="services-grid">
       <!-- 认知破土 -->
-      <div class="svc-card" style="display:flex;flex-direction:column">
+      <div class="svc-card">
         <div class="svc-icon">
           <svg viewBox="0 0 22 22" fill="none"><path d="M11 20V4" stroke="#2D5A3D" stroke-width="1.5" stroke-linecap="round"/><path d="M6 9l5-5 5 5" stroke="#2D5A3D" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M3 18c2-2 4.5-3 8-3s6 1 8 3" stroke="#5A8F6E" stroke-width="1.5" stroke-linecap="round"/></svg>
         </div>
@@ -518,7 +692,7 @@ footer{border-top:0.5px solid var(--border);padding:36px 0}
         </div>
       </div>
       <!-- 能力扎根 -->
-      <div class="svc-card" style="display:flex;flex-direction:column">
+      <div class="svc-card">
         <div class="svc-icon">
           <svg viewBox="0 0 22 22" fill="none"><path d="M11 20V8" stroke="#2D5A3D" stroke-width="2" stroke-linecap="round"/><ellipse cx="11" cy="7" rx="5" ry="4.5" fill="#5A8F6E"/><path d="M7 16c1.5-1.5 2.5-2 4-2s2.5.5 4 2" stroke="#8B7355" stroke-width="1.2" stroke-linecap="round" opacity="0.5"/><path d="M5 19c2-2 3.5-3 6-3s4 1 6 3" stroke="#5A8F6E" stroke-width="1.2" stroke-linecap="round" opacity="0.4"/></svg>
         </div>
@@ -532,7 +706,7 @@ footer{border-top:0.5px solid var(--border);padding:36px 0}
         </div>
       </div>
       <!-- 价值成林 -->
-      <div class="svc-card" style="display:flex;flex-direction:column">
+      <div class="svc-card">
         <div class="svc-icon">
           <svg viewBox="0 0 22 22" fill="none"><ellipse cx="6" cy="10" rx="3" ry="3.5" fill="#5A8F6E"/><rect x="5" y="13" width="1.5" height="5" rx="0.75" fill="#8B7355"/><ellipse cx="11" cy="8" rx="3.5" ry="4" fill="#2D5A3D"/><rect x="10.25" y="12" width="1.5" height="6" rx="0.75" fill="#8B7355"/><ellipse cx="16" cy="11" rx="2.8" ry="3" fill="#5A8F6E" opacity="0.7"/><rect x="15.25" y="14" width="1.5" height="4" rx="0.75" fill="#8B7355" opacity="0.7"/></svg>
         </div>
@@ -557,7 +731,7 @@ footer{border-top:0.5px solid var(--border);padding:36px 0}
       <p>三条产品线，让AI真正为企业创造价值</p>
       <div class="section-divider"></div>
     </div>
-    <div class="products-grid" style="grid-template-columns:repeat(3,1fr)">
+    <div class="products-grid">
       <div class="prod-card">
         <div class="prod-tag">企业侧</div>
         <h3>企业AI赋能系列</h3>
@@ -589,6 +763,128 @@ footer{border-top:0.5px solid var(--border);padding:36px 0}
           <span class="prod-item">自动化工作流</span>
           <span class="prod-item">知识库搭建</span>
           <span class="prod-item">提示词仓库</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── CASES ── -->
+<section class="cases" id="cases">
+  <div class="wrap">
+    <div class="section-header">
+      <h2>成功案例</h2>
+      <p>真实数据，真实效果——不是PPT里的概念，而是业务里的生产力</p>
+      <div class="section-divider"></div>
+    </div>
+    <div class="cases-hero">
+      <div class="cases-info">
+        <div class="cases-badge">首家企业AI落地客户</div>
+        <div class="cases-client">某省级农业科技企业</div>
+        <div class="cases-client-sub">覆盖人资、财务、新媒体等多个部门，15个自动化流程上线运行。从系统部署到产出回报，仅用3个月实现AI投入产出比超3倍，人力成本节省超7万元。</div>
+      </div>
+      <div class="cases-stats">
+        <div class="case-stat">
+          <div class="case-stat-num">726<small>h</small></div>
+          <div class="case-stat-label">累计节省工时</div>
+        </div>
+        <div class="case-stat">
+          <div class="case-stat-num">15<small>个</small></div>
+          <div class="case-stat-label">自动化流程</div>
+        </div>
+        <div class="case-stat">
+          <div class="case-stat-num">3.4<small>:1</small></div>
+          <div class="case-stat-label">AI投入产出比</div>
+        </div>
+        <div class="case-stat">
+          <div class="case-stat-num">10<small>人</small></div>
+          <div class="case-stat-label">等效释放人力</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cases-stories">
+      <!-- 财务部三方对账 -->
+      <div class="case-card">
+        <div class="case-dept">财务部</div>
+        <h3>三方对账效率革命</h3>
+        <div class="case-before">
+          <div class="case-before-title">❙ 改进前</div>
+          <div class="case-before-text">对账停留在WPS表格，数据敏感无法实时共享，财务、销售、零售商三方靠人工1v1逐一核对，80多张表格堆叠流转。</div>
+        </div>
+        <div class="case-after">
+          <div class="case-after-title">❙ 改进后</div>
+          <div class="case-after-text">智能表格+自动化提醒，三方实时在线对账，80多张表格减负为2张，异常数据8小时内自动提醒处理。</div>
+        </div>
+        <div class="case-impact">
+          <span class="case-impact-tag">
+            <svg viewBox="0 0 12 12" fill="none"><path d="M6 1v10M1 6h10" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+            月省近20天工时
+          </span>
+          <span class="case-impact-tag">
+            <svg viewBox="0 0 12 12" fill="none"><path d="M2 6h8M6 2v8" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+            80张→2张
+          </span>
+          <span class="case-impact-tag">
+            <svg viewBox="0 0 12 12" fill="none"><path d="M1 11l3-3M9 5l2-2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+            异常8h内响应
+          </span>
+        </div>
+      </div>
+
+      <!-- 人资部360评估 -->
+      <div class="case-card">
+        <div class="case-dept">人资部</div>
+        <h3>360评估秒级出结果</h3>
+        <div class="case-before">
+          <div class="case-before-title">❙ 改进前</div>
+          <div class="case-before-text">考核季360评估100%依赖人工手动录入和计算，回收难、汇总更难，结果迟迟无法交付。</div>
+        </div>
+        <div class="case-after">
+          <div class="case-after-title">❙ 改进后</div>
+          <div class="case-after-text">智能表格+仪表盘自动计算，全员评价结果实时可见，百条数据秒级统计，1张表格搞定全部。</div>
+        </div>
+        <div class="case-impact">
+          <span class="case-impact-tag">
+            <svg viewBox="0 0 12 12" fill="none"><path d="M6 1v10M1 6h10" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+            实时出结果
+          </span>
+          <span class="case-impact-tag">
+            <svg viewBox="0 0 12 12" fill="none"><path d="M2 6h8M6 2v8" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+            百条秒级计算
+          </span>
+          <span class="case-impact-tag">
+            <svg viewBox="0 0 12 12" fill="none"><path d="M1 11l3-3M9 5l2-2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+            1张表替代多张
+          </span>
+        </div>
+      </div>
+
+      <!-- 新媒体短视频KPI -->
+      <div class="case-card">
+        <div class="case-dept">新媒体</div>
+        <h3>短视频KPI从周跟到日跟</h3>
+        <div class="case-before">
+          <div class="case-before-title">❙ 改进前</div>
+          <div class="case-before-text">每天需花1-2小时逐一确认全省零售商的短视频输出进度，无法实时筛查，周报勉强，日跟进完全不可能。</div>
+        </div>
+        <div class="case-after">
+          <div class="case-after-title">❙ 改进后</div>
+          <div class="case-after-text">智能表格+智能机器人+AI小龙虾，全省零售商进度日跟进，2小时筛查缩短为2分钟输出，每日定时自动推送报告。</div>
+        </div>
+        <div class="case-impact">
+          <span class="case-impact-tag">
+            <svg viewBox="0 0 12 12" fill="none"><path d="M6 1v10M1 6h10" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+            周跟→日跟
+          </span>
+          <span class="case-impact-tag">
+            <svg viewBox="0 0 12 12" fill="none"><path d="M2 6h8M6 2v8" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+            2h→2min
+          </span>
+          <span class="case-impact-tag">
+            <svg viewBox="0 0 12 12" fill="none"><path d="M1 11l3-3M9 5l2-2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+            每日自动推送
+          </span>
         </div>
       </div>
     </div>
@@ -640,28 +936,52 @@ footer{border-top:0.5px solid var(--border);padding:36px 0}
 <section class="founder" id="founder">
   <div class="wrap">
     <div class="section-header">
-      <h2>创始人</h2>
-      <p>十余年深耕，专业值得信赖</p>
+      <h2>核心团队</h2>
+      <p>专业互补，实战落地</p>
       <div class="section-divider"></div>
     </div>
+    <div class="founders-grid">
     <div class="founder-card">
       <div class="founder-avatar">
         <img src="assets/founder.png" alt="刘健昕" style="width:100%;height:100%;object-fit:cover;">
       </div>
-      <div>
+      <div class="founder-header">
+        <div class="founder-role">引木创始人</div>
         <div class="founder-name">刘健昕</div>
         <div class="founder-tags">
-          <span class="founder-tag mbti">INTJ</span>
+          <span class="founder-tag">降本增效专家</span>
           <span class="founder-tag">企业AI效率工程师</span>
           <span class="founder-tag">AI落地实战派</span>
         </div>
-        <p class="founder-desc">企业管理咨询从业十余年，专注于企业AI落地应用。不走"讲概念"路线，只做"能落地"的事——帮企业用AI智能体和自动化工作流实现真正的降本增效，让AI从PPT里的愿景变成业务里的生产力。</p>
-        <div class="founder-creds">
-          <span class="cred-badge">国家中级经济师</span>
-          <span class="cred-badge">人力资源管理师</span>
-          <span class="cred-badge">就业指导师</span>
+      </div>
+      <p class="founder-desc">企业管理咨询从业十余年，专注于企业AI落地应用。不走"讲概念"路线，只做"能落地"的事——帮企业用AI智能体和自动化工作流实现真正的降本增效，让AI从PPT里的愿景变成业务里的生产力。</p>
+      <div class="founder-creds">
+        <span class="cred-badge">前上市企业培训总监</span>
+        <span class="cred-badge">国家中级经济师</span>
+        <span class="cred-badge">人力资源管理师</span>
+        <span class="cred-badge">就业指导师</span>
+      </div>
+    </div>
+    <div class="founder-card">
+      <div class="founder-avatar">
+        <img src="assets/cofounder.png" alt="邬彤" style="width:100%;height:100%;object-fit:cover;">
+      </div>
+      <div class="founder-header">
+        <div class="founder-role">联合创始人</div>
+        <div class="founder-name">邬彤</div>
+        <div class="founder-tags">
+          <span class="founder-tag">懂技术的市场人</span>
+          <span class="founder-tag">客户需求翻译官</span>
+          <span class="founder-tag">项目交付护航者</span>
         </div>
       </div>
+      <p class="founder-desc">技术背景出身，却在市场一线摸爬滚打多年——懂技术，所以跟客户谈AI不会"飘在空中"；懂市场，所以能精准捕捉客户真正的需求痛点。在引木负责客户对接与项目交付护航，确保每个项目的需求理解到位、执行过程透明、最终结果让客户满意。</p>
+      <div class="founder-creds">
+        <span class="cred-badge">人工智能与信息安全背景</span>
+        <span class="cred-badge">客户需求精准洞察</span>
+        <span class="cred-badge">项目交付全程护航</span>
+      </div>
+    </div>
     </div>
   </div>
 </section>
@@ -682,7 +1002,7 @@ footer{border-top:0.5px solid var(--border);padding:36px 0}
 <!-- ── FOOTER ── -->
 <footer>
   <div class="wrap footer-inner">
-    <div class="footer-logo">
+    <div class="footer-logo admin-trigger" ondblclick="window.open('http://101.42.2.15:8901','_blank')">
       <img src="assets/logo.png" alt="引木" style="height:22px;width:auto;">
     </div>
     <div class="footer-copy">&copy; 2026 哈尔滨南岗区引木管理咨询工作室 · 积木成林，共生共长</div>
@@ -695,5 +1015,29 @@ footer{border-top:0.5px solid var(--border);padding:36px 0}
   </div>
 </footer>
 
+<!-- 引木访客记录（无感知） -->
+<script>
+(function(){
+  var vid = localStorage.getItem('ym_vid');
+  if (!vid) {
+    vid = 'V' + Date.now().toString(36) + Math.random().toString(36).substr(2,4).toUpperCase();
+    localStorage.setItem('ym_vid', vid);
+  }
+  var source = 'direct';
+  var ref = document.referrer || '';
+  if (ref.indexOf('weixin') > -1 || ref.indexOf('.qq.com') > -1) source = 'wechat';
+  else if (ref.indexOf('baidu.com') > -1) source = 'baidu';
+  else if (ref.indexOf('google.com') > -1) source = 'google';
+  else if (ref) source = 'other';
+  var ua = navigator.userAgent.toLowerCase();
+  var device = /mobile|android|iphone|ipod|blackberry|mini/i.test(ua) ? 'mobile' : /tablet|ipad/i.test(ua) ? 'tablet' : 'desktop';
+  var page = window.location.pathname + window.location.hash;
+  try {
+    var payload = JSON.stringify({key:'yinmu2026',visitor_id:vid,page:page,source:source,referrer:ref,device:device});
+    if (navigator.sendBeacon) { navigator.sendBeacon('http://101.42.2.15:8901/ping', payload); }
+    else { fetch('http://101.42.2.15:8901/ping',{method:'POST',body:payload,headers:{'Content-Type':'application/json'},keepalive:true}).catch(function(){}); }
+  } catch(e){}
+})();
+</script>
 </body>
 </html>
