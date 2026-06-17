@@ -1436,25 +1436,30 @@ function saveToken() {
             const localMonths = DATA.months ? DATA.months.length : 0;
             const cloudMonths = cloudData.months ? cloudData.months.length : 0;
             if (localMonths > cloudMonths) {
-                console.log('📤 本地数据(' + localMonths + '月) > 云端(' + cloudMonths + '月)，推送本地数据');
-                syncToCloud(DATA).then(ok => { if (ok) updateSyncUI('synced'); else updateSyncUI('error'); });
-            } else {
-                console.log('📥 云端数据(' + cloudMonths + '月) >= 本地(' + localMonths + '月)，使用云端数据');
+                console.log('📤 本地(' + localMonths + '月) > 云端(' + cloudMonths + '月)，推送本地');
+                syncToCloud(DATA).then(ok => { updateSyncUI(ok ? 'synced' : 'error'); });
+            } else if (cloudMonths > localMonths) {
+                console.log('📥 云端(' + cloudMonths + '月) > 本地(' + localMonths + '月)，加载云端');
                 DATA = cloudData;
-                migrateAllYears();
-                normalizeROIData();
-                renderMonthTabs();
-                renderAll();
+                migrateAllYears(); normalizeROIData();
+                renderMonthTabs(); renderAll();
                 syncConfig.lastCloudUpdate = cloudData._updatedAt;
                 try { localStorage.setItem('dashboard_data_v5', JSON.stringify(DATA)); } catch(e) {}
                 updateSyncUI('synced');
+            } else {
+                // 月份数相同 → 做一次验证推送，而不是假装已同步
+                console.log('🔄 月份数相同(' + cloudMonths + '月)，验证云端连接...');
+                syncToCloud(DATA).then(ok => {
+                    updateSyncUI(ok ? 'synced' : 'error');
+                    if (!ok) console.warn('⚠️ 推送到云端失败，请检查Token权限或网络');
+                });
             }
         } else {
-            syncToCloud(DATA).then(ok => { if (ok) { updateSyncUI('synced'); console.log('✅ 首次推送本地数据到云端'); } });
+            syncToCloud(DATA).then(ok => { updateSyncUI(ok ? 'synced' : 'error'); if (ok) console.log('✅ 首次推送本地数据到云端'); });
         }
         startCloudPolling();
     }).catch(() => {
-        syncToCloud(DATA).then(ok => { if (ok) updateSyncUI('synced'); else updateSyncUI('error'); });
+        syncToCloud(DATA).then(ok => { updateSyncUI(ok ? 'synced' : 'error'); });
         startCloudPolling();
     });
 }
@@ -3144,7 +3149,7 @@ window.addEventListener('DOMContentLoaded', () => {
         console.log('ℹ️ 显示默认数据（1-6月真实数据）');
     }
 
-    // 云端同步：后台异步加载云端数据
+    // 云端同步：后台异步加载云端数据，验证真实连通性
     if (hasGithubToken()) {
         updateSyncUI('syncing');
         loadFromCloud().then(cloudData => {
@@ -3154,19 +3159,29 @@ window.addEventListener('DOMContentLoaded', () => {
                 const cloudTime = cloudData._updatedAt ? new Date(cloudData._updatedAt).getTime() : 0;
                 const localTime = DATA._updatedAt ? new Date(DATA._updatedAt).getTime() : 0;
                 if (cloudMonths > localMonths || (cloudMonths === localMonths && cloudTime > localTime)) {
+                    // 云端更新 → 拉取
                     DATA = cloudData;
-                    migrateAllYears();
-                    normalizeROIData();
-                    renderMonthTabs();
-                    renderAll();
+                    migrateAllYears(); normalizeROIData();
+                    renderMonthTabs(); renderAll();
                     syncConfig.lastCloudUpdate = cloudData._updatedAt;
-                    console.log('✅ 从云端加载了更新数据 (' + cloudMonths + '月)');
+                    console.log('✅ 从云端加载更新 (' + cloudMonths + '月)');
+                    updateSyncUI('synced');
                 } else if (localMonths > cloudMonths) {
-                    console.log('📤 本地(' + localMonths + '月) > 云端(' + cloudMonths + '月)，推送本地');
-                    syncToCloud(DATA);
+                    // 本地更全 → 推送
+                    console.log('📤 本地(' + localMonths + '月) > 云端(' + cloudMonths + '月)');
+                    syncToCloud(DATA).then(ok => { updateSyncUI(ok ? 'synced' : 'error'); });
+                } else {
+                    // 月数相同 → 做验证推送，确认连接真实有效
+                    console.log('🔄 月数相同(' + cloudMonths + '月)，验证云端连接...');
+                    syncToCloud(DATA).then(ok => {
+                        updateSyncUI(ok ? 'synced' : 'error');
+                        if (!ok) console.warn('⚠️ 推送到云端失败，同步未生效');
+                    });
                 }
+            } else {
+                // 云端无数据 → 推送
+                syncToCloud(DATA).then(ok => { updateSyncUI(ok ? 'synced' : 'error'); });
             }
-            updateSyncUI('synced');
             startCloudPolling();
         }).catch(() => { updateSyncUI('error'); startCloudPolling(); });
     } else {
