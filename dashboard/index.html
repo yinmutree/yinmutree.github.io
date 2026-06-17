@@ -65,6 +65,32 @@
         .year-create-btn:hover { background: rgba(16,185,129,0.3); }
         .year-badge { cursor: pointer; transition: all 0.15s; display: inline-flex; align-items: center; gap: 4px; }
         .year-badge:hover { opacity: 0.8; }
+        /* 云同步状态 */
+        .sync-badge { display: inline-flex; align-items: center; gap: 4px; padding: 4px 8px; border-radius: 6px; font-size: 11px; cursor: pointer; transition: all 0.2s; white-space: nowrap; }
+        .sync-badge.synced { background: rgba(16,185,129,0.12); color: #34d399; border: 1px solid rgba(16,185,129,0.2); }
+        .sync-badge.syncing { background: rgba(59,130,246,0.12); color: #60a5fa; border: 1px solid rgba(59,130,246,0.2); }
+        .sync-badge.error { background: rgba(239,68,68,0.12); color: #f87171; border: 1px solid rgba(239,68,68,0.2); }
+        .sync-badge.notoken { background: rgba(148,163,184,0.08); color: #64748b; border: 1px solid rgba(148,163,184,0.15); }
+        .sync-badge:hover { opacity: 0.8; }
+        .token-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); z-index: 100; display: flex; align-items: center; justify-content: center; }
+        .token-panel { background: #1e293b; border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 24px; max-width: 420px; width: 90%; box-shadow: 0 24px 64px rgba(0,0,0,0.5); }
+        .token-panel h3 { font-size: 16px; font-weight: 700; color: #f1f5f9; margin-bottom: 8px; }
+        .token-panel p { font-size: 12px; color: #94a3b8; line-height: 1.6; margin-bottom: 16px; }
+        .token-panel input { width: 100%; background: #0f172a; border: 1px solid #334155; color: #e2e8f0; padding: 10px 12px; border-radius: 8px; font-size: 13px; font-family: monospace; }
+        .token-panel input:focus { outline: none; border-color: #60a5fa; }
+        .token-actions { display: flex; gap: 8px; margin-top: 16px; }
+        .token-btn { flex: 1; padding: 10px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; border: none; transition: all 0.15s; }
+        .token-btn-primary { background: linear-gradient(135deg, #3b82f6, #6366f1); color: white; }
+        .token-btn-primary:hover { opacity: 0.9; }
+        .token-btn-ghost { background: transparent; color: #94a3b8; border: 1px solid #334155; }
+        .token-btn-ghost:hover { color: #e2e8f0; background: rgba(255,255,255,0.03); }
+        .token-link { color: #60a5fa; text-decoration: underline; cursor: pointer; }
+        .sync-status-dot { width: 6px; height: 6px; border-radius: 50%; display: inline-block; }
+        .sync-status-dot.synced { background: #34d399; }
+        .sync-status-dot.syncing { background: #60a5fa; animation: pulse 1s infinite; }
+        .sync-status-dot.error { background: #f87171; }
+        .sync-status-dot.notoken { background: #64748b; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
     </style>
 </head>
 <body class="min-h-screen">
@@ -93,6 +119,9 @@
                 <div id="year-panel" class="year-panel-wrap hidden"></div>
             </div>
             <div class="month-scroll flex gap-1.5 flex-1" id="month-tabs"></div>
+            <span class="sync-badge notoken" id="sync-badge" onclick="showTokenPanel()" title="点击配置云同步">
+                <span class="sync-status-dot notoken"></span> 未同步
+            </span>
         </div>
     </div>
 </nav>
@@ -1353,6 +1382,167 @@ const DEFAULT_DATA = {
 
 
 let DATA = JSON.parse(JSON.stringify(DEFAULT_DATA));
+
+// ═══════════════════════════════════════════════════════════════
+// 云同步引擎：GitHub Repo data.json 作为跨设备数据中心
+// ═══════════════════════════════════════════════════════════════
+const CLOUD_RAW_URL = 'https://yinmutree.github.io/dashboard/data.json';
+const CLOUD_API_URL = 'https://api.github.com/repos/yinmutree/yinmutree.github.io/contents/dashboard/data.json';
+const SYNC_POLL_INTERVAL = 30000;
+
+let syncConfig = {
+    token: (() => { try { return localStorage.getItem('dashboard_github_token') || ''; } catch(e) { return ''; } })(),
+    lastCloudUpdate: null,
+    pollingTimer: null,
+    syncing: false
+};
+
+function hasGithubToken() { return !!syncConfig.token && syncConfig.token.length > 30; }
+
+function updateSyncUI(status) {
+    const badge = document.getElementById('sync-badge');
+    if (!badge) return;
+    if (status === 'synced') {
+        badge.className = 'sync-badge synced';
+        badge.innerHTML = '<span class="sync-status-dot synced"></span> 已同步';
+    } else if (status === 'syncing') {
+        badge.className = 'sync-badge syncing';
+        badge.innerHTML = '<span class="sync-status-dot syncing"></span> 同步中';
+    } else if (status === 'error') {
+        badge.className = 'sync-badge error';
+        badge.innerHTML = '<span class="sync-status-dot error"></span> 失败';
+    } else {
+        badge.className = 'sync-badge notoken';
+        badge.innerHTML = '<span class="sync-status-dot notoken"></span> 未同步';
+    }
+}
+
+function showTokenPanel() {
+    document.getElementById('token-overlay').classList.remove('hidden');
+    if (syncConfig.token) document.getElementById('token-input').value = syncConfig.token;
+}
+
+function hideTokenPanel() { document.getElementById('token-overlay').classList.add('hidden'); }
+
+function saveToken() {
+    const val = document.getElementById('token-input').value.trim();
+    if (!val || val.length < 30) { alert('请粘贴有效的 GitHub Personal Access Token（至少 30 个字符）'); return; }
+    syncConfig.token = val;
+    try { localStorage.setItem('dashboard_github_token', val); } catch(e) {}
+    hideTokenPanel();
+    updateSyncUI('syncing');
+    loadFromCloud().then(cloudData => {
+        if (cloudData) {
+            const localMonths = DATA.months ? DATA.months.length : 0;
+            const cloudMonths = cloudData.months ? cloudData.months.length : 0;
+            if (localMonths > cloudMonths) {
+                console.log('📤 本地数据(' + localMonths + '月) > 云端(' + cloudMonths + '月)，推送本地数据');
+                syncToCloud(DATA).then(ok => { if (ok) updateSyncUI('synced'); else updateSyncUI('error'); });
+            } else {
+                console.log('📥 云端数据(' + cloudMonths + '月) >= 本地(' + localMonths + '月)，使用云端数据');
+                DATA = cloudData;
+                migrateAllYears();
+                normalizeROIData();
+                renderMonthTabs();
+                renderAll();
+                syncConfig.lastCloudUpdate = cloudData._updatedAt;
+                try { localStorage.setItem('dashboard_data_v5', JSON.stringify(DATA)); } catch(e) {}
+                updateSyncUI('synced');
+            }
+        } else {
+            syncToCloud(DATA).then(ok => { if (ok) { updateSyncUI('synced'); console.log('✅ 首次推送本地数据到云端'); } });
+        }
+        startCloudPolling();
+    }).catch(() => {
+        syncToCloud(DATA).then(ok => { if (ok) updateSyncUI('synced'); else updateSyncUI('error'); });
+        startCloudPolling();
+    });
+}
+
+async function loadFromCloud() {
+    try {
+        const resp = await fetch(CLOUD_RAW_URL + '?cb=' + Date.now());
+        if (!resp.ok) throw new Error('HTTP ' + resp.status);
+        const cloudData = await resp.json();
+        if (cloudData && cloudData.months && cloudData.months.length > 0) {
+            const hasRealData = cloudData.months.some(m => m.kpi && m.kpi[0] && m.kpi[0].value && m.kpi[0].value > 0);
+            if (hasRealData) {
+                syncConfig.lastCloudUpdate = cloudData._updatedAt || null;
+                return cloudData;
+            }
+        }
+    } catch (e) { console.log('☁️ 云端加载失败:', e.message); }
+    return null;
+}
+
+async function syncToCloud(data) {
+    if (!hasGithubToken()) return false;
+    if (syncConfig.syncing) return false;
+    syncConfig.syncing = true;
+    try {
+        let sha = null;
+        try {
+            const getResp = await fetch(CLOUD_API_URL, { headers: { 'Authorization': 'token ' + syncConfig.token } });
+            if (getResp.ok) { const info = await getResp.json(); sha = info.sha; }
+        } catch(e) {}
+        const saveData = JSON.parse(JSON.stringify(data));
+        saveData._updatedAt = new Date().toISOString();
+        const jsonStr = JSON.stringify(saveData, null, 2);
+        const content = btoa(unescape(encodeURIComponent(jsonStr)));
+        const body = { message: '📊 仪表盘自动同步数据 [' + saveData.activeYear + '年 ' + saveData.months.length + '个月]', content: content };
+        if (sha) body.sha = sha;
+        const putResp = await fetch(CLOUD_API_URL, {
+            method: 'PUT',
+            headers: { 'Authorization': 'token ' + syncConfig.token, 'Content-Type': 'application/json' },
+            body: JSON.stringify(body)
+        });
+        if (putResp.ok) {
+            syncConfig.lastCloudUpdate = saveData._updatedAt;
+            console.log('☁️ 云端同步成功', saveData._updatedAt);
+            syncConfig.syncing = false;
+            updateSyncUI('synced');
+            return true;
+        } else {
+            const err = await putResp.json().catch(() => ({}));
+            console.warn('☁️ 云端同步失败:', putResp.status, err.message || '');
+            syncConfig.syncing = false;
+            updateSyncUI('error');
+            return false;
+        }
+    } catch (e) {
+        console.warn('☁️ 云端同步异常:', e.message);
+        syncConfig.syncing = false;
+        updateSyncUI('error');
+        return false;
+    }
+}
+
+function startCloudPolling() {
+    if (syncConfig.pollingTimer) return;
+    syncConfig.pollingTimer = setInterval(async () => {
+        if (!hasGithubToken()) return;
+        const cloudData = await loadFromCloud();
+        if (!cloudData) return;
+        const localMonths = DATA.months ? DATA.months.length : 0;
+        const cloudMonths = cloudData.months ? cloudData.months.length : 0;
+        const cloudTime = cloudData._updatedAt ? new Date(cloudData._updatedAt).getTime() : 0;
+        const localTime = DATA._updatedAt ? new Date(DATA._updatedAt).getTime() : 0;
+        if (cloudMonths > localMonths || (cloudMonths === localMonths && cloudTime > localTime)) {
+            console.log('☁️ 检测到云端更新，自动同步...');
+            DATA = cloudData;
+            migrateAllYears();
+            normalizeROIData();
+            try { localStorage.setItem('dashboard_data_v5', JSON.stringify(DATA)); } catch(e) {}
+            try { const b = btoa(encodeURIComponent(JSON.stringify(DATA))); window.history.replaceState(null, '', '#' + b); } catch(e) {}
+            syncConfig.lastCloudUpdate = cloudData._updatedAt;
+            DATA._updatedAt = cloudData._updatedAt;
+            renderMonthTabs();
+            renderAll();
+            updateSyncUI('synced');
+            console.log('✅ 云端数据已同步到本地');
+        }
+    }, SYNC_POLL_INTERVAL);
+}
 let charts = {};
 let isEditMode = false;
 let editingMonthIndex = 0;
@@ -1551,6 +1741,10 @@ function saveDataToURL() {
         console.log('💾 数据已写入 URL hash');
     } catch (e) {
         console.warn('⚠️ URL hash 写入失败:', e.message);
+    }
+    // 云端同步（异步，不阻塞 UI）
+    if (hasGithubToken()) {
+        syncToCloud(DATA);
     }
 }
 
@@ -2945,12 +3139,56 @@ window.addEventListener('DOMContentLoaded', () => {
     });
     
     if (hasURLData) {
-        console.log('✅ 已从 URL 加载数据');
+        console.log('✅ 已从 URL 或 localStorage 加载数据');
     } else {
         console.log('ℹ️ 显示默认数据（1-6月真实数据）');
     }
+
+    // 云端同步：后台异步加载云端数据
+    if (hasGithubToken()) {
+        updateSyncUI('syncing');
+        loadFromCloud().then(cloudData => {
+            if (cloudData) {
+                const localMonths = DATA.months ? DATA.months.length : 0;
+                const cloudMonths = cloudData.months ? cloudData.months.length : 0;
+                const cloudTime = cloudData._updatedAt ? new Date(cloudData._updatedAt).getTime() : 0;
+                const localTime = DATA._updatedAt ? new Date(DATA._updatedAt).getTime() : 0;
+                if (cloudMonths > localMonths || (cloudMonths === localMonths && cloudTime > localTime)) {
+                    DATA = cloudData;
+                    migrateAllYears();
+                    normalizeROIData();
+                    renderMonthTabs();
+                    renderAll();
+                    syncConfig.lastCloudUpdate = cloudData._updatedAt;
+                    console.log('✅ 从云端加载了更新数据 (' + cloudMonths + '月)');
+                } else if (localMonths > cloudMonths) {
+                    console.log('📤 本地(' + localMonths + '月) > 云端(' + cloudMonths + '月)，推送本地');
+                    syncToCloud(DATA);
+                }
+            }
+            updateSyncUI('synced');
+            startCloudPolling();
+        }).catch(() => { updateSyncUI('error'); startCloudPolling(); });
+    } else {
+        updateSyncUI('notoken');
+    }
 });
 </script>
+
+<!-- 云同步令牌设置面板 -->
+<div id="token-overlay" class="token-overlay hidden" onclick="if(event.target===this)hideTokenPanel()">
+    <div class="token-panel">
+        <h3><i class="fas fa-cloud-arrow-up"></i> 配置跨设备云同步</h3>
+        <p>配置后在手机和电脑上自动同步数据。<br>
+        需要 GitHub Personal Access Token，<a class="token-link" href="https://github.com/settings/tokens" target="_blank" rel="noopener">点击这里创建</a>（选 <b>repo</b> 权限，classic token）。</p>
+        <input type="password" id="token-input" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx">
+        <p style="font-size:11px;color:#64748b;margin-top:6px;">令牌仅保存在你当前设备的浏览器中，不会上传到任何第三方。</p>
+        <div class="token-actions">
+            <button class="token-btn token-btn-ghost" onclick="hideTokenPanel()">稍后设置</button>
+            <button class="token-btn token-btn-primary" onclick="saveToken()">保存并启用同步</button>
+        </div>
+    </div>
+</div>
 
 </body>
 </html>
