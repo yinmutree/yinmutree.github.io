@@ -1,7 +1,7 @@
 {
   "clientName": "北谷农业",
   "isYearlyView": false,
-  "currentMonthIndex": 5,
+  "currentMonthIndex": 0,
   "providerName": "引木管理咨询",
   "advisorName": "法师（健昕）",
   "advisorPhone": "17600697399",
@@ -18,7 +18,7 @@
           "unit": "小时",
           "mom": "--",
           "momPct": "--",
-          "trans": "约 0.0 人天",
+          "trans": "--",
           "icon": "clock",
           "color": "amber"
         },
@@ -29,7 +29,7 @@
           "unit": "",
           "mom": "--",
           "momPct": "--",
-          "trans": "约释放0个全职",
+          "trans": "--",
           "icon": "user",
           "color": "blue"
         },
@@ -40,7 +40,7 @@
           "unit": "个",
           "mom": "--",
           "momPct": "--",
-          "trans": "覆盖1个部门",
+          "trans": "--",
           "icon": "cog",
           "color": "indigo"
         },
@@ -51,7 +51,7 @@
           "unit": "",
           "mom": "--",
           "momPct": "--",
-          "trans": "AI 直接为你赚回 ¥0 万",
+          "trans": "--",
           "icon": "coins",
           "color": "emerald"
         },
@@ -62,7 +62,7 @@
           "unit": "",
           "mom": "累计趋势",
           "momPct": "up",
-          "trans": "每投入1元回报0元",
+          "trans": "每投入1元，回报0元",
           "icon": "bullseye",
           "color": "white",
           "highlight": true
@@ -1180,7 +1180,7 @@
       0
     ],
     "cumulativeROI": [
-      0,
+      null,
       null,
       null,
       0.7,
@@ -2532,5 +2532,5 @@
       }
     }
   },
-  "_updatedAt": "2026-06-17T03:29:38.644Z"
+  "_updatedAt": "2026-06-17T11:42:53+08:00"
 }
