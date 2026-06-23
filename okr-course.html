@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OKR 目标管理 · 互动课程</title>
+  <style>
+    :root {
+      --bg: #f3f1ec;
+      --card: #ffffff;
+      --ink: #2c2c2c;
+      --ink-light: #555555;
+      --muted: #999999;
+      --accent: #c25e00;
+      --accent-light: #ffe5d0;
+      --green: #2e7d32;
+      --green-bg: #e8f5e9;
+      --red: #c62828;
+      --red-bg: #ffebee;
+      --shadow: 0 4px 20px rgba(0,0,0,0.08);
+      --shadow-hover: 0 8px 32px rgba(0,0,0,0.12);
+      --radius: 16px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+    .container { max-width: 720px; margin: 0 auto; padding: 40px 20px; }
+    .slide {
+      display: none;
+      animation: fadeIn 0.4s ease;
+    }
+    .slide.active { display: block; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* Header */
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 28px;
+    }
+    .brand {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--accent);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+    .progress-wrap { text-align: right; }
+    .progress-text { font-size: 13px; color: var(--muted); }
+    .progress-bar {
+      width: 120px; height: 4px; background: #e0ddd8;
+      border-radius: 2px; margin-top: 6px; overflow: hidden;
+    }
+    .progress-fill { height: 100%; background: var(--accent); border-radius: 2px; transition: width 0.3s ease; }
+
+    /* Card */
+    .card {
+      background: var(--card); border-radius: var(--radius);
+      box-shadow: var(--shadow); padding: 32px; margin-bottom: 20px;
+    }
+    .card h2 { font-size: 22px; font-weight: 700; margin-bottom: 16px; line-height: 1.35; }
+    .card h3 { font-size: 18px; font-weight: 700; margin: 20px 0 12px; }
+    .card p, .card li { color: var(--ink-light); font-size: 16px; margin-bottom: 10px; }
+    .card ul { margin-left: 20px; margin-bottom: 12px; }
+    .card li { margin-bottom: 6px; }
+    .card strong { color: var(--ink); }
+
+    /* Letter badge */
+    .letter-badge {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 36px; height: 36px; background: var(--accent); color: white;
+      font-size: 18px; font-weight: 800; border-radius: 10px;
+      margin-right: 10px; vertical-align: middle;
+    }
+
+    /* Concept box */
+    .concept-box {
+      background: var(--bg); border-radius: 12px; padding: 20px;
+      margin: 16px 0; border-left: 4px solid var(--accent);
+    }
+    .concept-box strong { color: var(--ink); }
+    .concept-box .example {
+      font-style: italic; color: var(--muted); margin-top: 8px; font-size: 15px;
+    }
+
+    /* Comparison cards */
+    .compare-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 16px 0; }
+    .compare-card { padding: 16px; border-radius: 12px; font-size: 15px; }
+    .compare-good { background: var(--green-bg); border: 1px solid #c8e6c9; color: var(--green); }
+    .compare-bad { background: var(--red-bg); border: 1px solid #ffcdd2; color: var(--red); text-decoration: line-through; }
+    .compare-label { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; opacity: 0.7; }
+
+    /* Buttons */
+    .btn {
+      display: inline-block; padding: 14px 28px; font-size: 16px; font-weight: 600;
+      border: none; border-radius: 12px; cursor: pointer; transition: all 0.2s ease; text-align: center;
+    }
+    .btn-primary { background: var(--accent); color: white; box-shadow: 0 4px 12px rgba(194, 94, 0, 0.3); }
+    .btn-primary:hover { background: #a64d00; transform: translateY(-1px); }
+    .btn-secondary { background: var(--bg); color: var(--ink); }
+    .btn-secondary:hover { background: #e8e5e0; }
+    .btn-block { width: 100%; }
+    .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none !important; }
+
+    /* Quiz Options */
+    .option-list { display: flex; flex-direction: column; gap: 12px; margin: 20px 0; }
+    .option {
+      display: flex; align-items: center; padding: 16px 20px;
+      border: 2px solid #e8e5e0; border-radius: 12px; cursor: pointer;
+      transition: all 0.2s ease; font-size: 16px; background: var(--card);
+    }
+    .option:hover { border-color: var(--accent); background: var(--accent-light); }
+    .option.selected { border-color: var(--accent); background: var(--accent-light); }
+    .option.correct { border-color: var(--green); background: var(--green-bg); }
+    .option.wrong { border-color: var(--red); background: var(--red-bg); }
+    .option-letter {
+      width: 32px; height: 32px; border-radius: 50%; background: var(--bg);
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; font-size: 14px; margin-right: 14px; flex-shrink: 0;
+    }
+    .option.selected .option-letter { background: var(--accent); color: white; }
+    .option.correct .option-letter { background: var(--green); color: white; }
+    .option.wrong .option-letter { background: var(--red); color: white; }
+    .option-check { margin-left: auto; font-size: 20px; opacity: 0; transition: opacity 0.2s ease; }
+    .option-check::before { content: ''; }
+    .option.correct .option-check { opacity: 1; }
+    .option.correct .option-check::before { content: '✅'; }
+    .option.wrong .option-check { opacity: 1; }
+    .option.wrong .option-check::before { content: '❌'; }
+    .option .check-correct, .option .check-wrong { display: none; }
+    .option.correct .check-correct { display: inline; }
+    .option.wrong .check-wrong { display: inline; }
+
+    /* Feedback */
+    .feedback {
+      padding: 16px 20px; border-radius: 12px; margin-top: 16px;
+      display: none; font-size: 15px; line-height: 1.6;
+    }
+    .feedback.show { display: block; animation: fadeIn 0.3s ease; }
+    .feedback-correct { background: var(--green-bg); color: var(--green); border: 1px solid #c8e6c9; }
+    .feedback-wrong { background: var(--red-bg); color: var(--red); border: 1px solid #ffcdd2; }
+
+    /* Nav buttons */
+    .nav-btns { display: flex; gap: 12px; justify-content: center; margin-top: 24px; }
+    .nav-btns .btn { flex: 1; max-width: 200px; }
+
+    /* Divider */
+    .divider { height: 1px; background: #e8e5e0; margin: 24px 0; }
+
+    /* Tip badges */
+    .tip-badge { display: inline-block; padding: 4px 10px; background: var(--accent-light); color: var(--accent); font-size: 12px; font-weight: 600; border-radius: 6px; margin-bottom: 12px; }
+    .tip-badge-green { background: var(--green-bg); color: var(--green); }
+
+    /* Result */
+    .result-box { text-align: center; padding: 40px 32px; }
+    .result-score { font-size: 64px; font-weight: 800; color: var(--accent); line-height: 1; margin-bottom: 12px; }
+    .result-label { font-size: 18px; color: var(--ink-light); margin-bottom: 24px; }
+    .result-items { display: flex; flex-direction: column; gap: 10px; max-width: 400px; margin: 0 auto 24px; text-align: left; }
+    .result-item { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; background: var(--bg); border-radius: 10px; font-size: 15px; }
+    .illustration { width: 100%; height: 120px; background: linear-gradient(135deg, #fff5eb 0%, #ffe0c2 100%); border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-bottom: 20px; font-size: 48px; }
+
+    /* Cover compact layout */
+    .cover-header { display: flex; align-items: center; gap: 16px; margin-bottom: 20px; }
+    .cover-icon {
+      width: 64px; height: 64px; flex-shrink: 0;
+      background: linear-gradient(135deg, #fff5eb 0%, #ffe0c2 100%);
+      border-radius: 16px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 32px;
+    }
+    .cover-title h2 { margin-bottom: 0; font-size: 24px; }
+    .cover-meta { font-size: 14px; color: var(--muted); margin-top: 4px; }
+
+    /* Comprehensive task */
+    .okr-group { border: 2px solid #e8e5e0; border-radius: 12px; padding: 20px; margin-bottom: 12px; cursor: pointer; transition: all 0.2s ease; }
+    .okr-group:hover { border-color: var(--accent); background: var(--accent-light); }
+    .okr-group.selected { border-color: var(--accent); background: var(--accent-light); }
+    .okr-group.correct { border-color: var(--green); background: var(--green-bg); }
+    .okr-group.wrong { border-color: var(--red); background: var(--red-bg); }
+    .okr-group-title { font-weight: 700; font-size: 16px; margin-bottom: 8px; }
+    .okr-kr { font-size: 15px; color: var(--ink-light); margin-left: 16px; line-height: 1.8; }
+    .okr-check { float: right; font-size: 20px; opacity: 0; }
+    .okr-group.correct .okr-check, .okr-group.wrong .okr-check { opacity: 1; }
+
+    @media (max-width: 480px) {
+      .container { padding: 24px 16px; }
+      .card { padding: 24px; }
+      .compare-row { grid-template-columns: 1fr; }
+    }
+
+    /* Force light mode regardless of system dark mode */
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #f3f1ec;
+        --card: #ffffff;
+        --ink: #2c2c2c;
+        --ink-light: #555555;
+        --muted: #999999;
+        --accent: #c25e00;
+        --accent-light: #ffe5d0;
+        --green: #2e7d32;
+        --green-bg: #e8f5e9;
+        --red: #c62828;
+        --red-bg: #ffebee;
+        --shadow: 0 4px 20px rgba(0,0,0,0.08);
+        --shadow-hover: 0 8px 32px rgba(0,0,0,0.12);
+      }
+      body { background: var(--bg); color: var(--ink); }
+      .card, .option, .match-item, .okr-group { background: var(--card); color: var(--ink); }
+      .option { border-color: #e8e5e0; }
+      .option:hover { border-color: var(--accent); background: var(--accent-light); }
+      .option.selected { border-color: var(--accent); background: var(--accent-light); }
+      .option.correct { border-color: var(--green); background: var(--green-bg); color: var(--green); }
+      .option.wrong { border-color: var(--red); background: var(--red-bg); color: var(--red); }
+      .option-letter { background: var(--bg); color: var(--ink); }
+      .option.selected .option-letter { background: var(--accent); color: white; }
+      .option.correct .option-letter { background: var(--green); color: white; }
+      .option.wrong .option-letter { background: var(--red); color: white; }
+      .compare-good { background: var(--green-bg); border-color: #c8e6c9; color: var(--green); }
+      .compare-bad { background: var(--red-bg); border-color: #ffcdd2; color: var(--red); }
+      .match-item { background: var(--card); border-color: #e8e5e0; }
+      .match-item:hover { border-color: var(--accent); }
+      .match-item.picked { border-color: var(--accent); background: var(--accent-light); }
+      .match-item.matched { border-color: var(--green); background: var(--green-bg); color: var(--green); }
+      .okr-group { background: var(--card); border-color: #e8e5e0; }
+      .okr-group:hover { background: var(--accent-light); border-color: var(--accent); }
+      .okr-group.selected { background: var(--accent-light); border-color: var(--accent); }
+      .okr-group.correct { background: var(--green-bg); border-color: var(--green); color: var(--green); }
+      .okr-group.wrong { background: var(--red-bg); border-color: var(--red); color: var(--red); }
+      .concept-box { background: var(--bg); border-left-color: var(--accent); }
+      .illustration { background: linear-gradient(135deg, #fff5eb 0%, #ffe0c2 100%); }
+      .cover-icon { background: linear-gradient(135deg, #fff5eb 0%, #ffe0c2 100%); }
+      .btn-secondary { background: var(--bg); color: var(--ink); }
+      .btn-secondary:hover { background: #e8e5e0; }
+      .progress-bar { background: #e0ddd8; }
+      .progress-fill { background: var(--accent); }
+      .divider { background: #e8e5e0; }
+      .tip-badge { background: var(--accent-light); color: var(--accent); }
+      .tip-badge-green { background: var(--green-bg); color: var(--green); }
+      .feedback-correct { background: var(--green-bg); color: var(--green); border-color: #c8e6c9; }
+      .feedback-wrong { background: var(--red-bg); color: var(--red); border-color: #ffcdd2; }
+      .result-item { background: var(--bg); }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+
+    <!-- Slide 0: Cover -->
+    <div class="slide active" data-index="0">
+      <div class="header">
+        <div class="brand">引木咨询 · 课堂互动</div>
+        <div class="progress-wrap">
+          <div class="progress-text">1 / 9</div>
+          <div class="progress-bar"><div class="progress-fill" style="width:11%"></div></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="cover-header">
+          <div class="cover-icon">🎯</div>
+          <div class="cover-title">
+            <span class="tip-badge">管理认知课</span>
+            <h2>OKR 目标管理 · 从入门到落地</h2>
+          </div>
+        </div>
+        <p>Objective（目标）与 Key Results（关键结果）的实战方法。本节课采用"边讲边练"模式，学完就能写自己的 OKR。</p>
+        <div class="divider"></div>
+        <p style="font-size: 14px; color: var(--muted);">预计用时：5 分钟 · 纯前端交互，不收集数据</p>
+        <p style="font-size: 12px; color: var(--muted); margin-top: 16px;">引木管理咨询 · 积木成林，共生共长</p>
+      </div>
+      <div class="nav-btns">
+        <button class="btn btn-primary btn-block" onclick="nextSlide()">开始学习 →</button>
+      </div>
+    </div>
+
+    <!-- Slide 1: O — Objective 目标 -->
+    <div class="slide" data-index="1">
+      <div class="header">
+        <div class="brand">引木咨询 · 课堂互动</div>
+        <div class="progress-wrap">
+          <div class="progress-text">2 / 9</div>
+          <div class="progress-bar"><div class="progress-fill" style="width:22%"></div></div>
+        </div>
+      </div>
+      <div class="card">
+        <span class="tip-badge">知识讲解</span>
+        <h2><span class="letter-badge">O</span>Objective（目标）—— 定方向</h2>
+        <p>Objective（目标）回答的是：你<strong>要达成什么</strong>？它是定性的、鼓舞人心的方向，不是冷冰冰的数字。</p>
+        <div class="compare-row">
+          <div class="compare-card compare-bad">
+            <div class="compare-label">❌ 不好</div>
+            "提高销售额"
+          </div>
+          <div class="compare-card compare-good">
+            <div class="compare-label">✅ 好</div>
+            "成为客户首选的供应商"
+          </div>
+        </div>
+        <div class="concept-box">
+          <strong>自检提示：</strong>这个目标说出来，团队成员会觉得兴奋吗？如果听起来像 KPI 考核表，就不是好的 Objective（目标）。
+        </div>
+
+        <div class="divider"></div>
+        <span class="tip-badge tip-badge-green">随堂练习</span>
+        <h3>哪个更像一个好的 Objective（目标）？</h3>
+        <div class="option-list" id="quiz-0">
+          <div class="option" onclick="selectOption(0, this, 0)">
+            <span class="option-letter">A</span>
+            <span>季度营收增长 30%（偏 KR，偏定量）</span>
+            <span class="option-check"></span>
+          </div>
+          <div class="option" onclick="selectOption(0, this, 1)">
+            <span class="option-letter">B</span>
+            <span>我们要成为行业最值得信赖和认可的品牌</span>
+            <span class="option-check"></span>
+          </div>
+          <div class="option" onclick="selectOption(0, this, 2)">
+            <span class="option-letter">C</span>
+            <span>完成三次产品迭代（偏 KR，偏任务）</span>
+            <span class="option-check"></span>
+          </div>
+        </div>
+        <div class="feedback feedback-correct" id="feedback-0-correct">
+          ✅ 正确！B 是定性描述、鼓舞人心，能让团队成员感受到方向感。A 和 C 都是数字或任务，更适合做 Key Results（关键结果），而不是 Objective（目标）。
+        </div>
+        <div class="feedback feedback-wrong" id="feedback-0-wrong">
+          ❌ 再想想。Objective（目标）的核心是"定方向、鼓舞人"，不是写数字。A 是定量指标（像 KPI），C 是任务清单。B 是定性描述，说出了"我们想成为什么"，这才是好的 Objective（目标）。
+        </div>
+      </div>
+      <div class="nav-btns">
+        <button class="btn btn-secondary" onclick="prevSlide()">← 上一页</button>
+        <button class="btn btn-primary" onclick="nextSlide()">下一个：KR →</button>
+      </div>
+    </div>
+
+    <!-- Slide 2: KR — Key Results 关键结果 -->
+    <div class="slide" data-index="2">
+      <div class="header">
+        <div class="brand">引木咨询 · 课堂互动</div>
+        <div class="progress-wrap">
+          <div class="progress-text">3 / 9</div>
+          <div class="progress-bar"><div class="progress-fill" style="width:33%"></div></div>
+        </div>
+      </div>
+      <div class="card">
+        <span class="tip-badge">知识讲解</span>
+        <h2><span class="letter-badge">K</span>Key Results（关键结果）—— 定指标</h2>
+        <p>Key Results（关键结果）回答的是：你怎么<strong>证明</strong>达成了 Objective（目标）？它是定量的、可衡量的，有明确的完成标准。</p>
+        <p>一个 Objective（目标）通常配 3-5 个 Key Results（关键结果）。</p>
+        <div class="compare-row">
+          <div class="compare-card compare-bad">
+            <div class="compare-label">❌ 不可衡量</div>
+            "优化用户体验"
+          </div>
+          <div class="compare-card compare-good">
+            <div class="compare-label">✅ 可衡量</div>
+            "NPS（净推荐值）评分从 35 提升至 50"
+          </div>
+        </div>
+        <div class="concept-box">
+          <strong>自检提示：</strong>当 KR 完成时，能不能明确说"达成了"或"没达成"？如果不能精确衡量，就不是好的 Key Results（关键结果）。
+        </div>
+
+        <div class="divider"></div>
+        <span class="tip-badge tip-badge-green">随堂练习</span>
+        <h3>哪个是好的 Key Results（关键结果）？</h3>
+        <div class="option-list" id="quiz-1">
+          <div class="option" onclick="selectOption(1, this, 0)">
+            <span class="option-letter">A</span>
+            <span>优化用户体验（不可衡量）</span>
+            <span class="option-check"></span>
+          </div>
+          <div class="option" onclick="selectOption(1, this, 1)">
+            <span class="option-letter">B</span>
+            <span>NPS（净推荐值）评分从 35 提升至 50（可衡量、有基准）</span>
+            <span class="option-check"></span>
+          </div>
+          <div class="option" onclick="selectOption(1, this, 2)">
+            <span class="option-letter">C</span>
+            <span>努力工作（不可衡量）</span>
+            <span class="option-check"></span>
+          </div>
+        </div>
+        <div class="feedback feedback-correct" id="feedback-1-correct">
+          ✅ 正确！B 有明确的衡量指标（NPS 评分）、基准值（35）和目标值（50），是典型的 Key Results（关键结果）。A 和 C 没有数字或标准，无法判断完成与否。
+        </div>
+        <div class="feedback feedback-wrong" id="feedback-1-wrong">
+          ❌ 再想想。Key Results（关键结果）的核心是"可衡量"。A 和 C 都没有数字或标准，无法判断完成与否。B 有"从 35 到 50"这个明确的变化，而且有具体指标名称（NPS 净推荐值），最符合标准。
+        </div>
+      </div>
+      <div class="nav-btns">
+        <button class="btn btn-secondary" onclick="prevSlide()">← 上一页</button>
+        <button class="btn btn-primary" onclick="nextSlide()">下一个：好 O 的标准 →</button>
+      </div>
+    </div>
+
+    <!-- Slide 3: 好 O 的标准 -->
+    <div class="slide" data-index="3">
+      <div class="header">
+        <div class="brand">引木咨询 · 课堂互动</div>
+        <div class="progress-wrap">
+          <div class="progress-text">4 / 9</div>
+          <div class="progress-bar"><div class="progress-fill" style="width:44%"></div></div>
+        </div>
+      </div>
+      <div class="card">
+        <span class="tip-badge">知识讲解</span>
+        <h2>好的 Objective（目标）长什么样？</h2>
+        <p>一个优秀的 Objective（目标）必须满足三个标准：</p>
+        <ul>
+          <li><strong>1. 鼓舞人心（Inspiring）</strong>— 不是干巴巴的数字，能让团队成员感到兴奋</li>
+          <li><strong>2. 定性描述（Qualitative）</strong>— 不说具体数字，用方向性语言描述"我们要成为什么"</li>
+          <li><strong>3. 简洁好记（Concise）</strong>— 一句话能说清楚，团队每个人都能脱口而出</li>
+        </ul>
+        <div class="compare-row">
+          <div class="compare-card compare-bad">
+            <div class="compare-label">❌ 不好</div>
+            "Q3 销售额提升 20%"
+          </div>
+          <div class="compare-card compare-good">
+            <div class="compare-label">✅ 好</div>
+            "让客户主动推荐我们的产品"
+          </div>
+        </div>
+        <div class="concept-box">
+          <strong>记忆口诀：</strong>好的 Objective（目标） = 让人兴奋的方向 + 不含数字 + 一句话能说清。
+        </div>
+
+        <div class="divider"></div>
+        <span class="tip-badge tip-badge-green">随堂练习</span>
+        <h3>以下哪个 Objective（目标）最符合"鼓舞人心+定性"标准？</h3>
+        <div class="option-list" id="quiz-2">
+          <div class="option" onclick="selectOption(2, this, 0)">
+            <span class="option-letter">A</span>
+            <span>本季度签下 50 家新客户（含数字，偏 KPI）</span>
+            <span class="option-check"></span>
+          </div>
+          <div class="option" onclick="selectOption(2, this, 1)">
+            <span class="option-letter">B</span>
+            <span>成为客户愿意主动推荐的首选品牌</span>
+            <span class="option-check"></span>
+          </div>
+          <div class="option" onclick="selectOption(2, this, 2)">
+            <span class="option-letter">C</span>
+            <span>完成 CRM 系统上线（偏任务，不含方向感）</span>
+            <span class="option-check"></span>
+          </div>
+        </div>
+        <div class="feedback feedback-correct" id="feedback-2-correct">
+          ✅ 正确！B 是定性描述，没有具体数字，而且"首选品牌""主动推荐"都有鼓舞人心的方向感。A 含数字，更适合做 KR；C 是任务清单，没有战略方向。
+        </div>
+        <div class="feedback feedback-wrong" id="feedback-2-wrong">
+          ❌ 再想想。好的 Objective（目标）要"鼓舞人心+定性"。A 含数字（50 家），更像 KPI 考核指标；C 是任务（完成上线），没有方向感。B 是"成为什么"，没有数字，是鼓舞人心的方向描述。
+        </div>
+      </div>
+      <div class="nav-btns">
+        <button class="btn btn-secondary" onclick="prevSlide()">← 上一页</button>
+        <button class="btn btn-primary" onclick="nextSlide()">下一个：好 KR 的标准 →</button>
+      </div>
+    </div>
+
+    <!-- Slide 4: 好 KR 的标准 -->
+    <div class="slide" data-index="4">
+      <div class="header">
+        <div class="brand">引木咨询 · 课堂互动</div>
+        <div class="progress-wrap">
+          <div class="progress-text">5 / 9</div>
+          <div class="progress-bar"><div class="progress-fill" style="width:56%"></div></div>
+        </div>
+      </div>
+      <div class="card">
+        <span class="tip-badge">知识讲解</span>
+        <h2>好的 Key Results（关键结果）长什么样？</h2>
+        <p>一个优秀的 Key Results（关键结果）必须满足三个标准：</p>
+        <ul>
+          <li><strong>1. 可衡量（Measurable）</strong>— 有数字或明确的评判标准，完成就是完成，没完成就是没完成</li>
+          <li><strong>2. 有挑战性（Ambitious）</strong>— 完成率 60%-70% 是理想区间，不是 100% 才算好。如果每次都 100% 完成，说明目标不够有挑战</li>
+          <li><strong>3. 时限清晰（Time-bound）</strong>— 有明确的截止日期，不能无限期拖延</li>
+        </ul>
+        <div class="compare-row">
+          <div class="compare-card compare-bad">
+            <div class="compare-label">❌ 不好</div>
+            "提升用户活跃度"
+          </div>
+          <div class="compare-card compare-good">
+            <div class="compare-label">✅ 好</div>
+            "日活跃用户从 2000 提升至 3500（Q2 末）"
+          </div>
+        </div>
+        <div class="concept-box">
+          <strong>核心原则：</strong>Key Results（关键结果）不怕完不成，怕的是不够有挑战。完成 70% 的 OKR 比完成 100% 的平庸 KPI 更有价值。
+        </div>
+
+        <div class="divider"></div>
+        <span class="tip-badge tip-badge-green">随堂练习</span>
+        <h3>以下哪个 Key Results（关键结果）的问题最大？</h3>
+        <div class="option-list" id="quiz-3">
+          <div class="option" onclick="selectOption(3, this, 0)">
+            <span class="option-letter">A</span>
+            <span>网站访问量在 3 个月内从 1 万增至 3 万（可衡量、有时限）</span>
+            <span class="option-check"></span>
+          </div>
+          <div class="option" onclick="selectOption(3, this, 1)">
+            <span class="option-letter">B</span>
+            <span>客户满意度提升 10%（可衡量，但缺时限）</span>
+            <span class="option-check"></span>
+          </div>
+          <div class="option" onclick="selectOption(3, this, 2)">
+            <span class="option-letter">C</span>
+            <span>提升团队战斗力（不可测、无时限、无基准）</span>
+            <span class="option-check"></span>
+          </div>
+        </div>
+        <div class="feedback feedback-correct" id="feedback-3-correct">
+          ✅ 正确！C 的问题最大——不可衡量、没有时限、也没有基准值，完全无法判断完成与否。A 虽然挑战大，但结构完整。B 缺时限，但比 C 好得多。
+        </div>
+        <div class="feedback feedback-wrong" id="feedback-3-wrong">
+          ❌ 再想想。题目问的是"问题最大"的那个。A 虽然挑战性大（3 倍增长），但结构完整（有数字、有基准、有时限）。B 缺时限但可衡量。C 三重缺失：不可测、无时限、无基准，问题最大。
+        </div>
+      </div>
+      <div class="nav-btns">
+        <button class="btn btn-secondary" onclick="prevSlide()">← 上一页</button>
+        <button class="btn btn-primary" onclick="nextSlide()">下一个：OKR vs KPI →</button>
+      </div>
+    </div>
+
+    <!-- Slide 5: OKR vs KPI -->
+    <div class="slide" data-index="5">
+      <div class="header">
+        <div class="brand">引木咨询 · 课堂互动</div>
+        <div class="progress-wrap">
+          <div class="progress-text">6 / 9</div>
+          <div class="progress-bar"><div class="progress-fill" style="width:67%"></div></div>
+        </div>
+      </div>
+      <div class="card">
+        <span class="tip-badge">知识讲解</span>
+        <h2>OKR（目标与关键结果） vs KPI（关键绩效指标）</h2>
+        <p>这两个工具经常被混淆，但本质完全不同：</p>
+        <ul>
+          <li><strong>KPI（关键绩效指标）</strong>：考核工具，"必须达成的指标"。完不成 = 绩效差，可能影响奖金和晋升</li>
+          <li><strong>OKR（目标与关键结果）</strong>：对齐工具，"争取达成的方向"。KR 完成 70% 就是优秀，重点是方向一致和过程透明</li>
+        </ul>
+        <div class="compare-row">
+          <div class="compare-card compare-bad">
+            <div class="compare-label">KPI 思维</div>
+            销售额必须达成 1000 万（完不成扣绩效）
+          </div>
+          <div class="compare-card compare-good">
+            <div class="compare-label">OKR 思维</div>
+            销售额争取 1500 万（即使达成 1000 万，也有明确进展）
+          </div>
+        </div>
+        <div class="concept-box">
+          <strong>核心区别：</strong>OKR（目标与关键结果）不怕完不成，怕的是目标不够有挑战。KPI（关键绩效指标）是"底线"，OKR 是"上限"。
+        </div>
+
+        <div class="divider"></div>
+        <span class="tip-badge tip-badge-green">随堂练习</span>
+        <h3>以下场景更适合用 OKR（目标与关键结果）还是 KPI（关键绩效指标）？</h3>
+        <p style="font-size: 15px; color: var(--ink-light); margin-bottom: 16px;">
+          场景：团队本季度要达成的目标是"开发一个创新功能原型（但不一定能保证上线）"
+        </p>
+        <div class="option-list" id="quiz-4">
+          <div class="option" onclick="selectOption(4, this, 0)">
+            <span class="option-letter">A</span>
+            <span>用 KPI（关键绩效指标）考核（必须上线）</span>
+            <span class="option-check"></span>
+          </div>
+          <div class="option" onclick="selectOption(4, this, 1)">
+            <span class="option-letter">B</span>
+            <span>用 OKR（目标与关键结果）管理（探索方向，允许试错）</span>
+            <span class="option-check"></span>
+          </div>
+          <div class="option" onclick="selectOption(4, this, 2)">
+            <span class="option-letter">C</span>
+            <span>两个都用，效果一样</span>
+            <span class="option-check"></span>
+          </div>
+        </div>
+        <div class="feedback feedback-correct" id="feedback-4-correct">
+          ✅ 正确！创新探索类任务不适合用 KPI（关键绩效指标）硬考核——"不一定上线"本身就说明有试错空间。OKR（目标与关键结果）更适合这类探索方向、允许试错、需要团队对齐的目标。C 也不对，因为 KPI 和 OKR 的适用场景完全不同。
+        </div>
+        <div class="feedback feedback-wrong" id="feedback-4-wrong">
+          ❌ 再想想。这个场景明确说了"不一定能保证上线"，说明是探索性、创新性的任务。KPI（关键绩效指标）是"必须达成"的考核工具，不适合这种不确定的任务。OKR（目标与关键结果）允许试错，关注的是方向对齐和过程透明，而不是 100% 完成率。
+        </div>
+      </div>
+      <div class="nav-btns">
+        <button class="btn btn-secondary" onclick="prevSlide()">← 上一页</button>
+        <button class="btn btn-primary" onclick="nextSlide()">下一个：设定原则 →</button>
+      </div>
+    </div>
+
+    <!-- Slide 6: OKR 设定原则 -->
+    <div class="slide" data-index="6">
+      <div class="header">
+        <div class="brand">引木咨询 · 课堂互动</div>
+        <div class="progress-wrap">
+          <div class="progress-text">7 / 9</div>
+          <div class="progress-bar"><div class="progress-fill" style="width:78%"></div></div>
+        </div>
+      </div>
+      <div class="card">
+        <span class="tip-badge">知识讲解</span>
+        <h2>OKR（目标与关键结果）设定的重要原则</h2>
+        <p>写好 OKR（目标与关键结果），除了掌握 O 和 KR 的区别，还要记住三个核心原则：</p>
+        <ul>
+          <li><strong>1. 聚焦（Focus）</strong>：每人/每团队每季度 1-3 个 O（目标），不要超过 3 个。写太多等于没有重点，执行必然打折扣</li>
+          <li><strong>2. 对齐（Align）</strong>：OKR（目标与关键结果）是"自下而上提出 + 自上而下对齐"。个人提出的目标要和团队/公司方向一致，不能各干各的</li>
+          <li><strong>3. 透明（Transparent）</strong>：所有人的 OKR（目标与关键结果）公开可见。减少信息不对称，让协作更顺畅</li>
+        </ul>
+        <div class="compare-row">
+          <div class="compare-card compare-bad">
+            <div class="compare-label">❌ 不聚焦</div>
+            一个人写 8 个 O（目标）、20 个 KR（关键结果）
+          </div>
+          <div class="compare-card compare-good">
+            <div class="compare-label">✅ 聚焦</div>
+            一个人写 2 个 O（目标）、5 个 KR（关键结果）
+          </div>
+        </div>
+        <div class="concept-box">
+          <strong>核心原则：</strong>OKR（目标与关键结果）不是"越多越好"，而是"越聚焦越有效"。1-3 个 O（目标）足以定义一个季度的战略方向。
+        </div>
+
+        <div class="divider"></div>
+        <span class="tip-badge tip-badge-green">随堂练习</span>
+        <h3>一个团队定了 5 个 Objective（目标）、每个配 5 个 Key Results（关键结果），问题是什么？</h3>
+        <div class="option-list" id="quiz-5">
+          <div class="option" onclick="selectOption(5, this, 0)">
+            <span class="option-letter">A</span>
+            <span>写得太少，没有覆盖所有工作</span>
+            <span class="option-check"></span>
+          </div>
+          <div class="option" onclick="selectOption(5, this, 1)">
+            <span class="option-letter">B</span>
+            <span>写得太多了，失去聚焦，执行必然打折扣</span>
+            <span class="option-check"></span>
+          </div>
+          <div class="option" onclick="selectOption(5, this, 2)">
+            <span class="option-letter">C</span>
+            <span>数量没问题，只要时间够</span>
+            <span class="option-check"></span>
+          </div>
+        </div>
+        <div class="feedback feedback-correct" id="feedback-5-correct">
+          ✅ 正确！5 个 O（目标）× 5 个 KR（关键结果）= 25 个指标，完全失去了聚焦。OKR（目标与关键结果）的核心原则是"每季度 1-3 个 O（目标）"，数量越少、越聚焦，执行效果越好。
+        </div>
+        <div class="feedback feedback-wrong" id="feedback-5-wrong">
+          ❌ 再想想。OKR（目标与关键结果）的核心原则就是"聚焦"。每人/每团队每季度 1-3 个 O（目标），超过 3 个就失去重点。25 个 KR（关键结果）分散精力，执行必然打折扣。OKR 不是"覆盖所有工作"，而是"聚焦最重要的方向"。
+        </div>
+      </div>
+      <div class="nav-btns">
+        <button class="btn btn-secondary" onclick="prevSlide()">← 上一页</button>
+        <button class="btn btn-primary" onclick="nextSlide()">综合任务 →</button>
+      </div>
+    </div>
+
+    <!-- Slide 7: Comprehensive Task -->
+    <div class="slide" data-index="7">
+      <div class="header">
+        <div class="brand">引木咨询 · 课堂互动</div>
+        <div class="progress-wrap">
+          <div class="progress-text">8 / 9</div>
+          <div class="progress-bar"><div class="progress-fill" style="width:89%"></div></div>
+        </div>
+      </div>
+      <div class="card">
+        <span class="tip-badge">综合任务</span>
+        <h2>终极挑战：判断哪组 OKR（目标与关键结果）最规范</h2>
+        <p>下面给出了 3 组完整的 OKR（目标与关键结果），请判断哪一组<strong>最符合 OKR 原则</strong>。点击你认为正确的一组。</p>
+
+        <div class="okr-group" id="okr-0" onclick="selectOKR(0)">
+          <div class="okr-group-title"><span style="color:var(--accent);font-weight:800">O1</span>：成为行业内最有创新能力的产品团队 <span class="okr-check" id="okr-check-0"></span></div>
+          <div class="okr-kr">KR1：新产品线 Q3 上线</div>
+          <div class="okr-kr">KR2：获得 3 项行业创新奖项</div>
+          <div class="okr-kr">KR3：客户创新满意度评分达 85 分</div>
+        </div>
+
+        <div class="okr-group" id="okr-1" onclick="selectOKR(1)">
+          <div class="okr-group-title"><span style="color:var(--accent);font-weight:800">O2</span>：Q3 销售额提升 30% <span class="okr-check" id="okr-check-1"></span></div>
+          <div class="okr-kr">KR1：签约 20 家新客户</div>
+          <div class="okr-kr">KR2：老客户复购率提升 15%</div>
+          <div class="okr-kr">KR3：人均客单价提升 10%</div>
+        </div>
+
+        <div class="okr-group" id="okr-2" onclick="selectOKR(2)">
+          <div class="okr-group-title"><span style="color:var(--accent);font-weight:800">O3</span>：让团队更有战斗力 <span class="okr-check" id="okr-check-2"></span></div>
+          <div class="okr-kr">KR1：提升团队凝聚力</div>
+          <div class="okr-kr">KR2：减少人员流失</div>
+          <div class="okr-kr">KR3：多组织团建活动</div>
+        </div>
+
+        <div class="feedback feedback-correct" id="okr-feedback-correct">
+          ✅ 正确！O1 是最佳选择。O1 的 Objective（目标）是定性鼓舞人心的（"最有创新能力"），3 个 KR（关键结果）都有明确衡量标准。O2 的 Objective（目标）本身就是 KPI 数字（"提升 30%"），缺少方向感。O3 的所有 KR（关键结果）都不可衡量（"凝聚力""减少""多组织"都没有标准）。
+        </div>
+        <div class="feedback feedback-wrong" id="okr-feedback-wrong">
+          ❌ 再想想。O2 的 Objective（目标）是"Q3 销售额提升 30%"——这本身就是 KPI 数字，不是定性方向。O3 的所有 KR（关键结果）都不可测（"凝聚力""减少""多组织"都没有衡量标准）。O1 的 Objective（目标）是定性方向（"创新能力"），KR（关键结果）都有明确数字和指标。
+        </div>
+      </div>
+      <div class="nav-btns">
+        <button class="btn btn-secondary" onclick="prevSlide()">← 上一页</button>
+        <button class="btn btn-primary" onclick="nextSlide()">查看成绩 →</button>
+      </div>
+    </div>
+
+    <!-- Slide 8: Result -->
+    <div class="slide" data-index="8">
+      <div class="header">
+        <div class="brand">引木咨询 · 课堂互动</div>
+        <div class="progress-wrap">
+          <div class="progress-text">9 / 9</div>
+          <div class="progress-bar"><div class="progress-fill" style="width:100%"></div></div>
+        </div>
+      </div>
+      <div class="card result-box">
+        <div class="illustration" style="height: 120px; font-size: 56px; margin-bottom: 24px;">🎉</div>
+        <div class="result-score" id="final-score">—</div>
+        <div class="result-label">本节课互动完成度</div>
+        <div class="result-items">
+          <div class="result-item"><span>什么是 O（Objective）——目标</span><span id="result-0">待完成</span></div>
+          <div class="result-item"><span>什么是 KR（Key Results）——关键结果</span><span id="result-1">待完成</span></div>
+          <div class="result-item"><span>好 Objective（目标）的标准</span><span id="result-2">待完成</span></div>
+          <div class="result-item"><span>好 Key Results（关键结果）的标准</span><span id="result-3">待完成</span></div>
+          <div class="result-item"><span>OKR vs KPI（关键绩效指标）</span><span id="result-4">待完成</span></div>
+          <div class="result-item"><span>OKR 设定原则</span><span id="result-5">待完成</span></div>
+          <div class="result-item"><span>综合实战判断</span><span id="result-6">待完成</span></div>
+        </div>
+        <p style="color: var(--muted); font-size: 14px; margin-bottom: 24px;">
+          数据仅保存在当前页面，刷新后重置。随时可以返回重做。
+        </p>
+        <button class="btn btn-secondary btn-block" onclick="restart()" style="max-width: 240px; margin: 0 auto;">重新学习</button>
+        <div style="margin-top: 32px; padding-top: 24px; border-top: 1px solid #e8e5e0;">
+          <p style="font-size: 13px; color: var(--muted); font-weight: 500;">
+            引木管理咨询 — 让每一棵木，都能长成森林
+          </p>
+          <p style="font-size: 12px; color: var(--muted); margin-top: 4px;">
+            认知破土 · 能力扎根 · 价值成林
+          </p>
+          <p style="font-size: 11px; color: var(--muted); margin-top: 8px; opacity: 0.7;">
+            积木成林，共生共长
+          </p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    // ====== Navigation ======
+    let current = 0;
+    const slides = document.querySelectorAll('.slide');
+    const total = slides.length;
+
+    function showSlide(n) {
+      slides.forEach((s, i) => s.classList.toggle('active', i === n));
+      current = n;
+      if (n === 8) updateResult();
+      window.scrollTo(0, 0);
+    }
+    function nextSlide() { if (current < total - 1) showSlide(current + 1); }
+    function prevSlide() { if (current > 0) showSlide(current - 1); }
+    function restart() { showSlide(0); resetAll(); }
+
+    // ====== Quiz State ======
+    const quizState = [
+      { answered: false, correct: false, answer: 1 },
+      { answered: false, correct: false, answer: 1 },
+      { answered: false, correct: false, answer: 1 },
+      { answered: false, correct: false, answer: 2 },
+      { answered: false, correct: false, answer: 1 },
+      { answered: false, correct: false, answer: 1 },
+    ];
+
+    function selectOption(quizIndex, el, selectedIndex) {
+      const q = quizState[quizIndex];
+      if (q.answered) return;
+      const options = document.querySelectorAll(`#quiz-${quizIndex} .option`);
+      options.forEach(opt => opt.classList.remove('selected'));
+      el.classList.add('selected');
+      q.answered = true;
+      q.correct = (selectedIndex === q.answer);
+      options.forEach((opt, i) => {
+        if (i === q.answer) {
+          opt.classList.add('correct');
+        } else if (i === selectedIndex) {
+          opt.classList.add('wrong');
+        }
+      });
+      document.getElementById(`feedback-${quizIndex}-${q.correct ? 'correct' : 'wrong'}`).classList.add('show');
+    }
+
+    // ====== Comprehensive Task ======
+    const okrCorrect = 0; // O1 is correct
+    let okrAnswered = false;
+    let okrCorrectSelected = false;
+
+    function selectOKR(index) {
+      if (okrAnswered) return;
+      okrAnswered = true;
+      okrCorrectSelected = (index === okrCorrect);
+      const groups = document.querySelectorAll('.okr-group');
+      
+      if (okrCorrectSelected) {
+        // 选对了：只标绿 + 图标改为 ✅
+        groups[okrCorrect].classList.add('correct');
+        document.getElementById('okr-check-' + okrCorrect).textContent = '✅';
+      } else {
+        // 选错了：正确答案标绿+✅，用户的错误选择标红+❌
+        groups[okrCorrect].classList.add('correct');
+        document.getElementById('okr-check-' + okrCorrect).textContent = '✅';
+        groups[index].classList.add('wrong');
+        document.getElementById('okr-check-' + index).textContent = '❌';
+      }
+      document.getElementById(okrCorrectSelected ? 'okr-feedback-correct' : 'okr-feedback-wrong').classList.add('show');
+    }
+
+    // ====== Result ======
+    function updateResult() {
+      let correctCount = 0;
+      const totalItems = 7; // 6 quizzes + 1 comprehensive task
+      quizState.forEach((q, i) => {
+        const el = document.getElementById(`result-${i}`);
+        if (q.correct) { correctCount++; el.textContent = '✅ 正确'; el.style.color = 'var(--green)'; }
+        else if (q.answered) { el.textContent = '❌ 需复习'; el.style.color = 'var(--red)'; }
+        else { el.textContent = '待完成'; el.style.color = 'var(--muted)'; }
+      });
+      const matchEl = document.getElementById('result-6');
+      if (okrCorrectSelected) { correctCount++; matchEl.textContent = '✅ 正确'; matchEl.style.color = 'var(--green)'; }
+      else if (okrAnswered) { matchEl.textContent = '❌ 需复习'; matchEl.style.color = 'var(--red)'; }
+      else { matchEl.textContent = '待完成'; matchEl.style.color = 'var(--muted)'; }
+      const score = Math.round((correctCount / totalItems) * 100);
+      document.getElementById('final-score').textContent = score + '%';
+    }
+
+    function resetAll() {
+      quizState.forEach(q => { q.answered = false; q.correct = false; });
+      okrAnswered = false;
+      okrCorrectSelected = false;
+      document.querySelectorAll('.option').forEach(opt => opt.classList.remove('selected', 'correct', 'wrong'));
+      document.querySelectorAll('.okr-group').forEach(g => g.classList.remove('selected', 'correct', 'wrong'));
+      document.querySelectorAll('.feedback').forEach(f => f.classList.remove('show'));
+    }
+  </script>
+</body>
+</html>
