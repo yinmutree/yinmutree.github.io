@@ -1,7 +1,7 @@
 {
   "clientName": "北谷农业",
   "isYearlyView": false,
-  "currentMonthIndex": 0,
+  "currentMonthIndex": 5,
   "providerName": "引木管理咨询",
   "advisorName": "法师（健昕）",
   "advisorPhone": "17600697399",
@@ -235,7 +235,7 @@
           "unit": "小时",
           "mom": "--",
           "momPct": "--",
-          "trans": "--",
+          "trans": "约 0.0 人天",
           "icon": "clock",
           "color": "amber"
         },
@@ -246,7 +246,7 @@
           "unit": "",
           "mom": "--",
           "momPct": "--",
-          "trans": "--",
+          "trans": "约释放0个全职",
           "icon": "user",
           "color": "blue"
         },
@@ -257,7 +257,7 @@
           "unit": "个",
           "mom": "--",
           "momPct": "--",
-          "trans": "--",
+          "trans": "覆盖1个部门",
           "icon": "cog",
           "color": "indigo"
         },
@@ -268,7 +268,7 @@
           "unit": "",
           "mom": "--",
           "momPct": "--",
-          "trans": "--",
+          "trans": "AI 直接为你赚回 ¥0 万",
           "icon": "coins",
           "color": "emerald"
         },
@@ -1034,60 +1034,60 @@
     {
       "monthName": "7月",
       "period": "2026.07",
-      "nextUpdate": "2026年8月28日",
+      "nextUpdate": "2026年7月28日",
       "kpi": [
         {
           "id": "hours",
           "title": "累计节省工时",
-          "value": "--",
+          "value": "469.5",
           "unit": "小时",
-          "mom": "--",
-          "momPct": "--",
-          "trans": "--",
+          "mom": "+0小时",
+          "momPct": "0",
+          "trans": "约 58.7 人天",
           "icon": "clock",
           "color": "amber"
         },
         {
           "id": "headcount",
           "title": "节省人力数",
-          "value": "--",
+          "value": "6",
           "unit": "人",
-          "mom": "--",
-          "momPct": "--",
-          "trans": "--",
+          "mom": "+0人",
+          "momPct": "0",
+          "trans": "约释放6个全职",
           "icon": "user",
           "color": "blue"
         },
         {
           "id": "flows",
           "title": "自动化流程数",
-          "value": "--",
+          "value": "15",
           "unit": "个",
-          "mom": "--",
-          "momPct": "--",
-          "trans": "--",
+          "mom": "+15个",
+          "momPct": "100",
+          "trans": "覆盖8个部门",
           "icon": "cog",
           "color": "indigo"
         },
         {
           "id": "cost",
           "title": "人力成本节省",
-          "value": "--",
+          "value": "3.9",
           "unit": "万",
-          "mom": "--",
-          "momPct": "--",
-          "trans": "--",
+          "mom": "+0万",
+          "momPct": "0",
+          "trans": "AI 直接为你赚回 ¥4 万",
           "icon": "coins",
           "color": "emerald"
         },
         {
           "id": "roi",
           "title": "AI投入产出比",
-          "value": "--",
+          "value": "1.9",
           "unit": ": 1",
-          "mom": "--",
+          "mom": "累计趋势",
           "momPct": "up",
-          "trans": "--",
+          "trans": "每投入1元回报1.9元",
           "icon": "bullseye",
           "color": "white",
           "highlight": true
@@ -1095,64 +1095,215 @@
       ],
       "roiDetail": {
         "invest": {
-          "total": 0,
+          "total": 2.1,
           "items": [
             {
-              "name": "软件服务费",
+              "name": "软件订阅/授权费",
               "value": 0
             },
             {
-              "name": "实施部署费",
-              "value": 0
+              "name": "系统实施/部署费",
+              "value": 1.8
             },
             {
-              "name": "年度运维费",
-              "value": 0
+              "name": "培训与运维费",
+              "value": 0.3
             }
           ]
         },
         "return": {
-          "total": 0,
+          "total": 3.9,
           "items": [
             {
               "name": "人力节省折算",
-              "value": 0
+              "value": 1.69
             },
             {
-              "name": "效率提升折算",
-              "value": 0
+              "name": "运营成本节省",
+              "value": 1.69
             },
             {
-              "name": "风险规避价值",
-              "value": 0
+              "name": "返工成本节省",
+              "value": 0.53
+            },
+            {
+              "name": "开发成本降低",
+              "value": 0.6
             }
           ]
         }
       },
-      "flows": [],
+      "flows": [
+        {
+          "name": "组织发展及异动周报输出",
+          "dept": "人资部",
+          "monthlyVolume": "4",
+          "savedPerTime": "0.5",
+          "monthlySaved": "2",
+          "status": "running"
+        },
+        {
+          "name": "离职信息同步",
+          "dept": "人资部",
+          "monthlyVolume": "5",
+          "savedPerTime": "0.2",
+          "monthlySaved": "1",
+          "status": "running"
+        },
+        {
+          "name": "入职信息同步及拉群",
+          "dept": "人资部",
+          "monthlyVolume": "5",
+          "savedPerTime": "0.2",
+          "monthlySaved": "1",
+          "status": "running"
+        },
+        {
+          "name": "转正一个月倒计时",
+          "dept": "人资部",
+          "monthlyVolume": "5",
+          "savedPerTime": "0.2",
+          "monthlySaved": "1",
+          "status": "running"
+        },
+        {
+          "name": "面试时间修改提醒",
+          "dept": "人资部",
+          "monthlyVolume": "5",
+          "savedPerTime": "0.2",
+          "monthlySaved": "1",
+          "status": "running"
+        },
+        {
+          "name": "周年提醒及年度重置",
+          "dept": "人资部",
+          "monthlyVolume": "70",
+          "savedPerTime": "0.1",
+          "monthlySaved": "7",
+          "status": "running"
+        },
+        {
+          "name": "新人首月、次月汇报提醒",
+          "dept": "人资部",
+          "monthlyVolume": "10",
+          "savedPerTime": "0.1",
+          "monthlySaved": "1",
+          "status": "running"
+        },
+        {
+          "name": "招聘数据周报",
+          "dept": "人资部",
+          "monthlyVolume": "1",
+          "savedPerTime": "2",
+          "monthlySaved": "2",
+          "status": "running"
+        },
+        {
+          "name": "转正流程状态自动修改",
+          "dept": "人资部",
+          "monthlyVolume": "5",
+          "savedPerTime": "0.1",
+          "monthlySaved": "0.5",
+          "status": "running"
+        },
+        {
+          "name": "主动离职流程状态自动修改",
+          "dept": "人资部",
+          "monthlyVolume": "5",
+          "savedPerTime": "0.1",
+          "monthlySaved": "0.5",
+          "status": "running"
+        },
+        {
+          "name": "被动流程状态自动修改",
+          "dept": "人资部",
+          "monthlyVolume": "5",
+          "savedPerTime": "0.1",
+          "monthlySaved": "0.5",
+          "status": "running"
+        },
+        {
+          "name": "360评估收集及结果自动输出",
+          "dept": "人资部",
+          "monthlyVolume": "0.25",
+          "savedPerTime": "160",
+          "monthlySaved": "40",
+          "status": "running"
+        },
+        {
+          "name": "黑龙江零售商自助对账表（三方对账）",
+          "dept": "财务部",
+          "monthlyVolume": "22",
+          "savedPerTime": "4",
+          "monthlySaved": "176",
+          "status": "running"
+        },
+        {
+          "name": "广西零售商自助对账表（三方对账）",
+          "dept": "财务部",
+          "monthlyVolume": "22",
+          "savedPerTime": "4",
+          "monthlySaved": "176",
+          "status": "running"
+        },
+        {
+          "name": "短视频KPI指标自动日跟进",
+          "dept": "解决方案部-新媒体",
+          "monthlyVolume": "30",
+          "savedPerTime": "2",
+          "monthlySaved": "60",
+          "status": "running"
+        }
+      ],
       "stories": [
         {
-          "dept": "--",
-          "title": "--",
-          "scenario": "--",
-          "before": "--",
-          "after": "--",
+          "dept": "人资部",
+          "title": "360评估自动结果输出",
+          "scenario": "目前考核季360评估依赖于人资文件表格版1人1表输出，且数据回收、数据统计100%依赖人工一点点手动录入计算，效率极低且耗费时间过大，加班较多",
+          "before": "回收难且结果无法实时计算",
+          "after": "智能表格+仪表盘",
           "results": [
             {
-              "label": "--",
-              "value": "--"
+              "label": "全员360评价结果",
+              "value": "实时出结果"
             },
             {
-              "label": "--",
-              "value": "--"
+              "label": "百条数据统计计算",
+              "value": "秒级自动计算"
             },
             {
-              "label": "--",
-              "value": "--"
+              "label": "表格减负",
+              "value": "1张表格实现"
+            }
+          ]
+        },
+        {
+          "dept": "广西北谷-解决方案部",
+          "title": "短视频KPI指标自动日跟进",
+          "scenario": "目前针对零售商短视频KPI考核，停留在人肉根据线上表格一条条逐一确认每个零售商的短视频输出进度，且难以实现每天花费1～2小时去全公司筛查和督促",
+          "before": "无法实时进行短视频KPI日跟进筛查",
+          "after": "智能表格+智能机器人+AI小龙虾",
+          "results": [
+            {
+              "label": "全省零售商短视频进度跟进",
+              "value": "周跟进提升为日跟进"
+            },
+            {
+              "label": "全省零售商筛查",
+              "value": "2小时缩短为2分钟输出"
+            },
+            {
+              "label": "每日进度报告输出",
+              "value": "每日定时自动化输出"
             }
           ]
         }
-      ]
+      ],
+      "dataNote": {
+        "source": "北谷农业月度确认 + 引木系统日志",
+        "costBasis": "按约定人力成本 50元/小时 计算",
+        "period": "2026年"
+      }
     }
   ],
   "trend": {
@@ -1177,7 +1328,7 @@
       1.4,
       1.9,
       3.9,
-      0
+      3.9
     ],
     "cumulativeROI": [
       0,
@@ -1186,7 +1337,7 @@
       0.7,
       1.1,
       1.9,
-      null
+      1.9
     ]
   },
   "dataNote": {
@@ -2532,5 +2683,5 @@
       }
     }
   },
-  "_updatedAt": "2026-06-22T02:03:28.182Z"
+  "_updatedAt": "2026-07-13T06:26:59.330Z"
 }
