@@ -257,6 +257,7 @@
                     <li>• 成本核算：<span id="data-cost">--</span></li>
                     <li>• 数据周期：<span id="data-period-note">--</span></li>
                     <li>• 最新更新：<span id="data-next" class="font-medium text-slate-300">--</span></li>
+                    <li>• 下次更新：<span id="data-nextupdate" class="font-medium text-slate-300">--</span></li>
                 </ul>
             </div>
             <div class="border-t border-slate-700/50 pt-4">
@@ -1314,6 +1315,289 @@ const DEFAULT_DATA = {
                             value: "表格概览"
                         }
                     ]
+                },
+                {
+                    dept: "广西北谷-解决方案部",
+                    title: "短视频KPI指标自动日跟进",
+                    scenario: "目前针对零售商短视频KPI考核，停留在人肉根据线上表格一条条逐一确认每个零售商的短视频输出进度，且难以实现每天花费1～2小时去全公司筛查和督促",
+                    before: "无法实时进行短视频KPI日跟进筛查",
+                    after: "智能表格+智能机器人+AI小龙虾",
+                    results: [
+                        {
+                            label: "全省零售商短视频进度跟进",
+                            value: "周跟进提升为日跟进"
+                        },
+                        {
+                            label: "全省零售商筛查",
+                            value: "2小时缩短为2分钟输出"
+                        },
+                        {
+                            label: "每日进度报告输出",
+                            value: "每日定时自动化输出"
+                        }
+                    ]
+                }
+            ],
+            dataNote: {
+                source: "北谷农业月度确认 + 引木系统日志",
+                costBasis: "按约定人力成本 50元/小时 计算",
+                period: "2026年"
+            }
+        },
+        {
+            monthName: "7月",
+            period: "2026.07",
+            nextUpdate: "2026年8月28日",
+            kpi: [
+                {
+                    id: "hours",
+                    title: "累计节省工时",
+                    value: "409.5",
+                    unit: "小时",
+                    mom: "+176小时",
+                    momPct: "75",
+                    trans: "约 0.2人/月",
+                    icon: "clock",
+                    color: "amber"
+                },
+                {
+                    id: "headcount",
+                    title: "节省人力数",
+                    value: "6",
+                    unit: "人",
+                    mom: "+2人",
+                    momPct: "50",
+                    trans: "约释放6个全职",
+                    icon: "user",
+                    color: "blue"
+                },
+                {
+                    id: "flows",
+                    title: "自动化流程数",
+                    value: "14",
+                    unit: "个",
+                    mom: "+1个",
+                    momPct: "8",
+                    trans: "覆盖7个部门",
+                    icon: "cog",
+                    color: "indigo"
+                },
+                {
+                    id: "cost",
+                    title: "人力成本节省",
+                    value: "3.9",
+                    unit: "万",
+                    mom: "+0万",
+                    momPct: "0",
+                    trans: "相当于省出0.3个年薪",
+                    icon: "coins",
+                    color: "emerald"
+                },
+                {
+                    id: "roi",
+                    title: "AI投入产出比",
+                    value: "4.3",
+                    unit: ": 1",
+                    mom: "累计趋势",
+                    momPct: "up",
+                    trans: "每投入1元，回报4.3元",
+                    icon: "bullseye",
+                    color: "white",
+                    highlight: true
+                }
+            ],
+            roiDetail: {
+                invest: {
+                    total: 2.1,
+                    items: [
+                        {
+                            name: "软件订阅/授权费",
+                            value: 0
+                        },
+                        {
+                            name: "系统实施/部署费",
+                            value: 1.8
+                        },
+                        {
+                            name: "培训与运维费",
+                            value: 0.3
+                        }
+                    ]
+                },
+                return: {
+                    total: 9.1,
+                    items: [
+                        {
+                            name: "人力节省折算",
+                            value: 3.9
+                        },
+                        {
+                            name: "运营成本降低",
+                            value: 3.9
+                        },
+                        {
+                            name: "返工成本节省",
+                            value: 1.3
+                        }
+                    ]
+                }
+            },
+            flows: [
+                {
+                    name: "组织发展及异动周报输出",
+                    dept: "人资部",
+                    monthlyVolume: "4",
+                    savedPerTime: "0.5",
+                    monthlySaved: "2",
+                    status: "running"
+                },
+                {
+                    name: "离职信息同步",
+                    dept: "人资部",
+                    monthlyVolume: "5",
+                    savedPerTime: "0.2",
+                    monthlySaved: "1",
+                    status: "running"
+                },
+                {
+                    name: "入职信息同步及拉群",
+                    dept: "人资部",
+                    monthlyVolume: "5",
+                    savedPerTime: "0.2",
+                    monthlySaved: "1",
+                    status: "running"
+                },
+                {
+                    name: "转正一个月倒计时",
+                    dept: "人资部",
+                    monthlyVolume: "5",
+                    savedPerTime: "0.2",
+                    monthlySaved: "1",
+                    status: "running"
+                },
+                {
+                    name: "面试时间修改提醒",
+                    dept: "人资部",
+                    monthlyVolume: "5",
+                    savedPerTime: "0.2",
+                    monthlySaved: "1",
+                    status: "running"
+                },
+                {
+                    name: "周年提醒及年度重置",
+                    dept: "人资部",
+                    monthlyVolume: "70",
+                    savedPerTime: "0.1",
+                    monthlySaved: "7",
+                    status: "running"
+                },
+                {
+                    name: "新人首月、次月汇报提醒",
+                    dept: "人资部",
+                    monthlyVolume: "10",
+                    savedPerTime: "0.1",
+                    monthlySaved: "1",
+                    status: "running"
+                },
+                {
+                    name: "招聘数据周报",
+                    dept: "人资部",
+                    monthlyVolume: "1",
+                    savedPerTime: "2",
+                    monthlySaved: "2",
+                    status: "running"
+                },
+                {
+                    name: "转正流程状态自动修改",
+                    dept: "人资部",
+                    monthlyVolume: "5",
+                    savedPerTime: "0.1",
+                    monthlySaved: "0.5",
+                    status: "running"
+                },
+                {
+                    name: "主动离职流程状态自动修改",
+                    dept: "人资部",
+                    monthlyVolume: "5",
+                    savedPerTime: "0.1",
+                    monthlySaved: "0.5",
+                    status: "running"
+                },
+                {
+                    name: "被动流程状态自动修改",
+                    dept: "人资部",
+                    monthlyVolume: "5",
+                    savedPerTime: "0.1",
+                    monthlySaved: "0.5",
+                    status: "running"
+                },
+                {
+                    name: "360评估收集及结果自动输出",
+                    dept: "人资部",
+                    monthlyVolume: "0.25",
+                    savedPerTime: "160",
+                    monthlySaved: "40",
+                    status: "running"
+                },
+                {
+                    name: "黑龙江零售商自助对账表（三方对账）",
+                    dept: "财务部",
+                    monthlyVolume: "22",
+                    savedPerTime: "4",
+                    monthlySaved: "176",
+                    status: "running"
+                },
+                {
+                    name: "广西零售商自助对账表（三方对账）",
+                    dept: "财务部",
+                    monthlyVolume: "22",
+                    savedPerTime: "4",
+                    monthlySaved: "176",
+                    status: "running"
+                }
+            ],
+            stories: [
+                {
+                    dept: "人资部",
+                    title: "360评估自动结果输出",
+                    scenario: "目前考核季360评估依赖于人资文件表格版1人1表输出，且数据回收、数据统计100%依赖人工一点点手动录入计算，效率极低且耗费时间过大，加班较多",
+                    before: "回收难且结果无法实时计算",
+                    after: "智能表格+仪表盘",
+                    results: [
+                        {
+                            label: "全员360评价结果",
+                            value: "实时出结果"
+                        },
+                        {
+                            label: "百条数据统计计算",
+                            value: "秒级自动计算"
+                        },
+                        {
+                            label: "表格减负",
+                            value: "1张表格实现"
+                        }
+                    ]
+                },
+                {
+                    dept: "广西北谷-解决方案部",
+                    title: "短视频KPI指标自动日跟进",
+                    scenario: "目前针对零售商短视频KPI考核，停留在人肉根据线上表格一条条逐一确认每个零售商的短视频输出进度，且难以实现每天花费1～2小时去全公司筛查和督促",
+                    before: "无法实时进行短视频KPI日跟进筛查",
+                    after: "智能表格+智能机器人+AI小龙虾",
+                    results: [
+                        {
+                            label: "全省零售商短视频进度跟进",
+                            value: "周跟进提升为日跟进"
+                        },
+                        {
+                            label: "全省零售商筛查",
+                            value: "2小时缩短为2分钟输出"
+                        },
+                        {
+                            label: "每日进度报告输出",
+                            value: "每日定时自动化输出"
+                        }
+                    ]
                 }
             ],
             dataNote: {
@@ -1525,7 +1809,6 @@ async function syncToCloud(data) {
 function startCloudPolling() {
     if (syncConfig.pollingTimer) return;
     syncConfig.pollingTimer = setInterval(async () => {
-        if (!hasGithubToken()) return;
         const cloudData = await loadFromCloud();
         if (!cloudData) return;
         const localMonths = DATA.months ? DATA.months.length : 0;
@@ -1863,27 +2146,18 @@ function calculateYearlyData() {
     const validMonths = months.filter(m => m.kpi[0].value !== "--");
     if (validMonths.length === 0) return null;
     
-    // 累加各月KPI数值（用户编辑的是当月值，全年需要累加）
-    let totalHours = 0;
-    let totalHeadcount = 0;
-    let totalCost = 0;
-    
-    validMonths.forEach(m => {
-        totalHours += parseKPIValue(m.kpi[0].value);
-        totalHeadcount += parseKPIValue(m.kpi[1].value);
-        totalCost += parseKPIValue(m.kpi[3].value);
-    });
-    
-    // 投入：年度总成本，取最后一个月
-    const investTotal = parseFloat((validMonths[validMonths.length - 1].roiDetail.invest.total || 0).toFixed(1));
-    // 回报：逐月累加
-    let returnTotal = 0;
-    validMonths.forEach(m => {
-        returnTotal += parseFloat((m.roiDetail.return.total || 0).toFixed(1));
-    });
-    returnTotal = parseFloat(returnTotal.toFixed(1));
-    
-    // 当前ROI = 总回报 / 总投入
+    // KPI 为累计口径，全年汇总取最新（最后一个有数据）月份的累计值，而非跨月求和
+    const lastMonth = validMonths[validMonths.length - 1];
+    const totalHours = parseKPIValue(lastMonth.kpi[0].value);
+    const totalHeadcount = parseKPIValue(lastMonth.kpi[1].value);
+    const totalCost = parseKPIValue(lastMonth.kpi[3].value);
+
+    // 投入：取最后一个月（年度总投入，KPI 累计口径）
+    const investTotal = parseFloat(parseFloat(lastMonth.roiDetail.invest.total || 0).toFixed(1));
+    // 回报：累计回报，取最后一个月（KPI 为累计口径，不需跨月累加）
+    const returnTotal = parseFloat(parseFloat(lastMonth.roiDetail.return.total || 0).toFixed(1));
+
+    // 当前ROI = 累计回报 / 累计投入（全年累计口径）
     const currentROI = investTotal > 0 ? (returnTotal / investTotal).toFixed(1) : '0';
     
     // 汇总所有流程（去重，取最新状态）
@@ -2024,7 +2298,7 @@ function renderKPI(isYearly, yearly, flows) {
             { id: "headcount", title: "节省人力数", value: yearly.totalHeadcount, unit: "人", mom: "全年累计", momPct: "up", icon: "user", color: "blue" },
             { id: "flows", title: "自动化流程数", value: yearly.totalFlows.toString(), unit: "个", mom: "全部流程", momPct: "up", icon: "cog", color: "indigo" },
             { id: "cost", title: "人力成本节省", value: yearly.totalCost, unit: "万", mom: "全年累计", momPct: "up", icon: "coins", color: "emerald" },
-            { id: "roi", title: "AI投入产出比", value: yearly.currentROI, unit: ": 1", mom: "全年平均", momPct: "up", icon: "bullseye", color: "white", highlight: true }
+            { id: "roi", title: "AI投入产出比", value: yearly.currentROI, unit: ": 1", mom: "全年累计", momPct: "up", icon: "bullseye", color: "white", highlight: true }
         ];
     } else {
         // 单月视图：使用当月数据
@@ -2147,8 +2421,8 @@ function renderTrendChart() {
         data: {
             labels,
             datasets: [
-                { label: '月节省直接成本（万元）', data: monthlyCost, backgroundColor: 'rgba(16, 185, 129, 0.7)', borderColor: 'rgba(16, 185, 129, 1)', borderWidth: 1, borderRadius: 4, order: 2, yAxisID: 'y' },
-                { label: '月度ROI', data: cumulativeROI, type: 'line', borderColor: '#3b82f6', backgroundColor: 'rgba(59, 130, 246, 0.1)', borderWidth: 2, pointBackgroundColor: '#3b82f6', pointRadius: 4, pointHoverRadius: 6, fill: true, tension: 0.4, order: 1, yAxisID: 'y1' }
+                { label: '累计回报（万元）', data: monthlyCost, backgroundColor: 'rgba(16, 185, 129, 0.7)', borderColor: 'rgba(16, 185, 129, 1)', borderWidth: 1, borderRadius: 4, order: 2, yAxisID: 'y' },
+                { label: '累计ROI', data: cumulativeROI, type: 'line', borderColor: '#3b82f6', backgroundColor: 'rgba(59, 130, 246, 0.1)', borderWidth: 2, pointBackgroundColor: '#3b82f6', pointRadius: 4, pointHoverRadius: 6, fill: true, tension: 0.4, order: 1, yAxisID: 'y1' }
             ]
         },
         options: {
@@ -2281,7 +2555,14 @@ function renderFooter(isYearly, yearly) {
     document.getElementById('data-cost').textContent = DATA.dataNote.costBasis;
     document.getElementById('data-period-note').textContent = isYearly && yearly ? DATA.activeYear + '年1月-' + yearly.latestMonth.monthName : DATA.dataNote.period;
     const now = new Date();
-    document.getElementById('data-next').textContent = `${now.getFullYear()}年${now.getMonth() + 1}月${now.getDate()}日`;
+    const todayStr = `${now.getFullYear()}年${now.getMonth() + 1}月${now.getDate()}日`;
+    // 页脚“最新更新”表示数据截至今天，显示今天日期
+    document.getElementById('data-next').textContent = todayStr;
+    // “下次更新”展示当前月份配置的 nextUpdate（为空时回退到今天）
+    const nextUpdateEl = document.getElementById('data-nextupdate');
+    if (nextUpdateEl) {
+        nextUpdateEl.textContent = (m.nextUpdate && m.nextUpdate.trim()) ? m.nextUpdate : todayStr;
+    }
     document.getElementById('provider-name').textContent = DATA.providerName;
     document.getElementById('advisor-name').textContent = DATA.advisorName;
     document.getElementById('advisor-phone').textContent = DATA.advisorPhone;
@@ -2403,7 +2684,7 @@ function autoCalcKPI(idx) {
         
         // KPI 配置
         const kpiConfigs = [
-            { idx: 0, title: '累计节省工时', unit: '小时', transTemplate: (v) => `约 ${(v / 1740).toFixed(1)}人/月` },
+            { idx: 0, title: '累计节省工时', unit: '小时', transTemplate: (v) => `约 ${(v / 8).toFixed(1)} 人天` },
             { idx: 1, title: '节省人力数', unit: '人', transTemplate: (v) => `约释放${Math.round(v)}个全职` },
             { idx: 2, title: '自动化流程数', unit: '个', transTemplate: (v) => `覆盖${Math.max(1, Math.round(v / 2))}个部门` },
             { idx: 3, title: '人力成本节省', unit: '万', transTemplate: (v) => `相当于省出${(v / 12).toFixed(1)}个年薪` }
@@ -2647,11 +2928,45 @@ function copyFromPrevMonth() {
     // 先保存当前表单数据（虽然会被覆盖，但养成好习惯）
     collectFormData();
     const prev = DATA.months[editingMonthIndex - 1];
-    DATA.months[editingMonthIndex] = JSON.parse(JSON.stringify(prev));
-    DATA.months[editingMonthIndex].monthName = getMonthNameByIndex(editingMonthIndex);
-    DATA.months[editingMonthIndex].period = getPeriodByIndex(editingMonthIndex);
+    const newIndex = editingMonthIndex;
+    const newMonth = JSON.parse(JSON.stringify(prev));
+
+    // 复制后清空累计类 KPI（工时/人力/成本），避免带入上月的脏累计值
+    // 同步清掉对应 mom/momPct/trans，让其在编辑后重新自动计算
+    [0, 1, 3].forEach(i => {
+        newMonth.kpi[i].value = '';
+        newMonth.kpi[i].mom = '--';
+        newMonth.kpi[i].momPct = '--';
+        newMonth.kpi[i].trans = '--';
+    });
+    // ROI 比值为累计口径，同样清零避免脏数据（保留“累计趋势”默认展示）
+    newMonth.kpi[4].value = '';
+    newMonth.kpi[4].mom = '累计趋势';
+    newMonth.kpi[4].momPct = 'up';
+    newMonth.kpi[4].trans = '累计趋势中';
+
+    // 投入/回报总计清零（累计口径，不能原样带入上月数据）
+    if (newMonth.roiDetail) {
+        if (newMonth.roiDetail.invest) newMonth.roiDetail.invest.total = 0;
+        if (newMonth.roiDetail.return) newMonth.roiDetail.return.total = 0;
+    }
+
+    // 基础信息刷新为新月
+    newMonth.monthName = getMonthNameByIndex(newIndex);
+    newMonth.period = getPeriodByIndex(newIndex);
+
+    // 同步清空趋势图该月数据（monthlyCost = 累计回报，cumulativeROI = 累计 ROI 比值）
+    if (DATA.trend) {
+        if (!DATA.trend.monthlyCost || !Array.isArray(DATA.trend.monthlyCost)) DATA.trend.monthlyCost = [];
+        if (!DATA.trend.cumulativeROI || !Array.isArray(DATA.trend.cumulativeROI)) DATA.trend.cumulativeROI = [];
+        DATA.trend.monthlyCost[newIndex] = null;
+        DATA.trend.cumulativeROI[newIndex] = null;
+    }
+
+    // 流程(flows)与故事(stories)保持复制（结构通常可复用）
+    DATA.months[newIndex] = newMonth;
     renderEditForm();
-    alert('✅ 已复制上月数据，请修改具体数字');
+    alert('✅ 已复制上月数据（流程/故事已保留），累计类数值已清零，请填写本月增量');
 }
 
 function getMonthNameByIndex(i) {
@@ -3129,6 +3444,19 @@ function toggleROIDetail(type) {
 // 初始化
 window.addEventListener('DOMContentLoaded', () => {
     const hasURLData = loadDataFromURL();
+
+    // 内置数据优先兜底：当源文件内置 DEFAULT_DATA 的月份数【严格大于】从 URL/localStorage
+    // 加载到的数据月份数时，自动采用最新内置数据。这样源文件(DEFAULT_DATA)更新后，
+    // 旧版浏览器因 localStorage 缓存了较少月份而刷新看不到更新的根因即被解决。
+    // 注意：仅当内置月份数 STRICTLY GREATER 才覆盖，避免反向覆盖（加载数据月份更多时也保持不动，
+    // 以尊重用户通过 URL 分享带入的、可能更多/不同的数据）。
+    const builtinMonths = DEFAULT_DATA && DEFAULT_DATA.months ? DEFAULT_DATA.months.length : 0;
+    const loadedMonths = DATA && DATA.months ? DATA.months.length : 0;
+    if (builtinMonths > loadedMonths) {
+        DATA = JSON.parse(JSON.stringify(DEFAULT_DATA)); // 以内置最新数据为准
+        console.log('🔄 检测到源数据更新，已采用最新内置数据（' + builtinMonths + '个月）');
+    }
+
     migrateAllYears();
     normalizeROIData();
     renderMonthTabs();
@@ -3149,44 +3477,39 @@ window.addEventListener('DOMContentLoaded', () => {
         console.log('ℹ️ 显示默认数据（1-6月真实数据）');
     }
 
-    // 云端同步：后台异步加载云端数据，验证真实连通性
-    if (hasGithubToken()) {
-        updateSyncUI('syncing');
-        loadFromCloud().then(cloudData => {
-            if (cloudData) {
-                const localMonths = DATA.months ? DATA.months.length : 0;
-                const cloudMonths = cloudData.months ? cloudData.months.length : 0;
-                const cloudTime = cloudData._updatedAt ? new Date(cloudData._updatedAt).getTime() : 0;
-                const localTime = DATA._updatedAt ? new Date(DATA._updatedAt).getTime() : 0;
-                if (cloudMonths > localMonths || (cloudMonths === localMonths && cloudTime > localTime)) {
-                    // 云端更新 → 拉取
-                    DATA = cloudData;
-                    migrateAllYears(); normalizeROIData();
-                    renderMonthTabs(); renderAll();
-                    syncConfig.lastCloudUpdate = cloudData._updatedAt;
-                    console.log('✅ 从云端加载更新 (' + cloudMonths + '月)');
-                    updateSyncUI('synced');
-                } else if (localMonths > cloudMonths) {
-                    // 本地更全 → 推送
-                    console.log('📤 本地(' + localMonths + '月) > 云端(' + cloudMonths + '月)');
-                    syncToCloud(DATA).then(ok => { updateSyncUI(ok ? 'synced' : 'error'); });
-                } else {
-                    // 月数相同 → 做验证推送，确认连接真实有效
-                    console.log('🔄 月数相同(' + cloudMonths + '月)，验证云端连接...');
-                    syncToCloud(DATA).then(ok => {
-                        updateSyncUI(ok ? 'synced' : 'error');
-                        if (!ok) console.warn('⚠️ 推送到云端失败，同步未生效');
-                    });
-                }
-            } else {
-                // 云端无数据 → 推送
-                syncToCloud(DATA).then(ok => { updateSyncUI(ok ? 'synced' : 'error'); });
+    // 云端同步：所有访客都从公开 data.json 读取（无需 token），线上编辑经云同步后客户自动看到
+    updateSyncUI(hasGithubToken() ? 'syncing' : 'synced');
+    loadFromCloud().then(cloudData => {
+        if (cloudData) {
+            const localMonths = DATA.months ? DATA.months.length : 0;
+            const cloudMonths = cloudData.months ? cloudData.months.length : 0;
+            const cloudTime = cloudData._updatedAt ? new Date(cloudData._updatedAt).getTime() : 0;
+            const localTime = DATA._updatedAt ? new Date(DATA._updatedAt).getTime() : 0;
+            if (cloudMonths > localMonths || (cloudMonths === localMonths && cloudTime > localTime)) {
+                DATA = cloudData;
+                migrateAllYears(); normalizeROIData();
+                renderMonthTabs(); renderAll();
+                syncConfig.lastCloudUpdate = cloudData._updatedAt;
+                console.log('✅ 从云端加载更新 (' + cloudMonths + '月)');
             }
-            startCloudPolling();
-        }).catch(() => { updateSyncUI('error'); startCloudPolling(); });
-    } else {
-        updateSyncUI('notoken');
-    }
+        }
+        // 写入侧：仅配置了 token 的编辑者，才把本地改动推送云端
+        if (hasGithubToken()) {
+            const localMonths = DATA.months ? DATA.months.length : 0;
+            const cloudMonths = cloudData && cloudData.months ? cloudData.months.length : 0;
+            if (!cloudData || cloudMonths <= localMonths) {
+                syncToCloud(DATA).then(ok => { updateSyncUI(ok ? 'synced' : 'error'); });
+            } else {
+                updateSyncUI('synced');
+            }
+        } else {
+            updateSyncUI(cloudData ? 'synced' : 'notoken');
+        }
+        startCloudPolling();
+    }).catch(() => {
+        if (hasGithubToken()) updateSyncUI('error'); else updateSyncUI('notoken');
+        startCloudPolling();
+    });
 });
 </script>
 
