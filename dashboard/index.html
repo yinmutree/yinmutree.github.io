@@ -2160,18 +2160,38 @@ function calculateYearlyData() {
     const validMonths = months.filter(m => m.kpi[0].value !== "--");
     if (validMonths.length === 0) return null;
     
-    // KPI 为累计口径，全年汇总取最新（最后一个有数据）月份的累计值，而非跨月求和
-    const lastMonth = validMonths[validMonths.length - 1];
-    const totalHours = parseKPIValue(lastMonth.kpi[0].value);
-    const totalHeadcount = parseKPIValue(lastMonth.kpi[1].value);
-    const totalCost = parseKPIValue(lastMonth.kpi[3].value);
+    // KPI 全年汇总：工时/成本跨月求和，人力数取最大值，ROI=全年回报÷全年投入
 
-    // 投入：取最后一个月（年度总投入，KPI 累计口径）
-    const investTotal = parseFloat(parseFloat(lastMonth.roiDetail.invest.total || 0).toFixed(1));
-    // 回报：累计回报，取最后一个月（KPI 为累计口径，不需跨月累加）
-    const returnTotal = parseFloat(parseFloat(lastMonth.roiDetail.return.total || 0).toFixed(1));
+    // 累计节省工时：各月相加（防御性处理 NaN）
+    let totalHours = 0;
+    validMonths.forEach(m => {
+        const v = parseKPIValue(m.kpi[0].value);
+        totalHours += isNaN(v) ? 0 : v;
+    });
 
-    // 当前ROI = 累计回报 / 累计投入（全年累计口径）
+    // 节省人力数：取最大值（岗位释放数不重复叠加）
+    let maxHeadcount = 0;
+    validMonths.forEach(m => {
+        const h = parseKPIValue(m.kpi[1].value);
+        if (!isNaN(h) && h > maxHeadcount) maxHeadcount = h;
+    });
+    const totalHeadcount = maxHeadcount;
+
+    // 人力成本节约：各月相加（每月发生的成本节约应累加）
+    let totalCost = 0;
+    validMonths.forEach(m => {
+        const v = parseKPIValue(m.kpi[3].value);
+        totalCost += isNaN(v) ? 0 : v;
+    });
+
+    // 全年 ROI = 全年累计回报 ÷ 全年累计投入（跨月累加）
+    let investTotal = 0, returnTotal = 0;
+    validMonths.forEach(m => {
+        investTotal += parseFloat(m.roiDetail.invest.total || 0);
+        returnTotal += parseFloat(m.roiDetail.return.total || 0);
+    });
+    investTotal = parseFloat(investTotal.toFixed(1));
+    returnTotal = parseFloat(returnTotal.toFixed(1));
     const currentROI = investTotal > 0 ? (returnTotal / investTotal).toFixed(1) : '0';
     
     // 汇总所有流程（去重，取最新状态）
