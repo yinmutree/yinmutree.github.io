@@ -1,7 +1,7 @@
 {
   "clientName": "北谷农业",
   "isYearlyView": false,
-  "currentMonthIndex": 1,
+  "currentMonthIndex": 3,
   "providerName": "引木管理咨询",
   "advisorName": "法师（健昕）",
   "advisorPhone": "17600697399",
@@ -300,7 +300,7 @@
       ],
       "roiDetail": {
         "invest": {
-          "total": 2.1,
+          "total": 0,
           "items": [
             {
               "name": "软件订阅/授权费",
@@ -308,17 +308,30 @@
             },
             {
               "name": "系统实施/部署费",
-              "value": 1.8
+              "value": 0
             },
             {
               "name": "培训与运维费",
-              "value": 0.3
+              "value": 0
             }
           ]
         },
         "return": {
           "total": 0,
-          "items": []
+          "items": [
+            {
+              "name": "",
+              "value": 0
+            },
+            {
+              "name": "",
+              "value": 0
+            },
+            {
+              "name": "",
+              "value": 0
+            }
+          ]
         }
       },
       "flows": [
@@ -2654,5 +2667,5 @@
       }
     }
   },
-  "_updatedAt": "2026-07-15T07:39:27.076Z"
+  "_updatedAt": "2026-07-15T07:39:33.236Z"
 }
