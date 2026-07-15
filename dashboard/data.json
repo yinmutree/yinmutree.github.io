@@ -1,7 +1,7 @@
 {
   "clientName": "北谷农业",
   "isYearlyView": false,
-  "currentMonthIndex": 4,
+  "currentMonthIndex": 5,
   "providerName": "引木管理咨询",
   "advisorName": "法师（健昕）",
   "advisorPhone": "17600697399",
@@ -835,11 +835,11 @@
         {
           "id": "roi",
           "title": "AI投入产出比",
-          "value": "1.9",
+          "value": "6.5",
           "unit": ": 1",
           "mom": "累计趋势",
           "momPct": "up",
-          "trans": "每投入1元回报1.9元",
+          "trans": "每投入1元回报6.5元",
           "icon": "bullseye",
           "color": "white",
           "highlight": true
@@ -847,7 +847,7 @@
       ],
       "roiDetail": {
         "invest": {
-          "total": 2.1,
+          "total": 0.6,
           "items": [
             {
               "name": "软件订阅/授权费",
@@ -855,11 +855,11 @@
             },
             {
               "name": "系统实施/部署费",
-              "value": 1.8
+              "value": 0.6
             },
             {
               "name": "培训与运维费",
-              "value": 0.3
+              "value": 0
             }
           ]
         },
@@ -1320,7 +1320,7 @@
       null,
       2.3,
       3.2,
-      1.9,
+      6.5,
       1.9
     ]
   },
@@ -2667,5 +2667,5 @@
       }
     }
   },
-  "_updatedAt": "2026-07-15T07:39:54.533Z"
+  "_updatedAt": "2026-07-15T07:40:01.343Z"
 }
