@@ -403,11 +403,11 @@
         {
           "id": "roi",
           "title": "AI投入产出比",
-          "value": "0.7",
+          "value": "2.3",
           "unit": ": 1",
           "mom": "累计趋势",
           "momPct": "up",
-          "trans": "每投入1元回报0.7元",
+          "trans": "每投入1元回报2.3元",
           "icon": "bullseye",
           "color": "white",
           "highlight": true
@@ -415,7 +415,7 @@
       ],
       "roiDetail": {
         "invest": {
-          "total": 2.1,
+          "total": 0.6,
           "items": [
             {
               "name": "软件订阅/授权费",
@@ -423,11 +423,11 @@
             },
             {
               "name": "系统实施/部署费",
-              "value": 1.8
+              "value": 0.6
             },
             {
               "name": "培训与运维费",
-              "value": 0.3
+              "value": 0
             }
           ]
         },
@@ -1318,7 +1318,7 @@
       null,
       null,
       null,
-      0.7,
+      2.3,
       1.1,
       1.9,
       1.9
@@ -2667,5 +2667,5 @@
       }
     }
   },
-  "_updatedAt": "2026-07-15T07:39:33.236Z"
+  "_updatedAt": "2026-07-15T07:39:48.784Z"
 }
