@@ -1,6 +1,6 @@
 {
   "clientName": "北谷农业",
-  "isYearlyView": false,
+  "isYearlyView": true,
   "currentMonthIndex": 5,
   "providerName": "引木管理咨询",
   "advisorName": "法师（健昕）",
@@ -2641,5 +2641,5 @@
       }
     }
   },
-  "_updatedAt": "2026-07-15T06:46:24.469Z"
+  "_updatedAt": "2026-07-15T07:39:04.756Z"
 }
