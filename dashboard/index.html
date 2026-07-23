@@ -2902,6 +2902,97 @@ function autoCalcAllKPI() {
     }
 }
 
+/**
+ * 全局统一重算所有月份（i>=1）的 KPI 环比（mom / momPct）。
+ *
+ * 背景：原 autoCalcKPI 仅在「编辑某月某字段的 input 事件」中，对“当前被编辑的单个字段”
+ * 基于当时 DATA 快照计算环比并冻结写入 DATA。若先编辑下月（此时上月尚未填写/为0），
+ * 会走“上月为0”分支算出 +本月总值/+100% 并永久保存；之后补填上月值也不会再纠正，
+ * 导致错误环比永久留存。
+ *
+ * 本函数遍历 DATA.months（跳过首月 i=0），对 idx ∈ [0,1,2,3] 以 DATA.months[i-1] 为上月，
+ * 复用 autoCalcKPI 完全一致的计算规则（currVal=当月值、prevVal=上月值、diff、pct、mom 文案含单位）
+ * 重新计算并写回 DATA.months[i].kpi[idx].mom 与 .momPct，保证全量校正。
+ * ROI(idx=4) 保持“累计趋势”/“up”，不在此重算。
+ *
+ * 调用点：
+ *   1) collectFormData() 末尾 —— 每次保存后全局校正，避免错误冻结。
+ *   2) DOMContentLoaded 展示渲染前 —— 页面加载即按最新算法校正旧数据（防线上旧错值）。
+ */
+function recalcAllMonthsMoM() {
+    try {
+        if (!DATA || !DATA.months || !DATA.months.length) return;
+
+        // 与 autoCalcKPI 保持完全一致的 KPI 配置（单位映射：idx0=小时、idx1=人、idx2=个、idx3=万）
+        const kpiConfigs = [
+            { idx: 0, unit: '小时' },
+            { idx: 1, unit: '人' },
+            { idx: 2, unit: '个' },
+            { idx: 3, unit: '万' }
+        ];
+
+        // 数值解析：与 autoCalcKPI.parseNum 完全一致
+        function parseNum(str) {
+            if (!str || str === '--' || str === '') return 0;
+            const cleaned = str.replace(/,/g, '').replace(/[^0-9.]/g, '');
+            return parseFloat(cleaned) || 0;
+        }
+
+        // 数值格式化：与 autoCalcKPI.fmtNum 完全一致
+        function fmtNum(n) {
+            return Number.isInteger(n) ? n.toString() : n.toFixed(1).replace(/\.0$/, '');
+        }
+
+        // 首月 i=0 无上月可比对，跳过；从 i=1 起逐月以 i-1 为上月
+        for (let i = 1; i < DATA.months.length; i++) {
+            const curr = DATA.months[i];
+            if (!curr || !curr.kpi) continue;
+            const prev = DATA.months[i - 1];
+            if (!prev || !prev.kpi) continue;
+
+            for (let idx = 0; idx < 4; idx++) {
+                const cfg = kpiConfigs[idx];
+                if (!cfg) continue;
+                const currKpi = curr.kpi[idx];
+                const prevKpi = prev.kpi[idx];
+                if (!currKpi) continue;
+
+                const currVal = parseNum(currKpi.value);
+                const prevVal = parseNum(prevKpi ? prevKpi.value : '');
+
+                let momText = '--';
+                let pctText = '--';
+
+                if (currVal > 0) {
+                    if (prevVal === 0) {
+                        // 上月为0（首月或上月未填）：按初始值处理
+                        const momValue = idx === 0 ? currVal.toLocaleString() : fmtNum(currVal);
+                        const momUnitStr = cfg.unit === '万' ? '万' : (idx === 2 ? '个' : cfg.unit);
+                        momText = `+${momValue}${momUnitStr}`;
+                        pctText = '100';
+                    } else {
+                        // 有上月数据：计算真实环比 = 本月 - 上月
+                        const diff = currVal - prevVal;
+                        const pct = prevVal > 0 ? Math.round((diff / prevVal) * 100) : 100;
+                        const momSign = diff >= 0 ? '+' : '';
+                        const momValue = idx === 0 ? diff.toLocaleString() : fmtNum(diff);
+                        const momUnitStr = cfg.unit === '万' ? '万' : (idx === 2 ? '个' : cfg.unit);
+                        momText = `${momSign}${momValue}${momUnitStr}`;
+                        pctText = pct.toString();
+                    }
+                }
+
+                // 写回 mom / momPct（ROI idx=4 保持“累计趋势”/“up”不重算）
+                currKpi.mom = momText;
+                currKpi.momPct = pctText;
+            }
+        }
+        console.log('✅ recalcAllMonthsMoM: 已全局重算所有月份 KPI 环比');
+    } catch (err) {
+        console.error('recalcAllMonthsMoM error:', err);
+    }
+}
+
 function addFlow() {
     // 先保存当前表单数据，避免丢失
     collectFormData();
@@ -3464,6 +3555,9 @@ function collectFormData() {
     // m.dataNote.source = document.getElementById('e-note-source').value;
     // m.dataNote.costBasis = document.getElementById('e-note-cost').value;
     // m.dataNote.period = document.getElementById('e-note-period').value;
+
+    // 全局统一重算所有月份 KPI 环比，确保每次保存都校正，避免“仅编辑时单字段冻结”导致的错误留存
+    recalcAllMonthsMoM();
 }
 
 function saveAndClose() {
@@ -3584,6 +3678,8 @@ window.addEventListener('DOMContentLoaded', () => {
 
     migrateAllYears();
     normalizeROIData();
+    // 展示前全局校正所有月份 KPI 环比：即使 data.json/URL 里存了旧的错值，加载即按最新算法纠正
+    recalcAllMonthsMoM();
     renderMonthTabs();
     renderAll();
     
@@ -3615,6 +3711,7 @@ window.addEventListener('DOMContentLoaded', () => {
             if (cloudMonths > localMonths || (cloudMonths === localMonths && cloudTime > localTime)) {
                 DATA = cloudData;
                 migrateAllYears(); normalizeROIData();
+                recalcAllMonthsMoM(); // 云端数据同样按最新算法校正环比
                 renderMonthTabs(); renderAll();
                 syncConfig.lastCloudUpdate = cloudData._updatedAt;
                 console.log('✅ 从云端加载更新 (' + cloudMonths + '月)');
