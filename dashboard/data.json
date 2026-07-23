@@ -578,8 +578,8 @@
           "title": "自动化流程数",
           "value": "13",
           "unit": "个",
-          "mom": "+13个",
-          "momPct": "100",
+          "mom": "+2个",
+          "momPct": "18",
           "trans": "覆盖7个部门",
           "icon": "cog",
           "color": "indigo"
@@ -815,8 +815,8 @@
           "title": "自动化流程数",
           "value": "15",
           "unit": "个",
-          "mom": "+15个",
-          "momPct": "100",
+          "mom": "+2个",
+          "momPct": "15",
           "trans": "覆盖8个部门",
           "icon": "cog",
           "color": "indigo"
@@ -1046,8 +1046,8 @@
           "title": "累计节省工时",
           "value": "549.5",
           "unit": "小时",
-          "mom": "+0小时",
-          "momPct": "0",
+          "mom": "+80小时",
+          "momPct": "17",
           "trans": "约 68.7 人天",
           "icon": "clock",
           "color": "amber"
@@ -1068,8 +1068,8 @@
           "title": "自动化流程数",
           "value": "16",
           "unit": "个",
-          "mom": "+16个",
-          "momPct": "100",
+          "mom": "+1个",
+          "momPct": "7",
           "trans": "覆盖8个部门",
           "icon": "cog",
           "color": "indigo"
@@ -2696,5 +2696,5 @@
       }
     }
   },
-  "_updatedAt": "2026-07-23T05:24:33.230Z"
+  "_updatedAt": "2026-07-23T06:07:56.313Z"
 }
