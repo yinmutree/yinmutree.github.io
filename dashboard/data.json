@@ -1,7 +1,7 @@
 {
   "clientName": "北谷农业",
   "isYearlyView": false,
-  "currentMonthIndex": 6,
+  "currentMonthIndex": 5,
   "providerName": "引木管理咨询",
   "advisorName": "法师（健昕）",
   "advisorPhone": "17600697399",
@@ -1044,11 +1044,11 @@
         {
           "id": "hours",
           "title": "累计节省工时",
-          "value": "469.5",
+          "value": "549.5",
           "unit": "小时",
           "mom": "+0小时",
           "momPct": "0",
-          "trans": "约 58.7 人天",
+          "trans": "约 68.7 人天",
           "icon": "clock",
           "color": "amber"
         },
@@ -1066,9 +1066,9 @@
         {
           "id": "flows",
           "title": "自动化流程数",
-          "value": "15",
+          "value": "16",
           "unit": "个",
-          "mom": "+15个",
+          "mom": "+16个",
           "momPct": "100",
           "trans": "覆盖8个部门",
           "icon": "cog",
@@ -1258,6 +1258,14 @@
           "savedPerTime": "2",
           "monthlySaved": "60",
           "status": "running"
+        },
+        {
+          "name": "CRM系统审核专员",
+          "dept": "运营部",
+          "monthlyVolume": "1000",
+          "savedPerTime": "80",
+          "monthlySaved": "80",
+          "status": "running"
         }
       ],
       "stories": [
@@ -1279,6 +1287,27 @@
             {
               "label": "表格减负",
               "value": "1张表格实现"
+            }
+          ]
+        },
+        {
+          "dept": "运营部",
+          "title": "数字员工-CRM系统审核专员",
+          "scenario": "原CRM系统零售商进行电话拜访的号码比对以及当面拜访的图片比对，需要一一进行人工点击审核",
+          "before": "100%人工逐条审核，时间成本巨大且价值不大，准确度也低",
+          "after": "开发AI数字员工自动进行初版全面审核并提交异常报告",
+          "results": [
+            {
+              "label": "时间成本",
+              "value": "2周时间降低为1小时"
+            },
+            {
+              "label": "异常信息筛查",
+              "value": "0出错"
+            },
+            {
+              "label": "",
+              "value": ""
             }
           ]
         }
@@ -2667,5 +2696,5 @@
       }
     }
   },
-  "_updatedAt": "2026-07-15T07:45:58.002Z"
+  "_updatedAt": "2026-07-23T05:24:33.230Z"
 }
