@@ -1,7 +1,7 @@
 {
   "clientName": "北谷农业",
   "isYearlyView": false,
-  "currentMonthIndex": 5,
+  "currentMonthIndex": 6,
   "providerName": "引木管理咨询",
   "advisorName": "法师（健昕）",
   "advisorPhone": "17600697399",
@@ -1299,15 +1299,15 @@
           "results": [
             {
               "label": "时间成本",
-              "value": "2周时间降低为1小时"
+              "value": "80小时成本降低为1小时"
             },
             {
               "label": "异常信息筛查",
               "value": "0出错"
             },
             {
-              "label": "",
-              "value": ""
+              "label": "零售商审查管理",
+              "value": "精准交付甲方"
             }
           ]
         }
@@ -2696,5 +2696,5 @@
       }
     }
   },
-  "_updatedAt": "2026-07-23T06:07:56.313Z"
+  "_updatedAt": "2026-07-23T06:11:04.512Z"
 }
