@@ -1077,7 +1077,7 @@
         {
           "id": "cost",
           "title": "人力成本节省",
-          "value": "3.9",
+          "value": "4.3",
           "unit": "万",
           "mom": "+0万",
           "momPct": "0",
@@ -1088,7 +1088,7 @@
         {
           "id": "roi",
           "title": "AI投入产出比",
-          "value": "6.5",
+          "value": "7.2",
           "unit": ": 1",
           "mom": "累计趋势",
           "momPct": "up",
@@ -1117,23 +1117,23 @@
           ]
         },
         "return": {
-          "total": 3.9,
+          "total": 4.3,
           "items": [
             {
               "name": "人力节省折算",
-              "value": 1.69
+              "value": 1.86
             },
             {
               "name": "运营成本节省",
-              "value": 1.69
+              "value": 1.86
             },
             {
               "name": "返工成本节省",
-              "value": 0.53
+              "value": 0.58
             },
             {
               "name": "开发成本降低",
-              "value": 0.6
+              "value": 0.66
             }
           ]
         }
