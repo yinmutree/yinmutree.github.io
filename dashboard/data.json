@@ -1,7 +1,7 @@
 {
   "clientName": "北谷农业",
   "isYearlyView": false,
-  "currentMonthIndex": 6,
+  "currentMonthIndex": 5,
   "providerName": "引木管理咨询",
   "advisorName": "法师（健昕）",
   "advisorPhone": "17600697399",
@@ -1077,7 +1077,7 @@
         {
           "id": "cost",
           "title": "人力成本节省",
-          "value": "4.3",
+          "value": "3.9",
           "unit": "万",
           "mom": "+0万",
           "momPct": "0",
@@ -1088,7 +1088,7 @@
         {
           "id": "roi",
           "title": "AI投入产出比",
-          "value": "7.2",
+          "value": "6.5",
           "unit": ": 1",
           "mom": "累计趋势",
           "momPct": "up",
@@ -1117,23 +1117,23 @@
           ]
         },
         "return": {
-          "total": 4.3,
+          "total": 3.9,
           "items": [
             {
               "name": "人力节省折算",
-              "value": 1.86
+              "value": 1.69
             },
             {
               "name": "运营成本节省",
-              "value": 1.86
+              "value": 1.69
             },
             {
               "name": "返工成本节省",
-              "value": 0.58
+              "value": 0.53
             },
             {
               "name": "开发成本降低",
-              "value": 0.66
+              "value": 0.6
             }
           ]
         }
@@ -2696,5 +2696,5 @@
       }
     }
   },
-  "_updatedAt": "2026-07-29T01:31:15.606Z"
+  "_updatedAt": "2026-07-29T02:07:40.345Z"
 }
