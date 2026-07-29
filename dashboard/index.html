@@ -2396,21 +2396,31 @@ function renderROIDetail(isYearly, yearly) {
     // 计算显示用的 ROI 明细（不修改原始 DATA）
     let displayROI = { ...m.roiDetail, invest: { ...m.roiDetail.invest }, return: { ...m.roiDetail.return } };
     if (!isYearly) {
-        // 月度视图：累计回报 = 当月及之前所有月份回报之和
+        // 月度视图：累计回报/投入 = 当月及之前所有月份之和
         const currentIdx = DATA.currentMonthIndex;
-        let cumReturn = 0;
-        const cumReturnItems = {};
+        let cumReturn = 0, cumInvest = 0;
+        const cumReturnItems = {}, cumInvestItems = {};
         for (let i = 0; i <= currentIdx; i++) {
             const month = DATA.months[i];
-            if (month && month.roiDetail && month.roiDetail.return && month.roiDetail.return.total != null) {
-                cumReturn += parseFloat(month.roiDetail.return.total);
-                (month.roiDetail.return.items || []).forEach(item => {
-                    if (item.name) cumReturnItems[item.name] = (cumReturnItems[item.name] || 0) + item.value;
-                });
+            if (month && month.roiDetail) {
+                if (month.roiDetail.return && month.roiDetail.return.total != null) {
+                    cumReturn += parseFloat(month.roiDetail.return.total);
+                    (month.roiDetail.return.items || []).forEach(item => {
+                        if (item.name) cumReturnItems[item.name] = (cumReturnItems[item.name] || 0) + item.value;
+                    });
+                }
+                if (month.roiDetail.invest && month.roiDetail.invest.total != null) {
+                    cumInvest += parseFloat(month.roiDetail.invest.total);
+                    (month.roiDetail.invest.items || []).forEach(item => {
+                        if (item.name) cumInvestItems[item.name] = (cumInvestItems[item.name] || 0) + item.value;
+                    });
+                }
             }
         }
         displayROI.return.total = parseFloat(cumReturn.toFixed(1));
         displayROI.return.items = Object.entries(cumReturnItems).map(([name, value]) => ({ name, value }));
+        displayROI.invest.total = parseFloat(cumInvest.toFixed(1));
+        displayROI.invest.items = Object.entries(cumInvestItems).map(([name, value]) => ({ name, value }));
     }
     
     const d = displayROI;
